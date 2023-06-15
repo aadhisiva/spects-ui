@@ -1,0 +1,20 @@
+.footerPage {
+    .footerContainer {
+        background-color: #124f8c;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 50px;
+        // padding: 12px;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+
+        .footerText {
+            color: white;
+            font-size: 16px;
+            font-weight: 400;
+        }
+    }
+}

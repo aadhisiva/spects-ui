@@ -1,0 +1,89 @@
+.dashboardPage {
+    display: block;
+    margin: 1% 8% 3% 8% !important;
+    padding: 1%;
+
+    .statisticsContainer {
+        .statistics {
+            width: 100px;
+            text-align: center;
+            padding: 7px;
+            background-color: #124f8c;
+            border: 1px solid #000000;
+            border-radius: 10px 10px 0px 0px;
+
+            .title {
+                color: white;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 130%;
+            }
+        }
+    }
+
+    .orderItemsContainer {
+        border: 1px solid;
+        border-radius: 0px 20px 20px 20px;
+        align-items: center;
+
+        .titleContainer {
+            .title {
+                font-weight: 700;
+                font-size: 18px;
+                line-height: 130%;
+            }
+        }
+
+        .orderItems {
+            margin: 20px 20px 20px 20px;
+            height: 50px;
+            background: #62A76C;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+
+            .title {
+                text-align: left;
+                font-size: 15px;
+                color: white;
+            }
+
+            .count {
+                text-align: right;
+                font-size: 15px;
+                color: white;
+            }
+        }
+    }
+
+    .menuItemsContainer {
+        border: 1px solid #000000;
+        margin: 40px 0;
+        border-radius: 40px;
+
+        text-align: center;
+        .menuItems {
+            margin: 40px;
+            padding: 10px 0 0 0;
+            height: 150px;
+            background: #62A76C;
+            border-radius: 10px;
+            // display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            // align-items: center;
+            .title {
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 130%;
+                padding: 0 10px;
+                color: #FFFFFF;
+            }
+        }
+
+    }
+}

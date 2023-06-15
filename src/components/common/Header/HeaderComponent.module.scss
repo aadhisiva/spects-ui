@@ -1,0 +1,57 @@
+.homePage {
+    // width: 100em;
+    // @media only screen and (max-width: 600px) {
+    //     width: 60vh;
+    // }
+    .headerContainer {
+        background-color: #124f8c;
+        height: 70px;
+
+        .headerRow {
+            align-items: end;
+            padding-top: 6px;
+        }
+
+        .leftSideImage {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .centerName {
+            .title {
+                color: white;
+                font-size: 17px;
+                letter-spacing: 0.2px;
+                font-weight: 600;
+            }
+
+            .subTitle {
+                color: white;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 15px;
+            }
+        }
+
+        .rightSideContent {
+            text-align: right;
+
+            .title {
+                color: white;
+                letter-spacing: 0.5px;
+            }
+
+            .subTitle {
+                color: white;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 12px;
+            }
+        }
+
+        .rightSideImage {
+            text-align: right;
+            padding-right: 10px;
+        }
+    }
+}

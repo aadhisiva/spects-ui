@@ -1,0 +1,27 @@
+.titleBarPage {
+    .titleBarContainer{
+        background-color: #1C8BCE;
+        height: 35px;
+        // display: flex;
+        align-items: center;
+        color: white;  
+        .titleContainer{
+            text-align: start;  
+            overflow: hidden;
+            .title {
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 130%;
+            }
+        }
+        .loginUserContainer {
+            text-align: end;
+            .loginUserTitle{
+                color: rgb(35, 228, 115);
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 130%; 
+            }
+        }
+    }
+}

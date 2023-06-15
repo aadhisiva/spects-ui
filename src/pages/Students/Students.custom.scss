@@ -1,0 +1,44 @@
+.student-page-list {
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-thead {
+        color: #000000;
+        font-weight: 600;
+        font-size: 19px;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-thead>tr {
+        // border: 1px solid;
+        // border-radius: 10px;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-thead>tr>th {
+        // border: 1px solid #000000;
+        background-color: #ABD2F6;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper table {
+        border-collapse: collapse;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+        display: none;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-container table>thead>tr:first-child>*:last-child {
+        border-radius: 0 10px 10px 0;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-container table>thead>tr:first-child>*:first-child {
+        border-radius: 10px 0 0 10px;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-tbody {
+        border: 1px solid;
+        font-size: 16px;
+        font-weight: 400;
+        font-style: normal;
+    }
+    .css-dev-only-do-not-override-k7429z.ant-table-wrapper .ant-table-pagination-right {
+        justify-content: center;
+    }
+}

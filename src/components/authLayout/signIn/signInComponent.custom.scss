@@ -1,0 +1,16 @@
+.signin-page {
+    .css-dev-only-do-not-override-k7429z.ant-form-item .ant-form-item-label>label::after {
+        content: none;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-form-item .ant-form-item-label>label {
+        font-size: 17px;
+        font-weight: 600;
+        margin-right: 70px;
+    }
+
+    .css-dev-only-do-not-override-k7429z.ant-form-item .ant-form-item-control-input-content {
+        display: flex;
+        justify-content: end;
+    };
+};

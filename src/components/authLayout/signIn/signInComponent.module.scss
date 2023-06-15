@@ -1,0 +1,40 @@
+.signInPage {
+    margin: 40px;
+    text-align: center;
+
+    .box {
+        height: auto;
+        border: 1px solid #000000;
+        border-radius: 35px;
+        .cardDetails {
+            padding: 10px 0 20px 0;
+            .divider {
+                margin: 10px 30px 30px;
+                border: 0.1px solid #000000;
+            }
+
+            .title {
+
+                font-style: normal;
+                font-weight: 600;
+                font-size: 32px;
+                line-height: 130%;
+                /* or 42px */
+                align-items: center;
+                text-align: center;
+            }
+            .rowSpace {
+            }
+            .buttonPlace {
+                text-align: end;
+                .resendOtp {
+                    align-items: end;
+                    color: #30930D;
+                }
+                .timer {
+                    color: #F24E1E;
+                }
+            }
+        }
+    }
+}
