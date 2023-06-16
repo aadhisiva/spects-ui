@@ -1,31 +1,49 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Col, Form, Input, Row, Select, Table, message, notification } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Row, Select, Table } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
-import styles from "./AssignmentTable.module.scss";
+import styles from "./ReportsTable.module.scss";
 import classNames from "classnames";
-import "./AssignmentTable.custom.scss";
+import "./ReportsTable.custom.scss";
 import { useNavigate } from 'react-router';
 import { TitleBarComponent } from '../../components/common/titleBar';
 import { Option } from 'antd/es/mentions';
 import { SearchOutlined } from "@ant-design/icons";
-import DummyData from "../dommy.json";
+// import DummyData from "../dommy.json";
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
-import { NotificationInfo, NotificationSuccess } from '../../components/common/Notifications/Notifications';
+import { NotificationSuccess } from '../../components/common/Notifications/Notifications';
 import { ModalModify } from '../../components/common/ModalModify';
 import { SelectItems } from '../../components/common/SelectItems';
 import SelectRowsPerPage from '../../components/common/SelectItems/SelectRowsPerPage';
 
+const { RangePicker } = DatePicker;
 interface DataType {
     key: string,
-    designation: string;
-    name: string;
+    type: string;
+    refractionist_name: string;
+    details: string;
+    date: string;
+    email: string;
     contact_number: string;
-    district: string;
-    taluka: string;
-    sub_center: string;
+    m_f_name: string;
+    status: string;
 };
 
-export const AssignmentTable: React.FC = () => {
+let DummyData: DataType[] = [];
+for (let i = 0; i < 10000; i++) {
+    DummyData.push({
+        key: `${i}`,
+        type: `school ${i}`,
+        refractionist_name: `subb reddy ${i}`,
+        details: `school ${i}`,
+        date: "2022/02/10",
+        email: 'aadhi@gmial.com',
+        contact_number: `5655767${i}`,
+        m_f_name: `reddamm ${i}`,
+        status: `order_pending${i}`
+    });
+}
+
+export const ReportsTable: React.FC = () => {
     const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,16 +51,20 @@ export const AssignmentTable: React.FC = () => {
     const [visible, setVisisble] = useState(false);
     const [formData, setFormData] = useState({});
     const [selctedData, setSelectedData] = useState({
-        designation: "",
+        type: "",
         district: "",
         taluka: "",
-        sub_center: ""
-    })
-    const selectDataTypes = ["district", "taluka", "Sub center", "state", "admin"];
+        sub_center: "",
+        refractionist: "",
+        deatils: "",
+        dates: "",
+    });
+    const selectDataTypes = ["district", "taluka", "Sub center", "state", "admin"]
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [queryString, setQueryString] = useState<string>("");
     const navigate = useNavigate();
 
+    // console.log("tableData", tableData)
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         console.log('Various parameters', pagination, filters, sorter);
         setCurrentPage(Number(pagination?.current));
@@ -53,30 +75,56 @@ export const AssignmentTable: React.FC = () => {
 
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Designation',
-            dataIndex: 'designation',
-            key: 'designation',
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
             filteredValue: [queryString],
             onFilter: (value: any, record) => {
                 return (
-                    String(record.designation).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.name).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.type).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.refractionist_name).toLowerCase().includes(value.toLowerCase()) ||
                     String(record.contact_number).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.district).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.sub_center).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.taluka).toLowerCase().includes(value.toLowerCase())
+                    String(record.m_f_name).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.email).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.details).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.status).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.date).toLowerCase().includes(value.toLowerCase())
                 );
             },
-            sorter: (a, b) => a.designation.length - b.designation.length,
-            sortOrder: sortedInfo.columnKey === 'designation' ? sortedInfo.order : null,
+            sorter: (a, b) => a.type.length - b.type.length,
+            sortOrder: sortedInfo.columnKey === 'type' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            sorter: (a, b) => a.name.length - b.name.length,
-            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
+            title: 'Refractionist Name',
+            dataIndex: 'refractionist_name',
+            key: 'refractionist_name',
+            sorter: (a, b) => a.refractionist_name.length - b.refractionist_name.length,
+            sortOrder: sortedInfo.columnKey === 'refractionist_name' ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: 'Deatils',
+            dataIndex: 'details',
+            key: 'details',
+            sorter: (a, b) => a.details.length - b.details.length,
+            sortOrder: sortedInfo.columnKey === 'details' ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: 'Date',
+            dataIndex: 'date',
+            key: 'date',
+            sorter: (a, b) => a.date.length - b.date.length,
+            sortOrder: sortedInfo.columnKey === 'date' ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: 'Mother/Father Name',
+            dataIndex: 'm_f_name',
+            key: 'm_f_name',
+            sorter: (a, b) => a.m_f_name.length - b.m_f_name.length,
+            sortOrder: sortedInfo.columnKey === 'm_f_name' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
@@ -88,27 +136,19 @@ export const AssignmentTable: React.FC = () => {
             ellipsis: true,
         },
         {
-            title: 'District',
-            dataIndex: 'district',
-            key: 'district',
-            sorter: (a, b) => a.district.length - b.district.length,
-            sortOrder: sortedInfo.columnKey === 'district' ? sortedInfo.order : null,
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            sorter: (a, b) => a.email.length - b.email.length,
+            sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
-            title: 'Taluka',
-            dataIndex: 'taluka',
-            key: 'taluka',
-            sorter: (a, b) => a.taluka.length - b.taluka.length,
-            sortOrder: sortedInfo.columnKey === 'taluka' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'Sub Center',
-            key: 'sub_center',
-            dataIndex: 'sub_center',
-            sorter: (a, b) => a.sub_center.length - b.sub_center.length,
-            sortOrder: sortedInfo.columnKey === 'sub_center' ? sortedInfo.order : null,
+            title: 'Status',
+            key: 'status',
+            dataIndex: 'status',
+            sorter: (a, b) => a.status.length - b.status.length,
+            sortOrder: sortedInfo.columnKey === 'status' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
@@ -117,7 +157,7 @@ export const AssignmentTable: React.FC = () => {
             render: (_, record) => {
                 return (
                     <Button onClick={() => handleModifyForm(record)} type='primary'>
-                        Modify
+                        view
                     </Button>
                 )
             }
@@ -151,29 +191,29 @@ export const AssignmentTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-
-    const onFinish = (values: string) => {
-        console.log(values);
-        NotificationSuccess(`Success`);
-    };
-    // console.log("formData", formData)
-    const onHandleSelectItemChange = (type: string, value: string) => {
+    console.log("formData", selctedData)
+    const onHandleSelectItemChange = (type: string, value: any) => {
         setSelectedData((prev) => ({
             ...prev,
             [type]: value
         }))
     };
-    const handleSearchSelectedItem = () => {
-        if (selctedData.designation == "") NotificationInfo(`Please Select designation`);
-        else if (selctedData.district == "") NotificationInfo(`Please Select district`);
-        else if (selctedData.taluka == "") NotificationInfo(`Please Select taluka`);
-        else if (selctedData.taluka == "") NotificationInfo(`Please Select sub_center`)
-        else {
-            return NotificationSuccess(`Success`)
-        }
-
+    const onChangeDate = (va: any, da: any) => {
+        console.log('value', da)
+        setSelectedData((prev) => ({
+            ...prev,
+            dates: da
+        }))
     };
 
+    const onFinish = (values: string) => {
+        console.log(values);
+        NotificationSuccess(`Success`);
+    };
+
+    const handleSearchQueryString = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQueryString(e.target.value);
+    };
     const validateMessages = {
         required: '${label} is required!',
         types: {
@@ -185,15 +225,11 @@ export const AssignmentTable: React.FC = () => {
         },
     };
 
-    const handleSearchQueryString = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQueryString(e.target.value);
-    };
-
     return (
         <>
             {visible ? FormOpen() : ("")}
-            <TitleBarComponent title={"Assignment List"} image={true} />
-            <div className={classNames(styles.assignmentTable, "assignment-page-list")}>
+            <TitleBarComponent title={"Reports List"} image={true} />
+            <div className={classNames(styles.reportsTable, "report-page-list")}>
                 <div className={styles.table}>
                     <Row>
                         <Col sm={3} xs={24} className={styles.statisticsContainer}>
@@ -205,16 +241,24 @@ export const AssignmentTable: React.FC = () => {
                     <Form
                         name="nest-messages"
                         onFinish={onFinish}
-                        validateMessages={validateMessages}
-                    >
+                        validateMessages={validateMessages}>
                         <Row className={styles.selectItemsContainer}>
                             <Col sm={6} xs={24}>
                                 <SelectItems
-                                    placeholder="Select Designation"
-                                    name="designation"
+                                    placeholder="Select Types"
+                                    name="type"
                                     selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.designation ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('designation', value)}
+                                    hasFeedback={!selctedData.type ? false : true}
+                                    onChange={(value) => onHandleSelectItemChange('type', value)}
+                                />
+                            </Col>
+                            <Col sm={6} xs={24}>
+                                <SelectItems
+                                    placeholder="Select Deatils"
+                                    name="deatils"
+                                    selectItems={selectDataTypes}
+                                    hasFeedback={!selctedData.deatils ? false : true}
+                                    onChange={(value) => onHandleSelectItemChange('deatils', value)}
                                 />
                             </Col>
                             <Col sm={6} xs={24}>
@@ -245,6 +289,29 @@ export const AssignmentTable: React.FC = () => {
                                 />
                             </Col>
                             <Col sm={6} xs={24}>
+                                <SelectItems
+                                    placeholder="Select Refractionist"
+                                    name="refractionist"
+                                    selectItems={selectDataTypes}
+                                    hasFeedback={!selctedData.refractionist ? false : true}
+                                    onChange={(value) => onHandleSelectItemChange('refractionist', value)}
+                                />
+                            </Col>
+                            <Col sm={6} xs={24}>
+                                <div className={styles.selecttypes}>
+                                    <Form.Item
+                                        name={"From and To Date"}
+                                        hasFeedback={!selctedData.dates ? false : true}
+                                        rules={[{ required: true }]}>
+                                        <RangePicker
+                                            format="YYYY-MM-DD"
+                                            placeholder={['From Date', 'To Date']}
+                                            onChange={onChangeDate}
+                                        />
+                                    </Form.Item>
+                                </div>
+                            </Col>
+                            <Col sm={6} xs={24}>
                                 <div className={styles.selecttypes}>
                                     <Button type="primary" htmlType="submit">
                                         Search
@@ -253,7 +320,6 @@ export const AssignmentTable: React.FC = () => {
                             </Col>
                         </Row>
                     </Form>
-
                     {/* search and select rows */}
                     <Row>
                         <Col sm={18} xs={12} className={styles.slectRows}>
@@ -273,7 +339,6 @@ export const AssignmentTable: React.FC = () => {
                         </Col>
                     </Row>
                     <Table
-                        style={{ tableLayout: 'auto' }}
                         columns={columns}
                         dataSource={tableData}
                         pagination={{

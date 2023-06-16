@@ -13,6 +13,7 @@ import { BeneficiaryDetails } from '../../pages/BeneficiaryDetails'
 import { StudentDetails } from '../../pages/StudentDetails'
 import { DashBoardHierarchy } from '../../pages/DashBoardHierarchy'
 import { AssignmentTable } from '../../pages/AssignmentTable'
+import { ReportsTable } from '../../pages/ReportsTable'
 
 const router = createBrowserRouter([
     {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
     {
         path: "/assignment-list",
         element: <AssignmentTable />,
+    },
+    {
+        path: "/reports-list",
+        element: <ReportsTable />,
     },
 ])
 

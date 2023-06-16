@@ -86,8 +86,8 @@ export const DashBoardHierarchy: React.FC = (props) => {
     const handleClick = () => {
         naviagte("/school-tracking")
     };
-    const handleClickToNextPage = (role: string) => {
-        naviagte("/assignment-list")
+    const handleClickToNextPage = (role: string, path: string) => {
+        naviagte(path);
     };
 
     return (
@@ -101,12 +101,6 @@ export const DashBoardHierarchy: React.FC = (props) => {
                             <span className={styles.title}>Statistics</span>
                         </div>
                     </Col>
-                    {/* <span className={styles.loginBy}>LOGIN BY : </span>
-                    <Col sm={3} xs={24} className={styles.loginConatainer}>
-                        <div className={styles.statistics}>
-                            <span className={styles.title}>{findLoginName(location.state?.role)}</span>
-                        </div>
-                    </Col> */}
                 </Row>
                 <Row justify="space-around" align={"middle"} className={styles.orderItemsContainer}>
                     <Col sm={6} xs={24}>
@@ -146,7 +140,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
                     {loginUser.map((obj, i) => (
                         <Col key={i} sm={Number(obj.small)} xs={24}>
-                            <a onClick={(e) =>handleClickToNextPage(obj.role)}>
+                            <a onClick={(e) =>handleClickToNextPage(obj.role, "/assignment-list")}>
                             <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
                                 <Image width={50} height={50} preview={false} src={obj.image} />
                                 <p className={styles.title}>{obj.role}</p>
@@ -167,33 +161,15 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
                     {loginUser.map((obj, i) => (
                         <Col key={i} sm={Number(obj.small)} xs={24}>
+                            <a onClick={(e) =>handleClickToNextPage(obj.role, "/reports-list")}>
                             <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
                                 <Image width={50} height={50} preview={false} src={obj.image} />
                                 <p className={styles.title}>{obj.role}</p>
                             </div>
+                            </a>
                         </Col>
                     ))}
                 </Row>
-                {/* <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
-                    <Col sm={6} xs={24}>
-                        <div className={styles.menuItems}>
-                            <Image width={50} height={50} preview={false} src={RefractionistImage} />
-                            <p className={styles.title}>Refractionist Assignment</p>
-                        </div>
-                    </Col>
-                    <Col sm={6} xs={24}>
-                        <div style={{ backgroundColor: "#3399FF" }} className={styles.menuItems}>
-                            <Image width={50} height={55} preview={false} src={BenificiaryImage} />
-                            <p className={styles.title}>Beneficiary Tracking</p>
-                        </div>
-                    </Col>
-                    <Col sm={6} xs={24}>
-                        <div style={{ backgroundColor: "#AC8FF2" }} className={styles.menuItems}>
-                            <Image width={50} height={55} preview={false} src={StudentImage} />
-                            <p className={styles.title}>Student Tracking</p>
-                        </div>
-                    </Col>
-                </Row> */}
                 <Button type="primary" onClick={handleClick}>
                     next
                 </Button>

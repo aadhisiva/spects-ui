@@ -19,7 +19,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
     onCancel
 }
 ) => {
-    console.log("state", state.designation)
+    // console.log("state", state.designation)
     const [form] = Form.useForm();
 
     form.setFieldsValue({
