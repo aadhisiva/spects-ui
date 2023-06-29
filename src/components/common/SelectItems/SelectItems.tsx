@@ -3,6 +3,8 @@ import { Form, Select } from 'antd';
 import { Option } from 'antd/es/mentions';
 import classNames from 'classnames';
 import styles from "./SelectItems.module.scss";
+import { useLocale } from 'antd/es/locale';
+import { useLocation } from 'react-router';
 
 type SelectTypesI = {
     placeholder?: string,
@@ -21,6 +23,8 @@ export const SelectItems: React.FC<SelectTypesI> = ({
     selectItems,
     disabled
 }) => {
+    const location = useLocation();
+
     return (
         <div className={classNames(styles.selectTypesPage, "selectType-page")}>
             <div className={styles.selecttypes}>
@@ -35,10 +39,21 @@ export const SelectItems: React.FC<SelectTypesI> = ({
                         disabled={disabled}
                     // defaultValue={"----Select----"}
                     >
-                        <Option value="">----Select----</Option>
-                        {(selectItems || [])?.map((obj, i) => (
-                            <Option key={String(i)} value={`${obj.option}`}>{obj.option.replace(/\W/g, "").replace(/\d/g, "")}</Option>
-                        ))}
+                        {location.pathname == "/reports-list"? (
+                            <>
+                            <Option value="">----Select----</Option>
+                            {(selectItems || [])?.map((obj, i) => (
+                                <Option key={String(i)} value={obj}>{obj}</Option>
+                            ))}
+                            </>
+                            ): (
+                                <>
+                                <Option value="">----Select----</Option>
+                                {(selectItems || [])?.map((obj, i) => (
+                                    <Option key={String(i)} value={`${obj.option}`}>{obj.option.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                ))}
+                                </>
+                            )}
                     </Select>
                 </Form.Item>
             </div>

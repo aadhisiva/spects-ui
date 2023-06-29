@@ -12,20 +12,17 @@ import { RefractionistTable } from '../hierarchy/Refractionist/Refractionist';
 export const AssignmentTable: React.FC = () => {
     const [loginBY, setLoginBy] = useState(findLoginName());
   const location: any = useLocation();
-console.log("location",location)
+
   const Routes = () => {
     if(loginBY?.type == "State Admin"){
-      return(
-             <DistrictOfficerTable />
-      )
+      if(location.state === "district") return <DistrictOfficerTable />
+      if(location.state === "taluka") return <TalukaTable />
+      if(location.state === "refraction") return <RefractionistTable />
     } else if(loginBY?.type == "District Officer"){
-         return (
-             <TalukaTable />
-         )
+      if(location.state === "taluka") return <TalukaTable />
+      if(location.state === "refraction") return <RefractionistTable />
     } else if(loginBY?.type == "Taluka"){
-      return (
-        <RefractionistTable />
-      )
+      if(location.state === "refraction") return <RefractionistTable />
     }
   } 
     return (

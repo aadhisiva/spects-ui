@@ -10,95 +10,135 @@ import { Option } from 'antd/es/mentions';
 import { SearchOutlined } from "@ant-design/icons";
 // import DummyData from "../dommy.json";
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
-import { NotificationSuccess } from '../../components/common/Notifications/Notifications';
+import { NotificationError, NotificationSuccess } from '../../components/common/Notifications/Notifications';
 import { ModalModify } from '../../components/common/ModalModify';
 import { SelectItems } from '../../components/common/SelectItems';
 import SelectRowsPerPage from '../../components/common/SelectItems/SelectRowsPerPage';
+import { GET_APIS } from '../../components/api/apisSpectacles';
 
 const { RangePicker } = DatePicker;
 interface DataType {
     key: string,
     type: string;
-    refractionist_name: string;
+    refractionist_name: string,
     details: string;
-    date: string;
-    email: string;
-    contact_number: string;
-    m_f_name: string;
+    district: string;
+    taluka: string;
+    sub_centre: string;
+    village: string;
     status: string;
+    school_institute_name: string,
+    phone_number: string,
+    name: string
 };
 
-let DummyData: DataType[] = [];
-for (let i = 0; i < 10000; i++) {
-    DummyData.push({
-        key: `${i}`,
-        type: `school ${i}`,
-        refractionist_name: `subb reddy ${i}`,
-        details: `school ${i}`,
-        date: "2022/02/10",
-        email: 'aadhi@gmial.com',
-        contact_number: `5655767${i}`,
-        m_f_name: `reddamm ${i}`,
-        status: `order_pending${i}`
-    });
+interface publilceObjType {
+    district: string,
+    name: string,
+    details: string,
+    phone_number: string,
+    refractionist_name: string,
+    status: string,
+    sub_centre: string,
+    taluka: string,
+    type: string,
+    village: string
 }
+
 
 export const ReportsTable: React.FC = () => {
     const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
-    const [tableData, setTableData] = useState<DataType[]>(DummyData);
     const [visible, setVisisble] = useState(false);
+    const [selcteDates, setSelecteDates] = useState("");
     const [formData, setFormData] = useState({});
-    const [selctedData, setSelectedData] = useState({
-        type: "",
-        district: "",
-        taluka: "",
-        sub_center: "",
-        refractionist: "",
-        deatils: "",
-        dates: "",
-    });
-    const selectDataTypes = ["district", "taluka", "Sub center", "state", "admin"]
+    const [refraDeatilsSelect, setRefraDetailsSelect] = useState<publilceObjType[]>([]);
+    const [talukaSelect, setTalukaSelect] = useState<publilceObjType[]>([]);
+    const [villageSelect, setVillageSelect] = useState<publilceObjType[]>([]);
+    const [subCentreSelect, setSubCentreSelect] = useState<publilceObjType[]>([]);
+
+    /** data */
+    const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
+    const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
+
+    /** Fitler actions */
+    const [talukaOption, setTalukaOption] = useState("");
+    const [refraType, setRefraTypes] = useState("");
+    const [refraDeatils, setRefraDetails] = useState("");
+    const [districtOption, setDistrictOption] = useState("");
+    const [districtSelect, setDistrictSelect] = useState<publilceObjType[]>([]);
+    const [villageOption, setVillageOption] = useState("");
+    const [subCentreOption, setSubCentreOption] = useState("");
+
+    const [statusOption, setStatusOption] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [queryString, setQueryString] = useState<string>("");
     const navigate = useNavigate();
 
-    // console.log("tableData", tableData)
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
-        console.log('Various parameters', pagination, filters, sorter);
         setCurrentPage(Number(pagination?.current));
         setRowsPerPage(Number(pagination.pageSize));
         setFilteredInfo(filters);
         setSortedInfo(sorter as SorterResult<DataType>);
     };
 
+    useEffect(() => {
+        (async () => {
+            let data = await GET_APIS('reports_data');
+            if (data.code) {
+                setOriginalTableData(data?.data)
+                setCopyOfOriginalTableData(data?.data)
+            } else {
+                NotificationError(data.message);
+            }
+        })()
+    }, [])
+
+    // filter operation
+    useEffect(() => {
+        // filter logic
+        let filterdData = originalTableData;
+        if (refraType) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType);
+        }
+        // filter types and details
+        if (refraType && refraDeatils) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils);
+        }
+        // filter types and details and district
+        if (refraType && refraDeatils && districtOption) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district == districtOption);
+        }
+        // filter types and details and district
+        if (refraType && refraDeatils && districtOption && talukaOption) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district == districtOption && obj.taluka === talukaOption);
+        }
+
+        setCopyOfOriginalTableData(filterdData);
+    }, [talukaOption, refraType, refraDeatils, districtOption, districtSelect, villageOption, subCentreOption, originalTableData]);
+
+
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Type',
-            dataIndex: 'type',
-            key: 'type',
+            title: 'Refractionist Name',
+            dataIndex: 'refractionist_name',
+            key: 'refractionist_name',
             filteredValue: [queryString],
             onFilter: (value: any, record) => {
                 return (
                     String(record.type).toLowerCase().includes(value.toLowerCase()) ||
                     String(record.refractionist_name).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.contact_number).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.m_f_name).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.email).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.name).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.phone_number).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.district).toLowerCase().includes(value.toLowerCase()) ||
                     String(record.details).toLowerCase().includes(value.toLowerCase()) ||
                     String(record.status).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.date).toLowerCase().includes(value.toLowerCase())
+                    String(record.taluka).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.sub_centre).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.village).toLowerCase().includes(value.toLowerCase())
                 );
             },
-            sorter: (a, b) => a.type.length - b.type.length,
-            sortOrder: sortedInfo.columnKey === 'type' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'Refractionist Name',
-            dataIndex: 'refractionist_name',
-            key: 'refractionist_name',
             sorter: (a, b) => a.refractionist_name.length - b.refractionist_name.length,
             sortOrder: sortedInfo.columnKey === 'refractionist_name' ? sortedInfo.order : null,
             ellipsis: true,
@@ -107,40 +147,56 @@ export const ReportsTable: React.FC = () => {
             title: 'Deatils',
             dataIndex: 'details',
             key: 'details',
-            sorter: (a, b) => a.details.length - b.details.length,
+            sorter: (a, b) => a.details?.length - b.details?.length,
             sortOrder: sortedInfo.columnKey === 'details' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
-            title: 'Date',
-            dataIndex: 'date',
-            key: 'date',
-            sorter: (a, b) => a.date.length - b.date.length,
-            sortOrder: sortedInfo.columnKey === 'date' ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: 'Mother/Father Name',
-            dataIndex: 'm_f_name',
-            key: 'm_f_name',
-            sorter: (a, b) => a.m_f_name.length - b.m_f_name.length,
-            sortOrder: sortedInfo.columnKey === 'm_f_name' ? sortedInfo.order : null,
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            sorter: (a, b) => a.name?.length - b.name?.length,
+            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
             title: 'Contact Number',
-            dataIndex: 'contact_number',
-            key: 'contact_number',
-            sorter: (a, b) => a.contact_number.length - b.contact_number.length,
-            sortOrder: sortedInfo.columnKey === 'contact_number' ? sortedInfo.order : null,
+            dataIndex: 'phone_number',
+            key: 'phone_number',
+            sorter: (a, b) => a.phone_number?.length - b.phone_number?.length,
+            sortOrder: sortedInfo.columnKey === 'phone_number' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            sorter: (a, b) => a.email.length - b.email.length,
-            sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
+            title: 'District',
+            dataIndex: 'district',
+            key: 'district',
+            sorter: (a, b) => a.district.length - b.district.length,
+            sortOrder: sortedInfo.columnKey === 'district' ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: 'Taluka',
+            dataIndex: 'taluka',
+            key: 'taluka',
+            sorter: (a, b) => a.taluka.length - b.taluka.length,
+            sortOrder: sortedInfo.columnKey === 'taluka' ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: 'Sub Centre',
+            dataIndex: 'sub_centre',
+            key: 'sub_centre',
+            sorter: (a, b) => a.sub_centre.length - b.sub_centre.length,
+            sortOrder: sortedInfo.columnKey === 'sub_centre' ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: 'Village/Ward',
+            dataIndex: 'village',
+            key: 'village',
+            sorter: (a, b) => a.village.length - b.village.length,
+            sortOrder: sortedInfo.columnKey === 'village' ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
@@ -191,39 +247,67 @@ export const ReportsTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-    console.log("formData", selctedData)
-    const onHandleSelectItemChange = (type: string, value: any) => {
-        setSelectedData((prev) => ({
-            ...prev,
-            [type]: value
-        }))
-    };
+
     const onChangeDate = (va: any, da: any) => {
         console.log('value', da)
-        setSelectedData((prev) => ({
-            ...prev,
-            dates: da
-        }))
-    };
-
-    const onFinish = (values: string) => {
-        console.log(values);
-        NotificationSuccess(`Success`);
+        setSelecteDates(da)
     };
 
     const handleSearchQueryString = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQueryString(e.target.value);
     };
-    const validateMessages = {
-        required: '${label} is required!',
-        types: {
-            email: '${label} is not a valid email!',
-            number: '${label} is not a valid number!',
-        },
-        number: {
-            range: '${label} must be between ${min} and ${max}',
-        },
+
+    const handleClickClearFilters = () => {
+        setDistrictOption("");
+        setTalukaOption("");
     };
+
+    const handleRefraTypes = (value: string) => {
+        if (value !== refraType) {
+            setRefraTypes(value);
+            let reset = copyOfOriginalTableData.filter(obj => obj.type == value);
+            setRefraDetailsSelect(reset);
+        }
+    }
+
+    const handleRefraDetails = (value: string) => {
+        setRefraDetails(value);
+        if (value !== refraDeatils) {
+            let reset = refraDeatilsSelect.filter(obj => obj.details == value);
+            setDistrictSelect(reset);
+        }
+    }
+
+    const handleDistrictOption = (value: string) => {
+        if (value !== districtOption) {
+            setDistrictOption(value);
+            let reset = districtSelect.filter(obj => obj.district == value);
+            setTalukaSelect(reset);
+        }
+    };
+
+    const handleTalukaOption = (value: string) => {
+        if (value !== talukaOption) {
+            setTalukaOption(value);
+            let reset = talukaSelect.filter(obj => obj.taluka == value);
+            setSubCentreSelect(reset);
+        }
+    };
+
+    const handleSubCentreOption = (value: string) => {
+        if (value !== subCentreOption) {
+            setSubCentreOption(value);
+            let reset = subCentreSelect.filter(obj => obj.sub_centre == value);
+            console.log("REs", reset)
+            setVillageSelect(reset);
+        }
+    };
+
+    const getTableData = () => {
+        if (refraType) {
+            return []
+        }
+    }
 
     return (
         <>
@@ -238,88 +322,146 @@ export const ReportsTable: React.FC = () => {
                             </div>
                         </Col>
                     </Row>
-                    <Form
-                        name="nest-messages"
-                        onFinish={onFinish}
-                        validateMessages={validateMessages}>
-                        <Row className={styles.selectItemsContainer}>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Types"
-                                    name="type"
-                                    selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.type ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('type', value)}
-                                />
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Deatils"
-                                    name="deatils"
-                                    selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.deatils ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('deatils', value)}
-                                />
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select District"
-                                    name="district"
-                                    selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.district ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('district', value)}
-                                />
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Taluka"
-                                    name="taluka"
-                                    selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.taluka ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('taluka', value)}
-                                />
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Sub Center"
-                                    name="sub_center"
-                                    selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.sub_center ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('sub_center', value)}
-                                />
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Refractionist"
-                                    name="refractionist"
-                                    selectItems={selectDataTypes}
-                                    hasFeedback={!selctedData.refractionist ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('refractionist', value)}
-                                />
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <div className={styles.selecttypes}>
-                                    <Form.Item
-                                        name={"From and To Date"}
-                                        hasFeedback={!selctedData.dates ? false : true}
-                                        rules={[{ required: true }]}>
-                                        <RangePicker
-                                            format="YYYY-MM-DD"
-                                            placeholder={['From Date', 'To Date']}
-                                            onChange={onChangeDate}
-                                        />
-                                    </Form.Item>
-                                </div>
-                            </Col>
-                            <Col sm={6} xs={24}>
-                                <div className={styles.selecttypes}>
-                                    <Button type="primary" htmlType="submit">
-                                        Search
-                                    </Button>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Form>
+                    <Row className={styles.selectItemsContainer}>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        placeholder="Types"
+                                        onChange={(value) => handleRefraTypes(value)}
+                                    >
+                                        <Option value="school">School</Option>
+                                        <Option value="otherBenificiary">Benificiary</Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        disabled={refraType ? false : true}
+                                        placeholder="Details"
+                                        onChange={handleRefraDetails}
+                                    >
+                                        {
+                                            (Array.from(new Set(refraDeatilsSelect.map((item: any) => item.details))) || []).map((obj, i) => (
+                                                <Option key={String(i)} value={obj}>{obj}</Option>
+                                            ))
+                                        }
+                                        <Option value="rc">Rc</Option>
+                                        <Option value="aadhar">Aadhar</Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        disabled={refraDeatils ? false : true}
+                                        placeholder="District"
+                                        onChange={handleDistrictOption}
+                                    >
+                                        {
+                                            (Array.from(new Set(districtSelect.map((item: any) => item.district))) || []).map((obj, i) => (
+                                                <Option key={String(i)} value={obj}>{obj}</Option>
+                                            ))
+                                        }
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        disabled={districtOption ? false : true}
+                                        placeholder="taluka"
+                                        onChange={handleTalukaOption}
+                                    >
+                                        {
+                                            (Array.from(new Set(talukaSelect.map((item: any) => item.taluka))) || []).map((obj, i) => (
+                                                <Option key={String(i)} value={obj}>{obj}</Option>
+                                            ))
+                                        }
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        disabled={talukaOption ? false : true}
+                                        placeholder="sub_centre"
+                                        onChange={handleSubCentreOption}
+                                    >
+                                        {
+                                            (Array.from(new Set(subCentreSelect.map((item: any) => item.sub_centre))) || []).map((obj, i) => (
+                                                <Option key={String(i)} value={obj}>{obj}</Option>
+                                            ))
+                                        }
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        disabled={subCentreOption ? false : true}
+                                        placeholder="village/Ward"
+                                        onChange={(value) => setVillageOption(value)}
+                                    >
+                                        {
+                                            (Array.from(new Set(villageSelect.map((item: any) => item.village))) || []).map((obj, i) => (
+                                                <Option key={String(i)} value={obj}>{obj}</Option>
+                                            ))
+                                        }
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item
+                                    name={"From and To Date"}
+                                    // hasFeedback={!selctedData.dates ? false : true}
+                                    rules={[{ required: true }]}>
+                                    <RangePicker
+                                        disabled={villageOption ? false : true}
+                                        format="YYYY-MM-DD"
+                                        placeholder={['From Date', 'To Date']}
+                                        onChange={onChangeDate}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        placeholder="status"
+                                        disabled={selcteDates ? false : true}
+                                        onChange={(value) => setStatusOption(value)}
+                                    >
+                                        <Option value="order_pending">Order Pending</Option>
+                                        <Option value="ready_to_deliver">Ready To Deliver</Option>
+                                        <Option value="delivered">Delivered</Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Button type="primary" onClick={handleClickClearFilters}>
+                                    Clear Filters
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+
                     {/* search and select rows */}
                     <Row>
                         <Col sm={18} xs={12} className={styles.slectRows}>
@@ -340,12 +482,12 @@ export const ReportsTable: React.FC = () => {
                     </Row>
                     <Table
                         columns={columns}
-                        dataSource={tableData}
+                        dataSource={copyOfOriginalTableData}
                         pagination={{
                             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                             current: currentPage,
                             pageSize: rowsPerPage,
-                            total: tableData.length
+                            total: copyOfOriginalTableData?.length || 0
 
                         }}
                         onChange={handleChange}
@@ -354,5 +496,5 @@ export const ReportsTable: React.FC = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+}; 

@@ -10,12 +10,14 @@ import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { useLocation } from "react-router";
 import { findLoginName } from "../../utilities/reUsableFun";
+import { GET_APIS } from "../../components/api/apisSpectacles";
+import { NotificationError } from "../../components/common/Notifications/Notifications";
 
 const loginArrayData = [
     {
         role: "District Officer",
         color: "#62A76C",
-        name: "state",
+        name: "district",
         small: Number(24 / 4),
         image: RefractionistImage,
     },
@@ -51,6 +53,9 @@ type LoginUserI = {
 export const DashBoardHierarchy: React.FC = (props) => {
     const [loginBY, setLoginBy] = useState(findLoginName());
     const [loginUser, setLoginUser] = useState<LoginUserI[]>([])
+    const [pendingCount, setPendingCount] = useState(0);
+    const [deliveredCount, setDeliveredCount] = useState(0);
+    const [allCount, setAllCount] = useState(0);
     const naviagte = useNavigate();
 
     const SwitchLoginData = (loginData: any) => {
@@ -67,6 +72,20 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 return setLoginUser(loginArrayData.slice(3, 3));
         };
     };
+    useEffect(()=> {
+        ( async () => {
+            let all = await GET_APIS("get_orders_count");
+            let delivered = await GET_APIS("delivered");
+            let pending = await GET_APIS("pending");
+            if(all.code == 200){
+                setAllCount(all.data)
+                setPendingCount(pending.data)
+                setDeliveredCount(delivered.data)
+            } else {
+                NotificationError("please try again.")
+            }
+        })()
+    },[])
 
     useEffect(() => {
         SwitchLoginData(findLoginName());
@@ -100,19 +119,19 @@ export const DashBoardHierarchy: React.FC = (props) => {
                     <Col sm={6} xs={24}>
                         <div className={styles.orderItems}>
                             <span className={styles.title}>Total</span>
-                            <span className={styles.count}>3000</span>
+                            <span className={styles.count}>{allCount}</span>
                         </div>
                     </Col>
                     <Col sm={6} xs={24}>
                         <div style={{ backgroundColor: "#3399FF" }} className={styles.orderItems}>
                             <span className={styles.title}>Delivered</span>
-                            <span className={styles.count}>3000</span>
+                            <span className={styles.count}>{deliveredCount}</span>
                         </div>
                     </Col>
                     <Col sm={6} xs={24}>
                         <div style={{ backgroundColor: "#AC8FF2" }} className={styles.orderItems}>
                             <span className={styles.title}>Pending</span>
-                            <span className={styles.count}>3000</span>
+                            <span className={styles.count}>{pendingCount}</span>
 
                         </div>
                     </Col>
@@ -129,7 +148,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
                     {loginUser.map((obj, i) => (
                         <Col key={i} sm={Number(obj.small)} xs={24}>
-                            <a onClick={(e) => handleClickToNextPage(obj.role, "/assignment-list")}>
+                            <a onClick={(e) => handleClickToNextPage(obj.name, "/assignment-list")}>
                                 <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
                                     <Image width={47} height={44} preview={false} src={obj.image} />
                                     <p className={styles.title}>{obj.role}</p>
@@ -148,20 +167,15 @@ export const DashBoardHierarchy: React.FC = (props) => {
                     </Col>
                 </Row>
                 <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
-                    {loginUser.map((obj, i) => (
-                        <Col key={i} sm={Number(obj.small)} xs={24}>
-                            <a onClick={(e) => handleClickToNextPage(obj.role, "/reports-list")}>
-                                <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
-                                    <Image width={50} height={50} preview={false} src={obj.image} />
-                                    <p className={styles.title}>{obj.role}</p>
+                        <Col sm={8} xs={24}>
+                            <a onClick={(e) => naviagte("/reports-list")}>
+                                <div style={{ backgroundColor: "#62A76C" }} className={styles.menuItems}>
+                                    <Image width={50} height={50} preview={false} src={BenificiaryImage} />
+                                    <p className={styles.title}>{"Reports"}</p>
                                 </div>
                             </a>
                         </Col>
-                    ))}
                 </Row>
-                <Button type="primary" onClick={handleClick}>
-                    next
-                </Button>
             </div>
         </>
     );

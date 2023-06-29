@@ -17,10 +17,6 @@ import { ReportsTable } from '../../pages/ReportsTable'
 
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <SignInComponent />,
-    },
-    {
         path: "/dashboard",
         element: <DashBoardHierarchy />,
     },
@@ -64,13 +60,25 @@ const router = createBrowserRouter([
         path: "/reports-list",
         element: <ReportsTable />,
     },
-])
+]);
 
+const routes =  createBrowserRouter([
+    {
+        path: "/",
+        element: <SignInComponent />,
+    },
+])
+const loginUser = localStorage.getItem('login_user');
+console.log("logindfds sdfsd", !loginUser)
 export const AuthLayout: React.FC = () => {
     return (
         <div>
             <LayoutComponent>
-                <RouterProvider router={router} />
+                {!loginUser? (
+                <RouterProvider router={routes} />
+                    ): (
+                        <RouterProvider router={router} />
+                )}
             </LayoutComponent>
         </div>
     )

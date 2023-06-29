@@ -1,27 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Col, Form, Input, Radio, RadioChangeEvent, Row, Select, Table, } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Form, Row, Select, Table, } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./District.module.scss";
 import classNames from 'classnames';
 import "./District.custom.scss";
 import { useLocation, useNavigate } from 'react-router';
-import { SearchOutlined } from "@ant-design/icons";
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { TabsPosition } from 'antd/es/tabs';
 import { Option } from 'antd/es/mentions';
-import { findLoginName, validateMessages } from '../../../utilities/reUsableFun';
-import { GET_APIS } from '../../../components/api/apisSpectacles';
+import { findLoginName } from '../../../utilities/reUsableFun';
+import { GET_APIS, LOGIN_APIS } from '../../../components/api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
-import { TitleBarComponent } from '../../../components/common/titleBar';
-import { SelectItems } from '../../../components/common/SelectItems';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
+import Search from 'antd/es/input/Search';
 
 interface DataType {
     key: string,
-    refractionist_name: string;
     name: string;
-    refractionist_mobile: string;
+    mobile_number: string;
     district: string;
     taluka: string;
     sub_centre: string;
@@ -37,35 +34,41 @@ export const DistrictOfficerTable: React.FC = () => {
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
     const [tableData, setTableData] = useState<DataType[]>([]);
+    const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
     const [visible, setVisisble] = useState(false);
     const [formData, setFormData] = useState({});
-    const [selctedData, setSelectedData] = useState({
-        designation: "",
-        district: "",
-        taluka: "",
-        sub_centre: "",
-        village: ""
-    })
+    const [districtOption, setDistrict] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [queryString, setQueryString] = useState<string>("");
-    const [districtData, setDistrictData] = useState([]);
-    const [talukaData, setTalukaData] = useState<[]>([]);
-    const [subCentreData, setSubCentreData] = useState([]);
-    const [villageData, setVillageData] = useState([]);
+    const [editId, setEditId] = useState([]);
 
     const navigate = useNavigate();
     const location = useLocation();
 
+    const GetTablData = async () => {
+        let data = await GET_APIS(`districts_data?type=${rural_urban}`);
+        if (data.code == 200) {
+            setTableData(data?.data)
+        } else {
+            NotificationError(data.message)
+        }
+    }
     useEffect(() => {
         (async () => {
-            let data = await GET_APIS(`all_masters?type=${rural_urban}`);
+            await GetTablData();
+        })();
+    }, [rural_urban]);
+
+    useEffect(() => {
+        (async () => {
+            let data = await GET_APIS(`districts_data?type=${rural_urban}&district=${districtOption}`);
             if (data.code == 200) {
                 setTableData(data?.data)
             } else {
                 NotificationError(data.message)
             }
         })();
-    }, [rural_urban]);
+    }, [districtOption]);
 
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
@@ -73,52 +76,36 @@ export const DistrictOfficerTable: React.FC = () => {
         setFilteredInfo(filters);
         setSortedInfo(sorter as SorterResult<DataType>);
     };
-
     const columns: ColumnsType<DataType> = [
-        // {
-        //     title: 'Designation',
-        //     dataIndex: 'refractionist_name',
-        //     key: 'refractionist_name',
-        //     filteredValue: [queryString],
-        //     onFilter: (value: any, record) => {
-        //         return (
-        //             String(record.refractionist_name).toLowerCase().includes(value.toLowerCase()) ||
-        //             // String(record.name).toLowerCase().includes(value.toLowerCase()) ||
-        //             String(record.refractionist_mobile).toLowerCase().includes(value.toLowerCase()) ||
-        //             String(record.district).toLowerCase().includes(value.toLowerCase()) ||
-        //             String(record.sub_centre).toLowerCase().includes(value.toLowerCase()) ||
-        //             String(record.taluka).toLowerCase().includes(value.toLowerCase())
-        //         );
-        //     },
-        //     sorter: (a, b) => a.refractionist_name.length - b.refractionist_name.length,
-        //     sortOrder: sortedInfo.columnKey === 'refractionist_name' ? sortedInfo.order : null,
-        //     ellipsis: true,
-        // },
-        // {
-        //     title: 'Name',
-        //     dataIndex: 'name',
-        //     key: 'name',
-        //     sorter: (a, b) => a.name.length - b.name.length,
-        //     sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
-        //     ellipsis: true,
-        // },
         {
-            title: 'Refractionist Mobile Number',
-            dataIndex: 'refractionist_mobile',
-            key: 'refractionist_mobile',
-            sorter: (a, b) => a.refractionist_mobile.length - b.refractionist_mobile.length,
-            sortOrder: sortedInfo.columnKey === 'refractionist_mobile' ? sortedInfo.order : null,
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            filteredValue: [queryString],
             onFilter: (value: any, record) => {
                 return (
-                    String(record.refractionist_name).toLowerCase().includes(value.toLowerCase()) ||
-                    // String(record.name).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.refractionist_mobile).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.district).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.sub_centre).toLowerCase().includes(value.toLowerCase()) ||
-                    String(record.taluka).toLowerCase().includes(value.toLowerCase())
+                    String(record.name).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.mobile_number).toLowerCase().includes(value.toLowerCase()) ||
+                    String(record.district).toLowerCase().includes(value.toLowerCase())
                 );
             },
+            sorter: (a, b) => a.name?.length - b.name?.length,
+            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
             ellipsis: true,
+            render: (_, record) => {
+                return !_? "N/A" : _;
+            }
+        },
+        {
+            title: 'Mobile Number',
+            dataIndex: 'mobile_number',
+            key: 'mobile_number',
+            sorter: (a, b) => a.mobile_number?.length - b.mobile_number?.length,
+            sortOrder: sortedInfo.columnKey === 'mobile_number' ? sortedInfo.order : null,
+            ellipsis: true,
+            render: (_, record) => {
+                return !_? "N/A" : _;
+            }
         },
         {
             title: 'District',
@@ -130,47 +117,6 @@ export const DistrictOfficerTable: React.FC = () => {
             render: (_, record) => {
                 return _.replace(/\W/g, "").replace(/\d/g, "");
             }
-        },
-        {
-            title: 'Taluka',
-            dataIndex: 'taluka',
-            key: 'taluka',
-            sorter: (a, b) => a.taluka.length - b.taluka.length,
-            sortOrder: sortedInfo.columnKey === 'taluka' ? sortedInfo.order : null,
-            ellipsis: true,
-            render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
-            }
-        },
-        {
-            title: 'Sub Centre',
-            key: 'sub_centre',
-            dataIndex: 'sub_centre',
-            sorter: (a, b) => a.sub_centre.length - b.sub_centre.length,
-            sortOrder: sortedInfo.columnKey === 'sub_centre' ? sortedInfo.order : null,
-            ellipsis: true,
-            render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
-            }
-        },
-        {
-            title: 'Village',
-            key: 'village',
-            dataIndex: 'village',
-            sorter: (a, b) => a.village.length - b.village.length,
-            sortOrder: sortedInfo.columnKey === 'village' ? sortedInfo.order : null,
-            ellipsis: true,
-            render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
-            }
-        },
-        {
-            title: 'Designation',
-            dataIndex: 'refractionist_name',
-            key: 'refractionist_name',
-            sorter: (a, b) => a.refractionist_name.length - b.refractionist_name.length,
-            sortOrder: sortedInfo.columnKey === 'refractionist_name' ? sortedInfo.order : null,
-            ellipsis: true,
         },
         {
             title: 'Action',
@@ -185,30 +131,37 @@ export const DistrictOfficerTable: React.FC = () => {
         },
     ];
 
-    const handleClick = (path: string) => {
-        navigate(path)
-    };
-
-    const onSave = (values: object) => {
-        console.log('Received values of form: ', values);
+    const onSave = async (values: any) => {
+        delete values?.district;
+        delete values?.rural_urban;
+        let body: any = { ...values, ...{ unique_id: editId } };
+        let result = await LOGIN_APIS("update_districts_Data", body);
+        if (result.code == 200) {
+            await GetTablData();
+        } else {
+            NotificationError("Update Failed")
+        }
         setVisisble(false);
     };
 
-    const handleModifyForm = (row: object) => {
+    const handleModifyForm = (row: any) => {
         setVisisble(true);
+        setEditId(row.id)
         setFormData(row);
         setEditMode("Edit")
     };
 
-    const handleAddNewUser = () => {
-        setVisisble(true);
-        setFormData("");
-        setEditMode("")
-    };
+    // const handleAddNewUser = () => {
+    //     setVisisble(true);
+    //     setFormData("");
+    //     setEditMode("")
+    // };
     const FormOpen = () => {
         return <ModalModify
+            districtsData={districtSelect}
             editMode={editmode ? true : false}
             state={formData}
+            setRuralOrUrban={(e)=> setRuralOrUrban(e)}
             visible={visible}
             onCancel={() => setVisisble(false)}
             onSave={onSave}
@@ -218,66 +171,18 @@ export const DistrictOfficerTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-    const onFinish = async (values: any) => {
-        const { district, taluka, sub_centre, village } = values;
-        let data = await GET_APIS(`search_data?type=${rural_urban}&district=${district}&taluka=${taluka}&sub_centre=${sub_centre}`);
-        if (data.code == 200) {
-            setTableData(data?.data);
-        } else {
-            NotificationError(data.message)
-        }
-        NotificationSuccess(`Success`);
-    };
-    const onHandleSelectItemChange = (type: string, value: string) => {
-        setSelectedData((prev) => ({
-            ...prev,
-            [type]: value
-        }))
-    };
-
-    const handleSearchQueryString = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQueryString(e.target.value);
-    };
-    const handleModeChange = (e: RadioChangeEvent) => {
-        setRuralOrUrban(e.target.value);
-    };
+   
     useEffect(() => {
         (async () => {
-            if (selctedData.district) {
-                let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${selctedData.district}`);
-                setTalukaData(data.data);
-            }
-        })();
-    }, [selctedData.district]);
-
-    useEffect(() => {
-        (async () => {
-            if (selctedData.district) {
-                let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${selctedData.district}`);
-                setTalukaData(data.data);
-            }
+            let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
+            setDistrictSelect(data.data);
         })();
     }, [rural_urban]);
 
-
-    useEffect(() => {
-        (async () => {
-            if (selctedData.sub_centre) {
-                let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${selctedData.district}&sub=${selctedData.sub_centre}`);
-                setVillageData(data.data);
-            }
-        })();
-    }, [selctedData.sub_centre]);
-
-    useEffect(() => {
-        (async () => {
-            if (selctedData.taluka) {
-                let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${selctedData.district}&taluka=${selctedData.taluka}`);
-                setSubCentreData(data.data);
-            }
-        })();
-    }, [selctedData.taluka]);
-    const ModifiedData = Array.from(new Set(tableData.map((item: any) => item.district)));
+    const handleClickClearFilters = () => {
+        setDistrict("");
+        setRuralOrUrban("");
+    };
 
     return (
         <>
@@ -290,77 +195,48 @@ export const DistrictOfficerTable: React.FC = () => {
                                 <span className={styles.title}>Filters</span>
                             </div>
                         </Col>
-                        <Col sm={4} xs={24} className={styles.statisticsContainer}>
-                            <Radio.Group defaultValue="" buttonStyle="solid" onChange={handleModeChange}>
-                                <Radio.Button value="rural">Rural</Radio.Button>
-                                <Radio.Button value="urban">Urban</Radio.Button>
-                            </Radio.Group>
+                    </Row>
+                    <Row className={styles.selectItemsContainer}>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item name={"rural_urban"}
+                                >
+                                    <Select
+                                        defaultValue={""}
+                                        placeholder="Rural/Urban"
+                                        onChange={(value) => setRuralOrUrban(value)}
+                                    >
+                                        <Option value="">--select--</Option>
+                                        <Option value="rural">Rural</Option>
+                                        <Option value="urban">Urban</Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item name={"district"}
+                                >
+                                    <Select
+                                        placeholder="Select District"
+                                        disabled={rural_urban ? false : true}
+                                        onChange={(value) => setDistrict(value)}
+                                    >
+                                        {(districtSelect || [])?.map((obj: any, i) => (
+                                            <Option key={String(i)} value={`${obj.option}`}>{obj.option.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Button type="primary" onClick={handleClickClearFilters}>
+                                    Clear Filters
+                                </Button>
+                            </div>
                         </Col>
                     </Row>
-                    <Form
-                        name="nest-messages"
-                        onFinish={onFinish}
-                        validateMessages={validateMessages}
-                    >
-                        <Row className={styles.selectItemsContainer}>
-                                <Col sm={6} xs={24}>
-                                    <div className={styles.selecttypes}>
-                                        <Form.Item name={"district"}
-                                            hasFeedback={!selctedData.district ? false : true}
-                                            validateStatus="success"
-                                            rules={[{ required: true }]}
-                                        >
-                                            <Select
-                                                placeholder="Select District"
-                                                disabled={rural_urban ? false : true}
-                                                onChange={(value) => onHandleSelectItemChange('district', value)}
-                                            >
-                                                <Option value="">----Select----</Option>
-                                                {(ModifiedData || [])?.map((obj: any, i) => (
-                                                    <Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Option>
-                                                ))}
-                                            </Select>
-                                        </Form.Item>
-                                    </div>
-                                </Col>
-                                <Col sm={6} xs={24}>
-                                    <SelectItems
-                                        placeholder="Select Taluka"
-                                        name="taluka"
-                                        disabled={rural_urban ? false : true}
-                                        selectItems={talukaData || []}
-                                        hasFeedback={!selctedData.taluka ? false : true}
-                                        onChange={(value) => onHandleSelectItemChange('taluka', value)}
-                                    />
-                                </Col>
-                            <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Sub Center"
-                                    name="sub_centre"
-                                    disabled={!rural_urban ? true: false}
-                                    selectItems={subCentreData || []}
-                                    hasFeedback={!selctedData.sub_centre ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('sub_centre', value)}
-                                />
-                            </Col>
-                            {/* <Col sm={6} xs={24}>
-                                <SelectItems
-                                    placeholder="Select Village"
-                                    name="village"
-                                    selectItems={villageData || []}
-                                    hasFeedback={!selctedData.sub_center ? false : true}
-                                    onChange={(value) => onHandleSelectItemChange('village', value)}
-                                />
-                            </Col> */}
-                            <Col sm={6} xs={24}>
-                                <div className={styles.selecttypes}>
-                                    <Button disabled={!rural_urban ? true: false} type="primary" htmlType="submit">
-                                        Search
-                                    </Button>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Form>
                     {/* search and select rows */}
                     <Row>
                         <Col sm={4} xs={12} className={styles.slectRows}>
@@ -368,21 +244,17 @@ export const DistrictOfficerTable: React.FC = () => {
                                 handleCh={handleCh}
                             />
                         </Col>
-                        <Col sm={5} xs={12} className={styles.headerRow}>
-                            <span>{location.state}</span>
+                        <Col sm={12} xs={12} className={styles.headerRow}>
+                            <span>{"District Health Officer"}</span>
                         </Col>
-                        <Col sm={9} xs={12} className={styles.searchContainer}>
-                            <Button type='primary' onClick={handleAddNewUser}>Add New</Button>
-                        </Col>
-                        <Col sm={6} xs={12} className={styles.searchContainer}>
-                            <Form.Item name="q">
-                                <Input
-                                    placeholder="ID, Title, Content, etc."
-                                    allowClear
-                                    prefix={<SearchOutlined />}
-                                    onChange={(e) => handleSearchQueryString(e)}
+                        <Col sm={8} xs={12} className={styles.searchContainer}>
+                                <Search 
+                                allowClear
+                                placeholder="input search" 
+                                enterButton
+                                onSearch={(e) => setQueryString(e)}
                                 />
-                            </Form.Item>
+
                         </Col>
                     </Row>
                     <Table
@@ -398,7 +270,6 @@ export const DistrictOfficerTable: React.FC = () => {
                         }}
                         onChange={handleChange}
                     />
-                    <Button type='primary' onClick={(e) => handleClick("/beneficiary-list")}>Next</Button>
                 </div>
             </div>
         </>
