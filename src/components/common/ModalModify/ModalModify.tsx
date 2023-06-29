@@ -2,8 +2,7 @@ import React from 'react'
 import classnames from "classnames";
 import styles from "./ModalModify.module.scss";
 import "./ModalModify.custom.scss";
-import { Form, Input, Modal } from 'antd';
-import { InputFeild } from '../InputFeild';
+import { Form, Modal } from 'antd';
 import { ReUseInputFeild } from '../ReUseInputFeild';
 
 type mofdifyModalI = {
@@ -11,12 +10,14 @@ type mofdifyModalI = {
     visible: boolean;
     onSave?: any;
     onCancel?: () => void;
+    editMode?: boolean
 }
 export const ModalModify: React.FC<mofdifyModalI> = ({
     state,
     visible,
     onSave,
-    onCancel
+    onCancel,
+    editMode
 }
 ) => {
     // console.log("state", state.designation)
@@ -35,8 +36,8 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
         <div className={classnames(styles.modifyPage, 'modify-page')}>
             <Modal
                 open={visible}
-                title="Modify Data"
-                okText="Create"
+                title={(editMode)? "Modify Data": "Add New"}
+                okText={(editMode)? "Update": "Create"}
                 cancelText="Cancel"
                 onCancel={onCancel}
                 onOk={() => {

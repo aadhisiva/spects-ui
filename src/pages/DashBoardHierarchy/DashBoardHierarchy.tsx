@@ -9,30 +9,33 @@ import { TitleBarComponent } from '../../components/common/titleBar';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { useLocation } from "react-router";
+import { findLoginName } from "../../utilities/reUsableFun";
 
-const loginData = "state_admin"
 const loginArrayData = [
     {
         role: "District Officer",
         color: "#62A76C",
+        name: "state",
         small: Number(24 / 4),
         image: RefractionistImage,
     },
     {
-        role: "Taluk",
+        role: "Taluka",
         color: "#3399FF",
+        name: "taluka",
         small: Number(24 / 4),
         image: BenificiaryImage,
     },
-    {
-        role: "Sub Center",
-        color: "#AC8FF2",
-        small: Number(24 / 4),
-        image: StudentImage,
-    },
+    // {
+    //     role: "Sub Center",
+    //     color: "#AC8FF2",
+    //     small: Number(24 / 4),
+    //     image: StudentImage,
+    // },
     {
         role: "Refractionist",
         color: "#ce7e7e",
+        name: "refraction",
         small: Number(24 / 4),
         image: BenificiaryImage,
     }];
@@ -41,58 +44,44 @@ type LoginUserI = {
     role: string,
     color: string,
     small: Number,
-    image: any
+    image: any,
+    name: string
 };
 
 export const DashBoardHierarchy: React.FC = (props) => {
+    const [loginBY, setLoginBy] = useState(findLoginName());
     const [loginUser, setLoginUser] = useState<LoginUserI[]>([])
     const naviagte = useNavigate();
-    const location = useLocation();
-   
-    // console.log(location)
 
-    const SwitchLoginData = (loginData: string) => {
-        switch (loginData) {
-            case "state_admin":
+    const SwitchLoginData = (loginData: any) => {
+        switch (loginData?.type) {
+            case "State Admin":
                 return setLoginUser(loginArrayData);
-            case "district_officer":
-                return setLoginUser(loginArrayData.slice(1, 4));
-            case "taluk":
-                return setLoginUser(loginArrayData.slice(2, 4));
-            case "subcenter":
-                return setLoginUser(loginArrayData.slice(3, 4));
+            case "District Officer":
+                return setLoginUser(loginArrayData.slice(1, 3));
+            case "Taluka":
+                return setLoginUser(loginArrayData.slice(2, 3));
+            case "Sub Centre":
+                return setLoginUser(loginArrayData.slice(3, 3));
             default:
-                return setLoginUser(loginArrayData.slice(3,4));
+                return setLoginUser(loginArrayData.slice(3, 3));
         };
     };
-    const findLoginName = (loginData: string) => {
-        switch (loginData) {
-            case "state_admin":
-                return "State Admin";
-            case "district_officer":
-                return "District Officer";
-            case "taluk":
-                return "Taluk";
-            case "subcenter":
-                return "Sub Center";
-            default:
-                return "Refractionist";
-        };
-    };
+
     useEffect(() => {
-        SwitchLoginData(location.state?.role)
-    }, [loginData])
+        SwitchLoginData(findLoginName());
+    }, [loginBY])
 
     const handleClick = () => {
         naviagte("/school-tracking")
     };
     const handleClickToNextPage = (role: string, path: string) => {
-        naviagte(path);
+        naviagte(path, {state: role});
     };
 
     return (
         <>
-            <TitleBarComponent title={"DashBoard"} image={true} loginUser={findLoginName(location.state?.role)} />
+            <TitleBarComponent title={"DashBoard"} image={true} />
             <div className={classNames(styles.dashBoardHierarchy, 'dashBoardHierarchy-page')}>
                 {/* statistics */}
                 <Row>
@@ -140,11 +129,11 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
                     {loginUser.map((obj, i) => (
                         <Col key={i} sm={Number(obj.small)} xs={24}>
-                            <a onClick={(e) =>handleClickToNextPage(obj.role, "/assignment-list")}>
-                            <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
-                                <Image width={50} height={50} preview={false} src={obj.image} />
-                                <p className={styles.title}>{obj.role}</p>
-                            </div>
+                            <a onClick={(e) => handleClickToNextPage(obj.role, "/assignment-list")}>
+                                <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
+                                    <Image width={47} height={44} preview={false} src={obj.image} />
+                                    <p className={styles.title}>{obj.role}</p>
+                                </div>
                             </a>
                         </Col>
                     ))}
@@ -161,11 +150,11 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify="space-around" align={"middle"} className={styles.menuItemsContainer}>
                     {loginUser.map((obj, i) => (
                         <Col key={i} sm={Number(obj.small)} xs={24}>
-                            <a onClick={(e) =>handleClickToNextPage(obj.role, "/reports-list")}>
-                            <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
-                                <Image width={50} height={50} preview={false} src={obj.image} />
-                                <p className={styles.title}>{obj.role}</p>
-                            </div>
+                            <a onClick={(e) => handleClickToNextPage(obj.role, "/reports-list")}>
+                                <div style={{ backgroundColor: `${obj.color}` }} className={styles.menuItems}>
+                                    <Image width={50} height={50} preview={false} src={obj.image} />
+                                    <p className={styles.title}>{obj.role}</p>
+                                </div>
                             </a>
                         </Col>
                     ))}

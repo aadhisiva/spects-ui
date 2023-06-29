@@ -1,23 +1,20 @@
-.user-details-page {
+.district-page-list {
     .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-thead {
         color: #000000;
         font-weight: 600;
-        font-size: 19px;
-    }
-
-    .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-thead>tr {
-        // border: 1px solid;
-        // border-radius: 10px;
+        font-size: 13px;
     }
 
     .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-thead>tr>th {
-        // border: 1px solid #000000;
         background-color: #ABD2F6;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     }
-
     .css-dev-only-do-not-override-12upa3x.ant-table-wrapper table {
         border-collapse: collapse;
+        width: auto;
+        @media only screen and (min-width: 1000px) {
+            width: 100%;
+        }
     }
 
     .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
@@ -33,22 +30,27 @@
     }
 
     .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-tbody {
-        border: 1px solid;
-        font-size: 16px;
+        border: 1.4px solid #b4a6a6;
+        border-radius: 10px;
+        font-size: 12px;
         font-weight: 400;
         font-style: normal;
     }
 
-    .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-pagination-right {
-        justify-content: center;
+    .css-dev-only-do-not-override-12upa3x.ant-form-item  {
+        margin-bottom: 3px;
     }
-
-    .css-dev-only-do-not-override-12upa3x.ant-btn {
-        background-color: #3C5AB7;
-        color: #FFFFFF;;
-        font-size: 14px;
-        height: 32px;
-        padding: 4px 20px;
-        border-radius: 6px;
+    .css-dev-only-do-not-override-12upa3x.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+        border: 0.5px solid #5b5454;
+    }
+    .css-dev-only-do-not-override-12upa3x.ant-table-wrapper {
+        overflow-y: auto;
+    }
+    .css-dev-only-do-not-override-12upa3x.ant-pagination .ant-pagination-options {
+        display: none;
+    }
+    .css-dev-only-do-not-override-12upa3x.ant-table-wrapper .ant-table-pagination-right  {
+        // display: inline-table;
+        justify-content: center;
     }
 }

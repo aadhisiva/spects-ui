@@ -4,7 +4,7 @@
         height: 35px;
         // display: flex;
         align-items: center;
-        color: white;  
+        color: hsl(0, 0%, 100%);  
         .titleContainer{
             text-align: start;  
             overflow: hidden;
@@ -17,10 +17,7 @@
         .loginUserContainer {
             text-align: end;
             .loginUserTitle{
-                color: rgb(35, 228, 115);
-                font-weight: 600;
-                font-size: 16px;
-                line-height: 130%; 
+                font-size: 19px;
             }
         }
     }

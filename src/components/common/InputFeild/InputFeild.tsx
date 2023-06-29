@@ -23,7 +23,7 @@ export const InputFeild: React.FC<InputFeildI> = ({
         <div>
             <Form.Item
                 labelCol={{ span: 10 }}
-                wrapperCol={{ span: 8 }}
+                wrapperCol={{ span: 12 }}
                 label={label}
                 name={name}
                 rules={[{ required: true, message: 'Please input your Role!' }]}

@@ -9,7 +9,8 @@ type SelectTypesI = {
     onChange?: (e: any) => void,
     name?: NamedCurve,
     hasFeedback?: boolean,
-    selectItems?: string[]
+    selectItems?: any[],
+    disabled?: boolean
 }
 
 export const SelectItems: React.FC<SelectTypesI> = ({
@@ -17,7 +18,8 @@ export const SelectItems: React.FC<SelectTypesI> = ({
     onChange,
     name,
     hasFeedback,
-    selectItems
+    selectItems,
+    disabled
 }) => {
     return (
         <div className={classNames(styles.selectTypesPage, "selectType-page")}>
@@ -30,11 +32,12 @@ export const SelectItems: React.FC<SelectTypesI> = ({
                     <Select
                         placeholder={placeholder}
                         onChange={onChange}
+                        disabled={disabled}
                     // defaultValue={"----Select----"}
                     >
                         <Option value="">----Select----</Option>
-                        {selectItems?.map((obj, i) => (
-                            <Option key={String(i)} value={`${obj}`}>{obj}</Option>
+                        {(selectItems || [])?.map((obj, i) => (
+                            <Option key={String(i)} value={`${obj.option}`}>{obj.option.replace(/\W/g, "").replace(/\d/g, "")}</Option>
                         ))}
                     </Select>
                 </Form.Item>
@@ -42,4 +45,4 @@ export const SelectItems: React.FC<SelectTypesI> = ({
         </div>
     );
 };
-
+// .replace(/\W/g, "").replace(/\d/g, "")
