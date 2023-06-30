@@ -15,6 +15,8 @@ import { ModalModify } from '../../components/common/ModalModify';
 import { SelectItems } from '../../components/common/SelectItems';
 import SelectRowsPerPage from '../../components/common/SelectItems/SelectRowsPerPage';
 import { GET_APIS } from '../../components/api/apisSpectacles';
+import Search from 'antd/es/input/Search';
+import { ViewTableData } from '../../components/common/ViewTableData';
 
 const { RangePicker } = DatePicker;
 interface DataType {
@@ -108,15 +110,33 @@ export const ReportsTable: React.FC = () => {
         }
         // filter types and details and district
         if (refraType && refraDeatils && districtOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district == districtOption);
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district === districtOption);
         }
-        // filter types and details and district
+        // filter types and details and district and taluka
         if (refraType && refraDeatils && districtOption && talukaOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district == districtOption && obj.taluka === talukaOption);
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district === districtOption && obj.taluka === talukaOption);
         }
-
+        // filter types and details and district and taluka and sub centre
+        if (refraType && refraDeatils && districtOption && talukaOption && subCentreOption) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType 
+            && obj.details === refraDeatils && obj.district == districtOption 
+            && obj.taluka === talukaOption && obj.sub_centre === subCentreOption);
+        }
+        // filter types and details and district and taluka and sub centre and village
+        if (refraType && refraDeatils && districtOption && talukaOption && subCentreOption && villageOption) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils 
+                && obj.district === districtOption && obj.taluka === talukaOption
+                && obj.sub_centre === subCentreOption && obj.village === villageOption);
+        }
+        // filter types and details and district and taluka and sub centre and village and status
+        if (refraType && refraDeatils && districtOption && talukaOption && subCentreOption && villageOption && statusOption) {
+            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils 
+                && obj.district === districtOption && obj.taluka === talukaOption
+                && obj.sub_centre === subCentreOption && obj.village === villageOption && obj.status === statusOption);
+            }
+            
         setCopyOfOriginalTableData(filterdData);
-    }, [talukaOption, refraType, refraDeatils, districtOption, districtSelect, villageOption, subCentreOption, originalTableData]);
+    }, [talukaOption, refraType, refraDeatils, districtOption, villageOption, subCentreOption, statusOption]);
 
 
     const columns: ColumnsType<DataType> = [
@@ -236,7 +256,7 @@ export const ReportsTable: React.FC = () => {
 
     };
     const FormOpen = () => {
-        return <ModalModify
+        return <ViewTableData
             state={formData}
             visible={visible}
             onCancel={() => setVisisble(false)}
@@ -260,6 +280,11 @@ export const ReportsTable: React.FC = () => {
     const handleClickClearFilters = () => {
         setDistrictOption("");
         setTalukaOption("");
+        setRefraDetails("");
+        setRefraTypes("");
+        setSubCentreOption("");
+        setStatusOption("");
+        setSelecteDates("");
     };
 
     const handleRefraTypes = (value: string) => {
@@ -303,11 +328,17 @@ export const ReportsTable: React.FC = () => {
         }
     };
 
-    const getTableData = () => {
-        if (refraType) {
-            return []
+    const handleVillageOption = (value: string) => {
+        if (value !== villageOption) {
+            setVillageOption(value);
         }
-    }
+    };
+
+    const handleStatusOption = (value: string) => {
+        if (value !== statusOption) {
+            setStatusOption(value);
+        }
+    };
 
     return (
         <>
@@ -412,7 +443,7 @@ export const ReportsTable: React.FC = () => {
                                     <Select
                                         disabled={subCentreOption ? false : true}
                                         placeholder="village/Ward"
-                                        onChange={(value) => setVillageOption(value)}
+                                        onChange={handleVillageOption}
                                     >
                                         {
                                             (Array.from(new Set(villageSelect.map((item: any) => item.village))) || []).map((obj, i) => (
@@ -444,7 +475,7 @@ export const ReportsTable: React.FC = () => {
                                     <Select
                                         placeholder="status"
                                         disabled={selcteDates ? false : true}
-                                        onChange={(value) => setStatusOption(value)}
+                                        onChange={handleStatusOption}
                                     >
                                         <Option value="order_pending">Order Pending</Option>
                                         <Option value="ready_to_deliver">Ready To Deliver</Option>
@@ -470,14 +501,12 @@ export const ReportsTable: React.FC = () => {
                             />
                         </Col>
                         <Col sm={6} xs={12} className={styles.searchContainer}>
-                            <Form.Item name="q">
-                                <Input
-                                    placeholder="ID, Title, Content, etc."
-                                    allowClear
-                                    prefix={<SearchOutlined />}
-                                    onChange={(e) => handleSearchQueryString(e)}
+                                <Search 
+                                allowClear
+                                placeholder="input search" 
+                                enterButton
+                                onSearch={(e) => setQueryString(e)}
                                 />
-                            </Form.Item>
                         </Col>
                     </Row>
                     <Table
@@ -492,7 +521,6 @@ export const ReportsTable: React.FC = () => {
                         }}
                         onChange={handleChange}
                     />
-                    <Button type='primary' onClick={(e) => handleClick("/beneficiary-list")}>Next</Button>
                 </div>
             </div>
         </>

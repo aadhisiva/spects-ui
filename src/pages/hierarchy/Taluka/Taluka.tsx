@@ -23,23 +23,28 @@ interface DataType {
     taluka: string;
     sub_centre: string;
     village: string;
+    rural_urban: string;
 };
 
 export const TalukaTable: React.FC = () => {
     const [loginBY, setLoginBy] = useState(findLoginName());
     const [mode, setMode] = useState<TabsPosition>('top');
     const [editmode, setEditMode] = useState('');
+
+    const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
+    const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
+
     const [rural_urban, setRuralOrUrban] = useState("");
     const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
     const [tableData, setTableData] = useState<DataType[]>([]);
-    const [districtSelect, setDistrictSelect] = useState([]);
+    const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
     const [visible, setVisisble] = useState(false);
     const [formData, setFormData] = useState({});
     const [districtOption, setDistrict] = useState("");
     const [talukaOption, setTalukaOption] = useState("");
-    const [talukaSelect, setTalukaSelect] = useState([]);
+    const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [queryString, setQueryString] = useState<string>("");
     const [editId, setEditId] = useState([]);
@@ -48,9 +53,10 @@ export const TalukaTable: React.FC = () => {
     const location = useLocation();
 
     const GetTablData = async () => {
-        let data = await GET_APIS(`talukas_data?type=${rural_urban}`);
+        let data = await GET_APIS(`talukas_data`);
         if (data.code == 200) {
-            setTableData(data?.data)
+            setOriginalTableData(data?.data)
+            setCopyOfOriginalTableData(data?.data)
         } else {
             NotificationError(data.message)
         }
@@ -59,30 +65,30 @@ export const TalukaTable: React.FC = () => {
         (async () => {
             await GetTablData();
         })();
-    }, [rural_urban]);
+    }, []);
 
-    useEffect(() => {
-        (async () => {
-            let data = await GET_APIS(`talukas_data?type=${rural_urban}&district=${districtOption}`);
+    // useEffect(() => {
+    //     (async () => {
+    //         let data = await GET_APIS(`talukas_data?type=${rural_urban}&district=${districtOption}`);
 
-            if (data.code == 200) {
-                setTableData(data?.data)
-            } else {
-                NotificationError(data.message)
-            }
-        })();
-    }, [districtOption]);
+    //         if (data.code == 200) {
+    //             setTableData(data?.data)
+    //         } else {
+    //             NotificationError(data.message)
+    //         }
+    //     })();
+    // }, [districtOption]);
 
-    useEffect(() => {
-        (async () => {
-            let data = await GET_APIS(`talukas_data?type=${rural_urban}&district=${districtOption}&taluka=${talukaOption}`);
-            if (data.code == 200) {
-                setTableData(data?.data)
-            } else {
-                NotificationError(data.message)
-            }
-        })();
-    }, [talukaOption]);
+    // useEffect(() => {
+    //     (async () => {
+    //         let data = await GET_APIS(`talukas_data?type=${rural_urban}&district=${districtOption}&taluka=${talukaOption}`);
+    //         if (data.code == 200) {
+    //             setTableData(data?.data)
+    //         } else {
+    //             NotificationError(data.message)
+    //         }
+    //     })();
+    // }, [talukaOption]);
 
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
@@ -156,6 +162,25 @@ export const TalukaTable: React.FC = () => {
         },
     ];
 
+    useEffect(() => {
+        let filterData = originalTableData;
+        // filter rural/urban
+        if(rural_urban){
+            filterData = filterData.filter(obj => obj.rural_urban === rural_urban);
+        };
+        // filter rural/urban and district
+        if(rural_urban && districtOption){
+            filterData = filterData.filter(obj => obj.rural_urban === rural_urban 
+                && obj.district === districtOption);
+        };
+        // filter rural/urban and district and taluka
+        if(rural_urban && districtOption && talukaOption){
+            filterData = filterData.filter(obj => obj.rural_urban === rural_urban 
+                && obj.district === districtOption && obj.taluka === talukaOption);
+        };
+        setCopyOfOriginalTableData(filterData);
+    }, [rural_urban, districtOption, talukaOption])
+
     const onSave = async (values: any) => {
         delete values?.district;
         delete values?.rural_urban;
@@ -171,7 +196,7 @@ export const TalukaTable: React.FC = () => {
 
     const handleModifyForm = (row: any) => {
         setVisisble(true);
-        setEditId(row.id)
+        setEditId(row.user_unique_id)
         setFormData(row);
         setEditMode("Edit")
     };
@@ -183,7 +208,6 @@ export const TalukaTable: React.FC = () => {
     // };
     const FormOpen = () => {
         return <ModalModify
-            districtsData={districtSelect}
             editMode={editmode ? true : false}
             state={formData}
             setRuralOrUrban={(e)=> setRuralOrUrban(e)}
@@ -197,18 +221,18 @@ export const TalukaTable: React.FC = () => {
         setRowsPerPage(Number(value))
     };
    
-    useEffect(() => {
-        (async () => {
-            let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
-            setDistrictSelect(data.data);
-        })();
-    }, [rural_urban]);
-    useEffect(() => {
-        (async () => {
-            let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${districtOption}`);
-            setTalukaSelect(data.data);
-        })();
-    }, [districtOption]);
+    // useEffect(() => {
+    //     (async () => {
+    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
+    //         setDistrictSelect(data.data);
+    //     })();
+    // }, [rural_urban]);
+    // useEffect(() => {
+    //     (async () => {
+    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${districtOption}`);
+    //         setTalukaSelect(data.data);
+    //     })();
+    // }, [districtOption]);
 
     const handleClickClearFilters = () => {
         setDistrict("");
@@ -216,6 +240,27 @@ export const TalukaTable: React.FC = () => {
         setTalukaOption("");
     };
 
+    const handleRuralOrUrban = (value: string) => {
+        if(value !== rural_urban){
+            setRuralOrUrban(value);
+            let reset = copyOfOriginalTableData.filter(obj => obj.rural_urban === value);
+            setDistrictSelect(reset);
+        };
+    };
+
+    const handleSelectedDistrict = (value: string) => {
+        if(value !== districtOption){
+            setDistrict(value);
+            let reset = copyOfOriginalTableData.filter(obj => obj.district === value);
+            setTalukaSelect(reset);
+        };
+    };
+
+    const handleSelectedTaluka = (value: string) => {
+        if(value !== talukaOption){
+            setTalukaOption(value);
+        };
+    };
     return (
         <>
             {visible ? FormOpen() : ("")}
@@ -236,11 +281,10 @@ export const TalukaTable: React.FC = () => {
                                     <Select
                                         defaultValue={""}
                                         placeholder="Rural/Urban"
-                                        onChange={(value) => setRuralOrUrban(value)}
+                                        onChange={handleRuralOrUrban}
                                     >
-                                        <Option value="">--select--</Option>
-                                        <Option value="rural">Rural</Option>
-                                        <Option value="urban">Urban</Option>
+                                        <Option value="Rural">Rural</Option>
+                                        <Option value="Urban">Urban</Option>
                                     </Select>
                                 </Form.Item>
                             </div>
@@ -252,10 +296,10 @@ export const TalukaTable: React.FC = () => {
                                     <Select
                                         placeholder="Select District"
                                         disabled={rural_urban ? false : true}
-                                        onChange={(value) => setDistrict(value)}
+                                        onChange={handleSelectedDistrict}
                                     >
-                                        {(districtSelect || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj.option}`}>{obj.option.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                        {(Array.from(new Set(districtSelect.map(obj => obj.district))) || [])?.map((obj: any, i) => (
+                                            <Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>
@@ -268,10 +312,10 @@ export const TalukaTable: React.FC = () => {
                                     <Select
                                         placeholder="Select Taluka"
                                         disabled={districtOption ? false : true}
-                                        onChange={(value) => setTalukaOption(value)}
+                                        onChange={handleSelectedTaluka}
                                     >
                                         {(talukaSelect || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj.option}`}>{obj.option.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                            <Option key={String(i)} value={`${obj.taluka}`}>{obj.taluka.replace(/\W/g, "").replace(/\d/g, "")}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>
@@ -308,12 +352,12 @@ export const TalukaTable: React.FC = () => {
                     <Table
                         style={{ tableLayout: 'auto' }}
                         columns={columns}
-                        dataSource={tableData}
+                        dataSource={copyOfOriginalTableData}
                         pagination={{
                             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                             current: currentPage,
                             pageSize: rowsPerPage,
-                            total: tableData.length
+                            total: copyOfOriginalTableData.length
 
                         }}
                         onChange={handleChange}

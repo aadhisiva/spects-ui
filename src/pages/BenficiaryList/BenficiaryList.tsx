@@ -144,7 +144,7 @@ export const BeneficiaryList: React.FC = () => {
             title: 'Action',
             key: 'action',
             render: () => (
-                <Button onClick={(e) => handleClick("/beneficiary-details")} type='primary'>
+                <Button onClick={() => handleClick("/beneficiary-details")} type='primary'>
                     View
                 </Button>
             )
@@ -161,7 +161,7 @@ export const BeneficiaryList: React.FC = () => {
             <div className={classNames(styles.benificaryListPage, "benificiary-page-list")}>
                 <div className={styles.table}>
                     <Table columns={columns} dataSource={data} />
-                    <Button type='primary' onClick={(e) => handleClick("/user-details")}>Next</Button>
+                    <Button type='primary' onClick={() => handleClick("/user-details")}>Next</Button>
                 </div>
             </div>
         </>

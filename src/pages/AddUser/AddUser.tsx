@@ -64,10 +64,10 @@ export const AddUser = () => {
                     <div className={styles.footerRow}>
                         <Row>
                             <Col sm={12} xs={12} className={styles.footerLeft}>
-                                <Button onClick={(e) =>handleClick("/user-details")}>Back</Button>
+                                <Button onClick={() =>handleClick("/user-details")}>Back</Button>
                             </Col>
                             <Col sm={12} xs={12} className={styles.footerRight}>
-                                <Button onClick={(e) =>handleClick("/beneficiary-details")}>Submit</Button>
+                                <Button onClick={() =>handleClick("/beneficiary-details")}>Submit</Button>
                             </Col>
                         </Row>
                     </div>

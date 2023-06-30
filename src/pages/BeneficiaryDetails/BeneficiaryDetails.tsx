@@ -87,7 +87,7 @@ export const BeneficiaryDetails = () => {
                 <div className={styles.footerRow}>
                         <Row>
                             <Col sm={24} xs={24} className={styles.footerRight}>
-                                <Button onClick={(e) =>handleClick("/beneficiary-list")}>Submit</Button>
+                                <Button onClick={() =>handleClick("/beneficiary-list")}>Submit</Button>
                             </Col>
                         </Row>
                     </div>

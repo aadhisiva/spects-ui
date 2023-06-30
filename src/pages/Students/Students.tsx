@@ -113,7 +113,7 @@ export const StudentsTable: React.FC = () => {
             title: 'Action',
             key: 'action',
             render: () => (
-                <Button onClick={(e) => handleClick("/student-details")} type='primary'>
+                <Button onClick={() => handleClick("/student-details")} type='primary'>
                     View
                 </Button>
             )
@@ -129,7 +129,7 @@ export const StudentsTable: React.FC = () => {
             <div className={classNames(styles.StudentPage, "student-page-list")}>
                 <div className={styles.table}>
                     <Table columns={columns} dataSource={data} />
-                    <Button type='primary' onClick={(e) => handleClick("/beneficiary-list")}>Next</Button>
+                    <Button type='primary' onClick={() => handleClick("/beneficiary-list")}>Next</Button>
                 </div>
             </div>
         </>
