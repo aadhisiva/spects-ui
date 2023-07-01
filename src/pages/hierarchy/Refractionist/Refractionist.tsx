@@ -52,15 +52,36 @@ export const RefractionistTable: React.FC = () => {
     const [editId, setEditId] = useState([]);
 
     const navigate = useNavigate();
-    const location = useLocation();
+    const checkUserLogin = loginBY?.type;
 
     const GetTablData = async () => {
-        let data = await GET_APIS(`all_masters`);
-        if (data.code == 200) {
-            setOriginalTableData(data?.data);
-            setCopyOfOriginalTableData(data?.data);
+        let {data} = checkUserLogin? await LOGIN_APIS(`getUser_data`, loginBY): []; 
+        if(checkUserLogin == "District Officer"){
+            let result = await GET_APIS(`all_masters?districtOne=${data[0]?.district}&districtTwo=${data[1].district}`);
+            if (result.code == 200) {
+                setOriginalTableData(result?.data);
+                setCopyOfOriginalTableData(result?.data);
+            } else {
+                NotificationError(result.message)
+            }
+        } else if(checkUserLogin == "Taluka"){
+            console.log("Sdas",data)
+            let result = await GET_APIS(`all_masters?talukaOne=${data[0]?.taluka}&talukaTwo=${data[1].taluka}`);
+            console.log("result",result)
+            if (result.code == 200) {
+                setOriginalTableData(result?.data);
+                setCopyOfOriginalTableData(result?.data);
+            } else {
+                NotificationError(result.message)
+            }
         } else {
-            NotificationError(data.message)
+            let result = await GET_APIS(`all_masters`);
+            if (result.code == 200) {
+                setOriginalTableData(result?.data);
+                setCopyOfOriginalTableData(result?.data);
+            } else {
+                NotificationError(result.message)
+            }
         }
     }
     useEffect(() => {
@@ -299,7 +320,7 @@ export const RefractionistTable: React.FC = () => {
     const handleSelectedDistrict = (value: string) => {
         if(value !== districtOption){
             setDistrict(value);
-            let reset = copyOfOriginalTableData.filter(obj => obj.district === value);
+            let reset = districtSelect.filter(obj => obj.district === value);
             setTalukaSelect(reset);
         };
     };
@@ -307,7 +328,7 @@ export const RefractionistTable: React.FC = () => {
     const handleSelectedTaluka = (value: string) => {
         if(value !== talukaOption){
             setTalukaOption(value);
-            let reset = copyOfOriginalTableData.filter(obj => obj.taluka === value);
+            let reset = talukaSelect.filter(obj => obj.taluka === value);
             setSubCentreSelect(reset);
         };
     };
@@ -388,7 +409,7 @@ export const RefractionistTable: React.FC = () => {
                                         onChange={handleSubCentreOption}
                                     >
                                         {(Array.from(new Set(subCentreSelect.map(obj => obj.sub_centre))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                            <Option key={String(i)} value={`${obj}`}>{obj}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>

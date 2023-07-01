@@ -14,9 +14,10 @@ import { NotificationError, NotificationSuccess } from '../../components/common/
 import { ModalModify } from '../../components/common/ModalModify';
 import { SelectItems } from '../../components/common/SelectItems';
 import SelectRowsPerPage from '../../components/common/SelectItems/SelectRowsPerPage';
-import { GET_APIS } from '../../components/api/apisSpectacles';
+import { GET_APIS, LOGIN_APIS } from '../../components/api/apisSpectacles';
 import Search from 'antd/es/input/Search';
 import { ViewTableData } from '../../components/common/ViewTableData';
+import { findLoginName } from '../../utilities/reUsableFun';
 
 const { RangePicker } = DatePicker;
 interface DataType {
@@ -53,12 +54,15 @@ export const ReportsTable: React.FC = () => {
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
     const [visible, setVisisble] = useState(false);
-    const [selcteDates, setSelecteDates] = useState("");
     const [formData, setFormData] = useState({});
+    // select items
+    const [selcteDates, setSelecteDates] = useState("");
     const [refraDeatilsSelect, setRefraDetailsSelect] = useState<publilceObjType[]>([]);
+    const [statusSelect, setStatusSelect] = useState<publilceObjType[]>([]);
     const [talukaSelect, setTalukaSelect] = useState<publilceObjType[]>([]);
     const [villageSelect, setVillageSelect] = useState<publilceObjType[]>([]);
     const [subCentreSelect, setSubCentreSelect] = useState<publilceObjType[]>([]);
+    const [districtSelect, setDistrictSelect] = useState<publilceObjType[]>([]);
 
     /** data */
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
@@ -69,30 +73,54 @@ export const ReportsTable: React.FC = () => {
     const [refraType, setRefraTypes] = useState("");
     const [refraDeatils, setRefraDetails] = useState("");
     const [districtOption, setDistrictOption] = useState("");
-    const [districtSelect, setDistrictSelect] = useState<publilceObjType[]>([]);
     const [villageOption, setVillageOption] = useState("");
     const [subCentreOption, setSubCentreOption] = useState("");
-
     const [statusOption, setStatusOption] = useState("");
+
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [queryString, setQueryString] = useState<string>("");
-    const navigate = useNavigate();
 
+    const [loginBY, setLoginBy] = useState(findLoginName());
+    /* naviagte */
+    const navigate = useNavigate();
+    const checkUserLogin = loginBY?.type;
+    /* custom pagination */
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
         setRowsPerPage(Number(pagination.pageSize));
         setFilteredInfo(filters);
         setSortedInfo(sorter as SorterResult<DataType>);
     };
-
+    /* first rendering only  */
     useEffect(() => {
         (async () => {
-            let data = await GET_APIS('reports_data');
-            if (data.code) {
-                setOriginalTableData(data?.data)
-                setCopyOfOriginalTableData(data?.data)
-            } else {
-                NotificationError(data.message);
+            let {data} = await LOGIN_APIS(`getUser_data`, loginBY);
+            if (checkUserLogin == "District Officer") {
+                let result = await GET_APIS('reports_data');
+                if (result.code) {
+                    let resultFilter = (result?.data || []).filter((obj: any) => obj.district === data[0].district || obj.district === data[1].district);
+                    setOriginalTableData(resultFilter)
+                    setCopyOfOriginalTableData(resultFilter)
+                } else {
+                    NotificationError(result.message);
+                }
+            } else if(checkUserLogin == "Taluka"){
+                let result = await GET_APIS('reports_data');
+                if (result.code) {
+                    let resultFilter = (result?.data || []).filter((obj: any) => obj.taluka === data[0].taluka || obj.taluka === data[1].taluka);
+                    setOriginalTableData(resultFilter)
+                    setCopyOfOriginalTableData(resultFilter)
+                } else {
+                    NotificationError(result.message);
+                }
+            }else {
+                let result = await GET_APIS('reports_data');
+                if (result.code) {
+                    setOriginalTableData(result?.data)
+                    setCopyOfOriginalTableData(result?.data)
+                } else {
+                    NotificationError(result.message);
+                }
             }
         })()
     }, [])
@@ -102,39 +130,43 @@ export const ReportsTable: React.FC = () => {
         // filter logic
         let filterdData = originalTableData;
         if (refraType) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType);
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj);
         }
-        // filter types and details
-        if (refraType && refraDeatils) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils);
+        // filter types and district
+        if (refraType && districtOption) {
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
+                && obj.district === districtOption);
         }
-        // filter types and details and district
-        if (refraType && refraDeatils && districtOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district === districtOption);
+        // filter types and district and taluka
+        if (refraType && districtOption && talukaOption) {
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
+                && obj.district === districtOption && obj.taluka === talukaOption);
         }
-        // filter types and details and district and taluka
-        if (refraType && refraDeatils && districtOption && talukaOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils && obj.district === districtOption && obj.taluka === talukaOption);
+        // filter types and district and taluka and sub centre
+        if (refraType && districtOption && talukaOption && subCentreOption) {
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
+                && obj.district == districtOption && obj.taluka === talukaOption && obj.sub_centre === subCentreOption);
         }
-        // filter types and details and district and taluka and sub centre
-        if (refraType && refraDeatils && districtOption && talukaOption && subCentreOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType 
-            && obj.details === refraDeatils && obj.district == districtOption 
-            && obj.taluka === talukaOption && obj.sub_centre === subCentreOption);
-        }
-        // filter types and details and district and taluka and sub centre and village
-        if (refraType && refraDeatils && districtOption && talukaOption && subCentreOption && villageOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils 
+        // filter types and district and taluka and sub centre and village
+        if (refraType && districtOption && talukaOption && subCentreOption && villageOption) {
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
                 && obj.district === districtOption && obj.taluka === talukaOption
                 && obj.sub_centre === subCentreOption && obj.village === villageOption);
         }
-        // filter types and details and district and taluka and sub centre and village and status
-        if (refraType && refraDeatils && districtOption && talukaOption && subCentreOption && villageOption && statusOption) {
-            filterdData = filterdData?.filter(obj => obj.type === refraType && obj.details === refraDeatils 
+        // filter types and district and taluka and sub centre and village and status
+        if (refraType && districtOption && talukaOption && subCentreOption && villageOption && statusOption) {
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
                 && obj.district === districtOption && obj.taluka === talukaOption
-                && obj.sub_centre === subCentreOption && obj.village === villageOption && obj.status === statusOption);
-            }
-            
+                && obj.sub_centre === subCentreOption && obj.village === villageOption && statusOption !== 'all' ? obj.status === statusOption : obj);
+        }
+        // filter types and details and district and taluka and sub centre and village and status
+        if (refraType && districtOption && talukaOption && subCentreOption && villageOption && statusOption && refraDeatils) {
+            filterdData = filterdData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
+                && obj.district === districtOption && obj.taluka === talukaOption
+                && obj.sub_centre === subCentreOption && obj.village === villageOption && statusOption !== 'all' ? obj.status === statusOption : obj
+            && obj.details == refraDeatils);
+        }
+
         setCopyOfOriginalTableData(filterdData);
     }, [talukaOption, refraType, refraDeatils, districtOption, villageOption, subCentreOption, statusOption]);
 
@@ -239,42 +271,28 @@ export const ReportsTable: React.FC = () => {
             }
         },
     ];
-
-    const handleClick = (path: string) => {
-        navigate(path)
-    };
-
-    const onSave = (values: object) => {
-        console.log('Received values of form: ', values);
-        setVisisble(false);
-    };
-
-
+    /* viewFormData */
     const handleModifyForm = (row: object) => {
         setVisisble(true);
         setFormData(row);
 
     };
+    /* form Open */
     const FormOpen = () => {
         return <ViewTableData
             state={formData}
             visible={visible}
             onCancel={() => setVisisble(false)}
-            onSave={onSave}
         />
     };
+
     const handleCh = (value: string) => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
 
     const onChangeDate = (va: any, da: any) => {
-        console.log('value', da)
         setSelecteDates(da)
-    };
-
-    const handleSearchQueryString = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQueryString(e.target.value);
     };
 
     const handleClickClearFilters = () => {
@@ -290,18 +308,16 @@ export const ReportsTable: React.FC = () => {
     const handleRefraTypes = (value: string) => {
         if (value !== refraType) {
             setRefraTypes(value);
-            let reset = copyOfOriginalTableData.filter(obj => obj.type == value);
-            setRefraDetailsSelect(reset);
-        }
-    }
+            let reset = copyOfOriginalTableData.filter(obj => value !== 'all' ? obj.type == value : obj);
+            setDistrictSelect(reset)
+        };
+    };
 
     const handleRefraDetails = (value: string) => {
-        setRefraDetails(value);
         if (value !== refraDeatils) {
-            let reset = refraDeatilsSelect.filter(obj => obj.details == value);
-            setDistrictSelect(reset);
-        }
-    }
+            setRefraDetails(value);
+        };
+    };
 
     const handleDistrictOption = (value: string) => {
         if (value !== districtOption) {
@@ -323,7 +339,6 @@ export const ReportsTable: React.FC = () => {
         if (value !== subCentreOption) {
             setSubCentreOption(value);
             let reset = subCentreSelect.filter(obj => obj.sub_centre == value);
-            console.log("REs", reset)
             setVillageSelect(reset);
         }
     };
@@ -331,13 +346,17 @@ export const ReportsTable: React.FC = () => {
     const handleVillageOption = (value: string) => {
         if (value !== villageOption) {
             setVillageOption(value);
+            let reset = villageSelect.filter(obj => obj.village == value);
+            setStatusSelect(reset);
         }
     };
 
     const handleStatusOption = (value: string) => {
         if (value !== statusOption) {
             setStatusOption(value);
-        }
+            let reset = villageSelect.filter(obj => value !== 'all' ? obj.status == value : obj);
+            setRefraDetailsSelect(reset);
+        };
     };
 
     return (
@@ -361,6 +380,7 @@ export const ReportsTable: React.FC = () => {
                                         placeholder="Types"
                                         onChange={(value) => handleRefraTypes(value)}
                                     >
+                                        <Option value="all">All</Option>
                                         <Option value="school">School</Option>
                                         <Option value="otherBenificiary">Benificiary</Option>
                                     </Select>
@@ -372,25 +392,6 @@ export const ReportsTable: React.FC = () => {
                                 <Form.Item>
                                     <Select
                                         disabled={refraType ? false : true}
-                                        placeholder="Details"
-                                        onChange={handleRefraDetails}
-                                    >
-                                        {
-                                            (Array.from(new Set(refraDeatilsSelect.map((item: any) => item.details))) || []).map((obj, i) => (
-                                                <Option key={String(i)} value={obj}>{obj}</Option>
-                                            ))
-                                        }
-                                        <Option value="rc">Rc</Option>
-                                        <Option value="aadhar">Aadhar</Option>
-                                    </Select>
-                                </Form.Item>
-                            </div>
-                        </Col>
-                        <Col sm={6} xs={24}>
-                            <div className={styles.selecttypes}>
-                                <Form.Item>
-                                    <Select
-                                        disabled={refraDeatils ? false : true}
                                         placeholder="District"
                                         onChange={handleDistrictOption}
                                     >
@@ -477,9 +478,34 @@ export const ReportsTable: React.FC = () => {
                                         disabled={selcteDates ? false : true}
                                         onChange={handleStatusOption}
                                     >
+                                        <Option value="all">All</Option>
                                         <Option value="order_pending">Order Pending</Option>
                                         <Option value="ready_to_deliver">Ready To Deliver</Option>
                                         <Option value="delivered">Delivered</Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                        </Col>
+                        <Col sm={6} xs={24}>
+                            <div className={styles.selecttypes}>
+                                <Form.Item>
+                                    <Select
+                                        disabled={statusOption ? false : true}
+                                        placeholder="Details"
+                                        onChange={handleRefraDetails}
+                                    >
+                                        {
+                                            (Array.from(new Set(refraDeatilsSelect.map((item: any) => item.details))) || []).map((obj, i) => (
+                                                <Option key={String(i)} value={obj}>{obj}</Option>
+                                            ))
+                                        }
+                                        {refraType !== 'school' ? (
+                                            <>
+                                                {/* <Option value="rc">Rc</Option>
+                                            <Option value="aadhar">Aadhar</Option> */}
+                                            </>
+                                        ) : ("")}
+                                        {/* <Option value="all">All</Option> */}
                                     </Select>
                                 </Form.Item>
                             </div>
@@ -501,12 +527,12 @@ export const ReportsTable: React.FC = () => {
                             />
                         </Col>
                         <Col sm={6} xs={12} className={styles.searchContainer}>
-                                <Search 
+                            <Search
                                 allowClear
-                                placeholder="input search" 
+                                placeholder="input search"
                                 enterButton
                                 onSearch={(e) => setQueryString(e)}
-                                />
+                            />
                         </Col>
                     </Row>
                     <Table

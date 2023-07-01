@@ -107,7 +107,7 @@ export const DistrictOfficerTable: React.FC = () => {
             sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return !_? "N/A" : _;
+                return !_ ? "N/A" : _;
             }
         },
         {
@@ -118,7 +118,7 @@ export const DistrictOfficerTable: React.FC = () => {
             sortOrder: sortedInfo.columnKey === 'mobile_number' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return !_? "N/A" : _;
+                return !_ ? "N/A" : _;
             }
         },
         {
@@ -149,18 +149,17 @@ export const DistrictOfficerTable: React.FC = () => {
     useEffect(() => {
         let filterData = originalTableData;
         // filter rural/urban
-        if(rural_urban){
+        if (rural_urban) {
             filterData = filterData.filter(obj => obj.rural_urban === rural_urban);
         };
         // filter rural/urban and district
-        if(rural_urban && districtOption){
+        if (rural_urban && districtOption) {
             filterData = filterData.filter(obj => obj.rural_urban === rural_urban && obj.district === districtOption);
         };
         setCopyOfOriginalTableData(filterData);
     }, [rural_urban, districtOption])
 
     const onSave = async (values: any) => {
-        delete values?.district;
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
         let result = await LOGIN_APIS("update_districts_Data", body);
@@ -189,7 +188,7 @@ export const DistrictOfficerTable: React.FC = () => {
             districtsData={districtSelect}
             editMode={editmode ? true : false}
             state={formData}
-            setRuralOrUrban={(e)=> setRuralOrUrban(e)}
+            setRuralOrUrban={(e) => setRuralOrUrban(e)}
             visible={visible}
             onCancel={() => setVisisble(false)}
             onSave={onSave}
@@ -199,7 +198,7 @@ export const DistrictOfficerTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-   
+
     // useEffect(() => {
     //     (async () => {
     //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
@@ -213,7 +212,7 @@ export const DistrictOfficerTable: React.FC = () => {
     };
 
     const handleRuralOrUrban = (value: string) => {
-        if(value !== rural_urban){
+        if (value !== rural_urban) {
             setRuralOrUrban(value);
             let reset = copyOfOriginalTableData.filter(obj => obj.rural_urban === value);
             setDistrictSelect(reset);
@@ -221,7 +220,7 @@ export const DistrictOfficerTable: React.FC = () => {
     };
 
     const handleSelectedDistrict = (value: string) => {
-        if(value !== districtOption){
+        if (value !== districtOption) {
             setDistrict(value);
         };
     };
@@ -287,12 +286,12 @@ export const DistrictOfficerTable: React.FC = () => {
                             <span>{"District Health Officer"}</span>
                         </Col>
                         <Col sm={8} xs={12} className={styles.searchContainer}>
-                                <Search 
+                            <Search
                                 allowClear
-                                placeholder="input search" 
+                                placeholder="input search"
                                 enterButton
                                 onSearch={(e) => setQueryString(e)}
-                                />
+                            />
 
                         </Col>
                     </Row>

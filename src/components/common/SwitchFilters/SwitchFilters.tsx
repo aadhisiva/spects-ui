@@ -28,42 +28,42 @@ export const SwitchFilters: React.FC<SwicthTypes> = ({
     const [subCentreData, setSubCentreData] = useState([]);
     const [villageData, setVillageData] = useState([]);
 
-    useEffect(() => {
-        (async () => {
-            if(selctedData.district){
-                let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}`);
-                setTalukaData(data.data);
-            }
-        })();
-    }, [selctedData.district]);
+    // useEffect(() => {
+    //     (async () => {
+    //         if(selctedData.district){
+    //             let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}`);
+    //             setTalukaData(data.data);
+    //         }
+    //     })();
+    // }, [selctedData.district]);
 
-    useEffect(() => {
-        (async () => {
-            if(selctedData.district){
-                let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}`);
-                setTalukaData(data.data);
-            }
-        })();
-    }, [type]);
+    // useEffect(() => {
+    //     (async () => {
+    //         if(selctedData.district){
+    //             let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}`);
+    //             setTalukaData(data.data);
+    //         }
+    //     })();
+    // }, [type]);
 
 
-    useEffect(() => {
-        (async () => {
-            if(selctedData.sub_centre){
-                let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}&sub=${selctedData.sub_centre}`);
-                setVillageData(data.data);
-            }
-        })();
-    }, [selctedData.sub_centre]);
+    // useEffect(() => {
+    //     (async () => {
+    //         if(selctedData.sub_centre){
+    //             let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}&sub=${selctedData.sub_centre}`);
+    //             setVillageData(data.data);
+    //         }
+    //     })();
+    // }, [selctedData.sub_centre]);
 
-    useEffect(() => {
-        (async () => {
-            if(selctedData.taluka){
-                let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}&taluka=${selctedData.taluka}`);
-                setSubCentreData(data.data);
-            }
-        })();
-    }, [selctedData.taluka]);
+    // useEffect(() => {
+    //     (async () => {
+    //         if(selctedData.taluka){
+    //             let data = await GET_APIS(`all_district_wise?type=${type}&district=${selctedData.district}&taluka=${selctedData.taluka}`);
+    //             setSubCentreData(data.data);
+    //         }
+    //     })();
+    // }, [selctedData.taluka]);
     const ModifiedData = Array.from(new Set(selectDataTypes.map((item: any) => 'rural' && item.district )));
    
     return (

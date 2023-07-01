@@ -18,14 +18,14 @@ const loginArrayData = [
         role: "District Officer",
         color: "#62A76C",
         name: "district",
-        small: Number(24 / 4),
+        small: Number(24 / 3),
         image: RefractionistImage,
     },
     {
         role: "Taluka",
         color: "#3399FF",
         name: "taluka",
-        small: Number(24 / 4),
+        small: Number(24 / 3),
         image: BenificiaryImage,
     },
     // {
@@ -38,7 +38,7 @@ const loginArrayData = [
         role: "Refractionist",
         color: "#ce7e7e",
         name: "refraction",
-        small: Number(24 / 4),
+        small: Number(24 / 3),
         image: BenificiaryImage,
     }];
 

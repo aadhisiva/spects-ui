@@ -7,14 +7,18 @@ import classNames from "classnames";
 
 type LayoutI = {
     children: ReactNode;
+    loginUser?: any
 }
 
-export const LayoutComponent: React.FC<LayoutI> = (props) => {
+export const LayoutComponent: React.FC<LayoutI> = ({
+    loginUser, 
+    children
+}) => {
     return (
         <>
-            <HeaderCompenent />
+            <HeaderCompenent loginUser={loginUser}/>
             <div className={classNames(styles.layoutPage, 'layout-page')}>
-                {props.children}
+                {children}
             </div>
             <FooterComponent />
         </>

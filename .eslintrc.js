@@ -3,8 +3,5 @@ module.exports = {
       react: {
        version: "detect",
       },
-    },
-    rules: {
-      'linebreak-style': ['error', 'windows'],
-    },
+    }
    }

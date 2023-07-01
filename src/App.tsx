@@ -1,12 +1,13 @@
 import {AuthLayout} from './components/authLayout/authLayout';
 import './App.css';
-import { SignInComponent } from './components/authLayout/signIn';
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
   return (
     <div className="App">
+      <BrowserRouter>
       <AuthLayout />
-      {/* <SignInComponent /> */}
+      </BrowserRouter>
     </div>
   );
 }

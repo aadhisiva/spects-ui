@@ -8,8 +8,11 @@ import { findLoginName } from '../../../utilities/reUsableFun';
 import classNames from 'classnames';
 
 const { Header } = Layout;
-export const HeaderCompenent: React.FC = () => {
-    const [loginUser, setLoginUser ] = useState<any>("");
+
+type HeaderProps = {
+    loginUser?: any
+}
+export const HeaderCompenent: React.FC<HeaderProps> = ({ loginUser }) => {
 
     const SwitchLoginData = (loginData: any) => {
         switch (loginData) {
@@ -23,10 +26,7 @@ export const HeaderCompenent: React.FC = () => {
                 return "PHCO"
         };
     };
-// console.log(localStorUser())
-// useEffect(()=>{
-//     setLoginUser(localStorUser());
-// }, [localStorUser()])
+    let showTitleByLoginUser = JSON.parse(loginUser);
     return (
         <div className={classNames(styles.homePage, 'header-page')}>
             <Header className={styles.headerContainer}>
@@ -47,9 +47,14 @@ export const HeaderCompenent: React.FC = () => {
                     </Col>
                     <Col xs={0} sm={3} className={styles.rightSideContent}>
                         <p className={styles.title}>National Health Mission</p>
-                        {/* {(localStorUser())? (
-                            <p className={styles.title}>Welcome {SwitchLoginData(localStorUser())}</p>
-                        ): ("")} */}
+                        {(!showTitleByLoginUser) ? ("") : (
+                            <p className={styles.title}>Welcome {
+                                showTitleByLoginUser.type == "state_admin" ? "State Admin" :
+                                    showTitleByLoginUser.type == "district_officer" ? "DHO" : 
+                                    showTitleByLoginUser.type == "taluka" ?
+                                        "THO" : "PHCO"
+                            }</p>
+                        )}
                         <p className={styles.subTitle}>ಕನ್ನಡ | English</p>
                     </Col>
                     <Col xs={1} sm={2} className={styles.rightSideImage}>

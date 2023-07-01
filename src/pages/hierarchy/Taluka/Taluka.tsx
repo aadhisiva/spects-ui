@@ -14,6 +14,7 @@ import { NotificationError, NotificationSuccess } from '../../../components/comm
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
 import Search from 'antd/es/input/Search';
+import { setTimeout } from 'timers';
 
 interface DataType {
     key: string,
@@ -51,15 +52,33 @@ export const TalukaTable: React.FC = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    
+    // if(loginBY?.type == "District Officer"){
+    //     let data = await LOGIN_APIS(`getUser_data`, loginBY);
+    //     console.log()
+    // }
+    const checkUserLogin = loginBY?.type == "District Officer";
 
     const GetTablData = async () => {
-        let data = await GET_APIS(`talukas_data`);
-        if (data.code == 200) {
-            setOriginalTableData(data?.data)
-            setCopyOfOriginalTableData(data?.data)
+        if(checkUserLogin){
+            let {data} = await LOGIN_APIS(`getUser_data`, loginBY); 
+            let result = await GET_APIS(`talukas_data?districtOne=${data[0]?.district}&districtTwo=${data[1].district}`);
+            if (result.code == 200) {
+                setOriginalTableData(result?.data)
+                setCopyOfOriginalTableData(result?.data)
+            } else {
+                NotificationError(result.message)
+            }
         } else {
-            NotificationError(data.message)
+            let result = await GET_APIS(`talukas_data`);
+            if (result.code == 200) {
+                setOriginalTableData(result?.data)
+                setCopyOfOriginalTableData(result?.data)
+            } else {
+                NotificationError(result.message)
+            }
         }
+        
     }
     useEffect(() => {
         (async () => {
@@ -187,7 +206,9 @@ export const TalukaTable: React.FC = () => {
         let body: any = { ...values, ...{ unique_id: editId } };
         let result = await LOGIN_APIS("update_taluka_data", body);
         if (result.code == 200) {
-            await GetTablData();
+            // setTimeout( async () => {
+                await GetTablData();
+            // }, 2000);
         } else {
             NotificationError("Update Failed")
         }
@@ -251,7 +272,7 @@ export const TalukaTable: React.FC = () => {
     const handleSelectedDistrict = (value: string) => {
         if(value !== districtOption){
             setDistrict(value);
-            let reset = copyOfOriginalTableData.filter(obj => obj.district === value);
+            let reset = districtSelect.filter(obj => obj.district === value);
             setTalukaSelect(reset);
         };
     };

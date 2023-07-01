@@ -1,14 +1,11 @@
 import React from 'react'
-import classnames from "classnames";
-import { Col, Form, Modal, Row, Select } from 'antd';
+import { Col, Form, Modal, Row } from 'antd';
 import { ReUseInputFeild } from '../ReUseInputFeild';
 import { useLocation } from 'react-router';
-import { Option } from 'antd/es/mentions';
 
 type mofdifyModalI = {
     state: any;
     visible: boolean;
-    onSave?: any;
     onCancel?: () => void;
     editMode?: boolean,
     districtsData?: any[],
@@ -17,7 +14,6 @@ type mofdifyModalI = {
 export const ViewTableData: React.FC<mofdifyModalI> = ({
     state,
     visible,
-    onSave,
     onCancel,
     editMode,
     districtsData,
