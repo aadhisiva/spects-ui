@@ -18,7 +18,7 @@ export const validateMessages = {
 
 export const findLoginName = () => {
     let parseData: any = localStorage.getItem("login_user");
-    let switchData = JSON.parse(parseData)
+    let switchData = JSON.parse(parseData);
     if(!switchData){
         return null
     } else {

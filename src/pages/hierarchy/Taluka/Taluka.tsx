@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Row, Select, Table, } from 'antd';
+import { Button, Col, Form, Row, Select, Spin, Table, } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./Taluka.module.scss";
 import classNames from 'classnames';
@@ -15,6 +15,8 @@ import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRows
 import { ModalModify } from '../../../components/common/ModalModify';
 import Search from 'antd/es/input/Search';
 import { setTimeout } from 'timers';
+import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 interface DataType {
     key: string,
@@ -29,8 +31,9 @@ interface DataType {
 
 export const TalukaTable: React.FC = () => {
     const [loginBY, setLoginBy] = useState(findLoginName());
-    const [mode, setMode] = useState<TabsPosition>('top');
     const [editmode, setEditMode] = useState('');
+    const { t } = useTranslation();
+    const [loading, setLoading] = useState(true);
 
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
     const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
@@ -50,64 +53,43 @@ export const TalukaTable: React.FC = () => {
     const [queryString, setQueryString] = useState<string>("");
     const [editId, setEditId] = useState([]);
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    
-    // if(loginBY?.type == "District Officer"){
-    //     let data = await LOGIN_APIS(`getUser_data`, loginBY);
-    //     console.log()
-    // }
     const checkUserLogin = loginBY?.type == "District Officer";
 
     const GetTablData = async () => {
-        if(checkUserLogin){
-            let {data} = await LOGIN_APIS(`getUser_data`, loginBY); 
-            let result = await GET_APIS(`talukas_data?districtOne=${data[0]?.district}&districtTwo=${data[1].district}`);
+        if (checkUserLogin) {
+            let { data } = await LOGIN_APIS(`getUser_data`, loginBY);
+            let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district)));
+            let bodyData: any = {
+                districts: uniqueBody
+            };
+            let result = await LOGIN_APIS(`talukas_data`, bodyData);
+            let uniqueData: any = _.uniqBy(result?.data, 'taluka');
             if (result.code == 200) {
-                setOriginalTableData(result?.data)
-                setCopyOfOriginalTableData(result?.data)
+                setLoading(false);
+                setOriginalTableData(uniqueData)
+                setCopyOfOriginalTableData(uniqueData)
             } else {
                 NotificationError(result.message)
             }
         } else {
             let result = await GET_APIS(`talukas_data`);
             if (result.code == 200) {
-                setOriginalTableData(result?.data)
-                setCopyOfOriginalTableData(result?.data)
+                let uniqueData: any = _.uniqBy(result?.data, 'taluka');
+                setLoading(false);
+                setOriginalTableData(uniqueData)
+                setCopyOfOriginalTableData(uniqueData)
             } else {
                 NotificationError(result.message)
             }
         }
-        
-    }
+
+    };
+
     useEffect(() => {
         (async () => {
             await GetTablData();
         })();
     }, []);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`talukas_data?type=${rural_urban}&district=${districtOption}`);
-
-    //         if (data.code == 200) {
-    //             setTableData(data?.data)
-    //         } else {
-    //             NotificationError(data.message)
-    //         }
-    //     })();
-    // }, [districtOption]);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`talukas_data?type=${rural_urban}&district=${districtOption}&taluka=${talukaOption}`);
-    //         if (data.code == 200) {
-    //             setTableData(data?.data)
-    //         } else {
-    //             NotificationError(data.message)
-    //         }
-    //     })();
-    // }, [talukaOption]);
 
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
@@ -117,7 +99,7 @@ export const TalukaTable: React.FC = () => {
     };
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Name',
+            title: t('TABLE_NAME'),
             dataIndex: 'name',
             key: 'name',
             filteredValue: [queryString],
@@ -132,22 +114,22 @@ export const TalukaTable: React.FC = () => {
             sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return !_? "N/A" : _;
+                return !_ ? "N/A" : _;
             }
         },
         {
-            title: 'Mobile Number',
+            title: t('TABLE_MOBILE'),
             dataIndex: 'mobile_number',
             key: 'mobile_number',
             sorter: (a, b) => a.mobile_number?.length - b.mobile_number?.length,
             sortOrder: sortedInfo.columnKey === 'mobile_number' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return !_? "N/A" : _;
+                return !_ ? "N/A" : _;
             }
         },
         {
-            title: 'District',
+            title: t('TABLE_DISTRICT'),
             dataIndex: 'district',
             key: 'district',
             sorter: (a, b) => a.district.length - b.district.length,
@@ -158,7 +140,7 @@ export const TalukaTable: React.FC = () => {
             }
         },
         {
-            title: 'Taluka',
+            title: t('TABLE_TALUKA'),
             dataIndex: 'taluka',
             key: 'taluka',
             sorter: (a, b) => a.taluka.length - b.taluka.length,
@@ -169,7 +151,7 @@ export const TalukaTable: React.FC = () => {
             }
         },
         {
-            title: 'Action',
+            title: t('TABLE_ACTION'),
             key: 'action',
             render: (_, record) => {
                 return (
@@ -184,31 +166,32 @@ export const TalukaTable: React.FC = () => {
     useEffect(() => {
         let filterData = originalTableData;
         // filter rural/urban
-        if(rural_urban){
+        if (rural_urban) {
             filterData = filterData.filter(obj => obj.rural_urban === rural_urban);
         };
         // filter rural/urban and district
-        if(rural_urban && districtOption){
-            filterData = filterData.filter(obj => obj.rural_urban === rural_urban 
+        if (rural_urban && districtOption) {
+            filterData = filterData.filter(obj => obj.rural_urban === rural_urban
                 && obj.district === districtOption);
         };
         // filter rural/urban and district and taluka
-        if(rural_urban && districtOption && talukaOption){
-            filterData = filterData.filter(obj => obj.rural_urban === rural_urban 
+        if (rural_urban && districtOption && talukaOption) {
+            filterData = filterData.filter(obj => obj.rural_urban === rural_urban
                 && obj.district === districtOption && obj.taluka === talukaOption);
         };
         setCopyOfOriginalTableData(filterData);
     }, [rural_urban, districtOption, talukaOption])
 
     const onSave = async (values: any) => {
+        setLoading(true);
+        setVisisble(false);
         delete values?.district;
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
         let result = await LOGIN_APIS("update_taluka_data", body);
         if (result.code == 200) {
-            // setTimeout( async () => {
-                await GetTablData();
-            // }, 2000);
+            await GetTablData();
+            setLoading(false);
         } else {
             NotificationError("Update Failed")
         }
@@ -222,16 +205,11 @@ export const TalukaTable: React.FC = () => {
         setEditMode("Edit")
     };
 
-    // const handleAddNewUser = () => {
-    //     setVisisble(true);
-    //     setFormData("");
-    //     setEditMode("")
-    // };
     const FormOpen = () => {
         return <ModalModify
             editMode={editmode ? true : false}
             state={formData}
-            setRuralOrUrban={(e)=> setRuralOrUrban(e)}
+            setRuralOrUrban={(e) => setRuralOrUrban(e)}
             visible={visible}
             onCancel={() => setVisisble(false)}
             onSave={onSave}
@@ -241,19 +219,6 @@ export const TalukaTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-   
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
-    //         setDistrictSelect(data.data);
-    //     })();
-    // }, [rural_urban]);
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${districtOption}`);
-    //         setTalukaSelect(data.data);
-    //     })();
-    // }, [districtOption]);
 
     const handleClickClearFilters = () => {
         setDistrict("");
@@ -262,7 +227,7 @@ export const TalukaTable: React.FC = () => {
     };
 
     const handleRuralOrUrban = (value: string) => {
-        if(value !== rural_urban){
+        if (value !== rural_urban) {
             setRuralOrUrban(value);
             let reset = copyOfOriginalTableData.filter(obj => obj.rural_urban === value);
             setDistrictSelect(reset);
@@ -270,7 +235,7 @@ export const TalukaTable: React.FC = () => {
     };
 
     const handleSelectedDistrict = (value: string) => {
-        if(value !== districtOption){
+        if (value !== districtOption) {
             setDistrict(value);
             let reset = districtSelect.filter(obj => obj.district === value);
             setTalukaSelect(reset);
@@ -278,11 +243,11 @@ export const TalukaTable: React.FC = () => {
     };
 
     const handleSelectedTaluka = (value: string) => {
-        if(value !== talukaOption){
+        if (value !== talukaOption) {
             setTalukaOption(value);
         };
     };
-    return (
+    const renderTalukaData = () => (
         <>
             {visible ? FormOpen() : ("")}
             <div className={classNames(styles.talukaPage, "taluka-page-list")}>
@@ -290,7 +255,7 @@ export const TalukaTable: React.FC = () => {
                     <Row>
                         <Col sm={3} xs={24} className={styles.statisticsContainer}>
                             <div className={styles.statistics}>
-                                <span className={styles.title}>Filters</span>
+                                <span className={styles.title}>{t("FILTERS")}</span>
                             </div>
                         </Col>
                     </Row>
@@ -345,7 +310,7 @@ export const TalukaTable: React.FC = () => {
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
                                 <Button type="primary" onClick={handleClickClearFilters}>
-                                    Clear Filters
+                                    {t("CLEAR_FILTERS")}
                                 </Button>
                             </div>
                         </Col>
@@ -358,15 +323,15 @@ export const TalukaTable: React.FC = () => {
                             />
                         </Col>
                         <Col sm={12} xs={12} className={styles.headerRow}>
-                            <span>{"Taluka Health Officer"}</span>
+                            <span>{t("TALUKA_HEALTH_OFFICER")}</span>
                         </Col>
                         <Col sm={8} xs={12} className={styles.searchContainer}>
-                                <Search 
+                            <Search
                                 allowClear
-                                placeholder="input search" 
+                                placeholder="input search"
                                 enterButton
                                 onSearch={(e) => setQueryString(e)}
-                                />
+                            />
 
                         </Col>
                     </Row>
@@ -385,6 +350,11 @@ export const TalukaTable: React.FC = () => {
                     />
                 </div>
             </div>
+        </>
+    )
+
+    return (
+        <><Spin spinning={loading}>{renderTalukaData()}</Spin>
         </>
     )
 }

@@ -5,6 +5,7 @@ import HomeImage from "../../../assets/Images/TitleBar/home.png";
 import { UserOutlined } from '@ant-design/icons';
 import { findLoginName } from '../../../utilities/reUsableFun';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 type titlePageI = {
     title: string;
@@ -14,6 +15,7 @@ type titlePageI = {
 
 export const TitleBarComponent: React.FC<titlePageI> = (props) => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const loginBy: any = findLoginName();
 
@@ -22,24 +24,6 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
         navigate("/");
 
     };
-    const Items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <a aria-disabled={true}>
-                    {loginBy}
-                </a>
-            ),
-        },
-        {
-            key: '1',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-                    LogOut
-                </a>
-            ),
-        },
-    ];
 
     return (
         <div className={styles.titleBarPage}>
@@ -62,7 +46,10 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                 {loginBy ? (
                     <Col sm={18} xs={12} className={styles.loginUserContainer}>
                         <div className={styles.loginUserTitle}>
-                            {loginBy?.type} | <span style={{ cursor: 'pointer' }} onClick={handleLogout}>LogOut</span>
+                           {t("WELCOME")} {loginBy?.type == "State Admin" ? t("STATE_ADMIN") :
+                                    loginBy?.type == "District Officer" ? "DHO" : 
+                                    loginBy?.type == "Taluka" ?
+                                        "THO" : "PHCO"} | <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
                         </div>
                     </Col>)
                     : ("")

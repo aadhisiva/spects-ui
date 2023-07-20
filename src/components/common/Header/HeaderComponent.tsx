@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Layout, Row, Col, Image } from "antd";
 import styles from "./HeaderComponent.module.scss";
 import "./HeaderComponent.custom.scss";
 import leftLogo from "../../../assets/Images/HeaderImages/leftLogo.png";
 import rightLogo from "../../../assets/Images/HeaderImages/rightLogo.png";
-import { findLoginName } from '../../../utilities/reUsableFun';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import i18n from "i18next";
 
 const { Header } = Layout;
 
@@ -13,25 +14,21 @@ type HeaderProps = {
     loginUser?: any
 }
 export const HeaderCompenent: React.FC<HeaderProps> = ({ loginUser }) => {
-
-    const SwitchLoginData = (loginData: any) => {
-        switch (loginData) {
-            case "State Admin":
-                return "State Admin";
-            case "District Officer":
-                return "DHO";
-            case "Taluka":
-                return "THO";
-            default:
-                return "PHCO"
-        };
-    };
+    const { t } = useTranslation();
+    
     let showTitleByLoginUser = JSON.parse(loginUser);
+    
+    const hanndleChange = (type: string) => {
+        localStorage.setItem('type', type);
+        let language: any = localStorage.getItem('type');
+        i18n.changeLanguage(language);
+    };
+
     return (
         <div className={classNames(styles.homePage, 'header-page')}>
             <Header className={styles.headerContainer}>
                 <Row className={styles.headerRow}>
-                    <Col xs={4} sm={3} className={styles.leftSideImage}>
+                    <Col xs={4} sm={5} className={styles.leftSideImage}>
                         <Image
                             preview={false}
                             width={70}
@@ -39,23 +36,23 @@ export const HeaderCompenent: React.FC<HeaderProps> = ({ loginUser }) => {
                             src={leftLogo}
                         />
                     </Col>
-                    <Col xs={15} sm={16}>
+                    <Col xs={15} sm={13}>
                         <div className={styles.centerName}>
-                            <p className={styles.title}>GOVT. OF KARNATAKA</p>
-                            <p className={styles.subTitle}>Spectcles Distribution</p>
+                            <p className={styles.title}>{t("GOV_NAME")}</p>
+                            <p className={styles.subTitle}>{t("PROJECT_TITLE")}</p>
                         </div>
                     </Col>
-                    <Col xs={0} sm={3} className={styles.rightSideContent}>
-                        <p className={styles.title}>National Health Mission</p>
-                        {(!showTitleByLoginUser) ? ("") : (
-                            <p className={styles.title}>Welcome {
-                                showTitleByLoginUser.type == "state_admin" ? "State Admin" :
+                    <Col xs={0} sm={4} className={styles.rightSideContent}>
+                        <p className={styles.title}>{t("NHM")}</p>
+                        {/* {(!showTitleByLoginUser) ? ("") : (
+                            <p className={styles.title}>{t("WELCOME")} {
+                                showTitleByLoginUser.type == "state_admin" ? t("STATE_ADMIN") :
                                     showTitleByLoginUser.type == "district_officer" ? "DHO" : 
                                     showTitleByLoginUser.type == "taluka" ?
                                         "THO" : "PHCO"
                             }</p>
-                        )}
-                        <p className={styles.subTitle}>ಕನ್ನಡ | English</p>
+                        )} */}
+                        <p className={styles.subTitle}><a onClick={() => hanndleChange("ka")}>ಕನ್ನಡ</a> | <a onClick={() => hanndleChange("en")}>English</a></p>
                     </Col>
                     <Col xs={1} sm={2} className={styles.rightSideImage}>
                         <Image

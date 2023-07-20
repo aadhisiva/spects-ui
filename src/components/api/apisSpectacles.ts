@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// const baseUrl = "http://ec2-3-109-68-73.ap-south-1.compute.amazonaws.com:8889/";
 const baseUrl = "http://localhost:8889/";
 
 export const GET_APIS = async (url: string) => {
@@ -9,7 +10,7 @@ export const GET_APIS = async (url: string) => {
         return res;
     } catch(e){
         return e;
-    }
+    };
 };
 
 export const LOGIN_APIS = async (url: string, data: string) => {

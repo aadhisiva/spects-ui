@@ -9,7 +9,8 @@ type InputFeildI = {
     label?: string,
     value?: string,
     disabled?: boolean
-    required?: boolean
+    required?: boolean,
+    readOnly?: boolean
 }
 export const ReUseInputFeild: React.FC<InputFeildI> = ({
     type,
@@ -19,7 +20,8 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
     label,
     value,
     disabled,
-    required
+    required,
+    readOnly= false
 }) => {
     return (
         <div>
@@ -29,6 +31,7 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
                 rules={required ? [{ required: true, message: `Please input your ${label}!` }]: []}
             >
                 <Input
+                    readOnly={readOnly}
                     type={type? type : "text"}
                     tabIndex={tabIndex}
                     onChange={onChange}

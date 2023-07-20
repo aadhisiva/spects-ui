@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Row, Select, Table, } from 'antd';
+import { Button, Col, Form, Row, Select, Spin, Table, } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./District.module.scss";
 import classNames from 'classnames';
@@ -7,14 +7,16 @@ import "./District.custom.scss";
 import { useLocation, useNavigate } from 'react-router';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { TabsPosition } from 'antd/es/tabs';
-import { Option } from 'antd/es/mentions';
 import { findLoginName } from '../../../utilities/reUsableFun';
 import { GET_APIS, LOGIN_APIS } from '../../../components/api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
 import Search from 'antd/es/input/Search';
+import _ from "lodash";
+import { useTranslation } from 'react-i18next';
 
+const { Option } = Select;
 interface DataType {
     key: string,
     name: string;
@@ -27,9 +29,9 @@ interface DataType {
 };
 
 export const DistrictOfficerTable: React.FC = () => {
-    const [loginBY, setLoginBy] = useState(findLoginName());
-    const [mode, setMode] = useState<TabsPosition>('top');
     const [editmode, setEditMode] = useState('');
+    const { t }  = useTranslation();
+    const [loading, setLoading] = useState(true);
 
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
     const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
@@ -38,7 +40,6 @@ export const DistrictOfficerTable: React.FC = () => {
     const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
-    const [tableData, setTableData] = useState<DataType[]>([]);
     const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
     const [visible, setVisisble] = useState(false);
     const [formData, setFormData] = useState({});
@@ -47,42 +48,23 @@ export const DistrictOfficerTable: React.FC = () => {
     const [queryString, setQueryString] = useState<string>("");
     const [editId, setEditId] = useState([]);
 
-    const navigate = useNavigate();
-    const location = useLocation();
-
     const GetTablData = async () => {
         let data = await GET_APIS(`districts_data`);
         if (data.code == 200) {
-            setOriginalTableData(data?.data)
-            setCopyOfOriginalTableData(data?.data)
+            let uniqueData: any = _.uniqBy(data?.data, 'district')
+            setLoading(false);
+            setOriginalTableData(uniqueData)
+            setCopyOfOriginalTableData(uniqueData)
         } else {
             NotificationError(data.message)
         }
     }
-    // const GetTablData = async () => {
-    //     let data = await GET_APIS(`districts_data?type=${rural_urban}`);
-    //     if (data.code == 200) {
-    //         setTableData(data?.data)
-    //     } else {
-    //         NotificationError(data.message)
-    //     }
-    // }
+
     useEffect(() => {
         (async () => {
             await GetTablData();
         })();
     }, []);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`districts_data?type=${rural_urban}&district=${districtOption}`);
-    //         if (data.code == 200) {
-    //             setTableData(data?.data)
-    //         } else {
-    //             NotificationError(data.message)
-    //         }
-    //     })();
-    // }, [districtOption]);
 
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
@@ -92,7 +74,7 @@ export const DistrictOfficerTable: React.FC = () => {
     };
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Name',
+            title: t('TABLE_NAME'),
             dataIndex: 'name',
             key: 'name',
             filteredValue: [queryString],
@@ -111,7 +93,7 @@ export const DistrictOfficerTable: React.FC = () => {
             }
         },
         {
-            title: 'Mobile Number',
+            title: t('TABLE_MOBILE'),
             dataIndex: 'mobile_number',
             key: 'mobile_number',
             sorter: (a, b) => a.mobile_number?.length - b.mobile_number?.length,
@@ -122,7 +104,7 @@ export const DistrictOfficerTable: React.FC = () => {
             }
         },
         {
-            title: 'District',
+            title: t('TABLE_DISTRICT'),
             dataIndex: 'district',
             key: 'district',
             sorter: (a, b) => a.district.length - b.district.length,
@@ -133,7 +115,7 @@ export const DistrictOfficerTable: React.FC = () => {
             }
         },
         {
-            title: 'Action',
+            title: t('TABLE_ACTION'),
             key: 'action',
             render: (_, record) => {
                 return (
@@ -160,15 +142,17 @@ export const DistrictOfficerTable: React.FC = () => {
     }, [rural_urban, districtOption])
 
     const onSave = async (values: any) => {
+        setVisisble(false);
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
+        setLoading(true);
         let result = await LOGIN_APIS("update_districts_Data", body);
         if (result.code == 200) {
             await GetTablData();
+            setLoading(false);
         } else {
             NotificationError("Update Failed")
         }
-        setVisisble(false);
     };
 
     const handleModifyForm = (row: any) => {
@@ -178,11 +162,6 @@ export const DistrictOfficerTable: React.FC = () => {
         setEditMode("Edit")
     };
 
-    // const handleAddNewUser = () => {
-    //     setVisisble(true);
-    //     setFormData("");
-    //     setEditMode("")
-    // };
     const FormOpen = () => {
         return <ModalModify
             districtsData={districtSelect}
@@ -198,13 +177,6 @@ export const DistrictOfficerTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
-    //         setDistrictSelect(data.data);
-    //     })();
-    // }, [rural_urban]);
 
     const handleClickClearFilters = () => {
         setDistrict("");
@@ -225,15 +197,15 @@ export const DistrictOfficerTable: React.FC = () => {
         };
     };
 
-    return (
+    const rednerDistrictsData = () =>(
         <>
-            {visible ? FormOpen() : ("")}
+        {visible ? FormOpen() : ("")}
             <div className={classNames(styles.districtPage, "district-page-list")}>
                 <div className={styles.table}>
                     <Row>
                         <Col sm={3} xs={24} className={styles.statisticsContainer}>
                             <div className={styles.statistics}>
-                                <span className={styles.title}>Filters</span>
+                                <span className={styles.title}>{t("FILTERS")}</span>
                             </div>
                         </Col>
                     </Row>
@@ -242,7 +214,6 @@ export const DistrictOfficerTable: React.FC = () => {
                             <div className={styles.selecttypes}>
                                 <Form.Item>
                                     <Select
-                                        defaultValue={""}
                                         placeholder="Rural/Urban"
                                         onChange={handleRuralOrUrban}
                                     >
@@ -270,7 +241,7 @@ export const DistrictOfficerTable: React.FC = () => {
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
                                 <Button type="primary" onClick={handleClickClearFilters}>
-                                    Clear Filters
+                                    {t("CLEAR_FILTERS")}
                                 </Button>
                             </div>
                         </Col>
@@ -283,7 +254,7 @@ export const DistrictOfficerTable: React.FC = () => {
                             />
                         </Col>
                         <Col sm={12} xs={12} className={styles.headerRow}>
-                            <span>{"District Health Officer"}</span>
+                            <span>{t("DISTRICT_HEALTH_OFFICER")}</span>
                         </Col>
                         <Col sm={8} xs={12} className={styles.searchContainer}>
                             <Search
@@ -310,6 +281,12 @@ export const DistrictOfficerTable: React.FC = () => {
                     />
                 </div>
             </div>
+        </>
+    )
+
+    return (
+        <>
+        {<Spin spinning={loading}>{rednerDistrictsData()}</Spin>}
         </>
     )
 }

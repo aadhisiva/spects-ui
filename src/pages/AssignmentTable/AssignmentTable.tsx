@@ -8,9 +8,11 @@ import { TalukaTable } from '../hierarchy/Taluka';
 import { DistrictOfficerTable } from '../hierarchy/District';
 import { useLocation } from 'react-router';
 import { RefractionistTable } from '../hierarchy/Refractionist/Refractionist';
+import { useTranslation } from 'react-i18next';
 
 export const AssignmentTable: React.FC = () => {
     const [loginBY, setLoginBy] = useState(findLoginName());
+    const { t } = useTranslation();
   const location: any = useLocation();
 
   const Routes = () => {
@@ -27,7 +29,7 @@ export const AssignmentTable: React.FC = () => {
   } 
     return (
         <>
-            <TitleBarComponent title={"Assignment List"} image={true} />
+            <TitleBarComponent title={t("ASSIGNMENT_LIST")} image={true} />
             <div className={classNames(styles.assignmentTable, "assignment-page-list")}>
                {Routes()}
             </div>

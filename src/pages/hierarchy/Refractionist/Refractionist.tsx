@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Row, Select, Table, } from 'antd';
+import { Button, Col, Form, Row, Select, Spin, Table, } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./Refractionist.module.scss";
 import classNames from 'classnames';
@@ -14,6 +14,7 @@ import { NotificationError, NotificationSuccess } from '../../../components/comm
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
 import Search from 'antd/es/input/Search';
+import { useTranslation } from 'react-i18next';
 
 interface DataType {
     key: string,
@@ -28,8 +29,9 @@ interface DataType {
 
 export const RefractionistTable: React.FC = () => {
     const [loginBY, setLoginBy] = useState(findLoginName());
-    const [mode, setMode] = useState<TabsPosition>('top');
     const [editmode, setEditMode] = useState('');
+    const { t } = useTranslation();
+    const [loading, setLoading] = useState(true);
 
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
     const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
@@ -38,7 +40,6 @@ export const RefractionistTable: React.FC = () => {
     const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
-    const [tableData, setTableData] = useState<DataType[]>([]);
     const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
     const [visible, setVisisble] = useState(false);
     const [formData, setFormData] = useState({});
@@ -51,24 +52,31 @@ export const RefractionistTable: React.FC = () => {
     const [queryString, setQueryString] = useState<string>("");
     const [editId, setEditId] = useState([]);
 
-    const navigate = useNavigate();
     const checkUserLogin = loginBY?.type;
 
     const GetTablData = async () => {
-        let {data} = checkUserLogin? await LOGIN_APIS(`getUser_data`, loginBY): []; 
+        let {data} = checkUserLogin? await LOGIN_APIS(`getUser_data`, loginBY): [];
         if(checkUserLogin == "District Officer"){
-            let result = await GET_APIS(`all_masters?districtOne=${data[0]?.district}&districtTwo=${data[1].district}`);
+            let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district))); 
+            let bodyData: any = {
+                districts: uniqueBody
+            };
+            let result = await LOGIN_APIS(`all_masters`, bodyData);
             if (result.code == 200) {
+                setLoading(false);
                 setOriginalTableData(result?.data);
                 setCopyOfOriginalTableData(result?.data);
             } else {
                 NotificationError(result.message)
             }
         } else if(checkUserLogin == "Taluka"){
-            console.log("Sdas",data)
-            let result = await GET_APIS(`all_masters?talukaOne=${data[0]?.taluka}&talukaTwo=${data[1].taluka}`);
-            console.log("result",result)
+            let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.taluka))); 
+            let bodyData: any = {
+                talukas: uniqueBody
+            };
+            let result = await LOGIN_APIS(`all_masters`, bodyData);
             if (result.code == 200) {
+                setLoading(false);
                 setOriginalTableData(result?.data);
                 setCopyOfOriginalTableData(result?.data);
             } else {
@@ -77,51 +85,20 @@ export const RefractionistTable: React.FC = () => {
         } else {
             let result = await GET_APIS(`all_masters`);
             if (result.code == 200) {
+                setLoading(false);
                 setOriginalTableData(result?.data);
                 setCopyOfOriginalTableData(result?.data);
             } else {
                 NotificationError(result.message)
             }
         }
-    }
+    };
+
     useEffect(() => {
         (async () => {
             await GetTablData();
         })();
     }, []);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_masters?type=${rural_urban}&district=${districtOption}`);
-    //         if (data.code == 200) {
-    //             setTableData(data?.data)
-    //         } else {
-    //             NotificationError(data.message)
-    //         }
-    //     })();
-    // }, [districtOption]);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_masters?type=${rural_urban}&district=${districtOption}&taluka=${talukaOption}`);
-    //         if (data.code == 200) {
-    //             setTableData(data?.data)
-    //         } else {
-    //             NotificationError(data.message)
-    //         }
-    //     })();
-    // }, [talukaOption]);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_masters?type=${rural_urban}&district=${districtOption}&taluka=${talukaOption}&sub=${subCentreOption}`);
-    //         if (data.code == 200) {
-    //             setTableData(data?.data)
-    //         } else {
-    //             NotificationError(data.message)
-    //         }
-    //     })();
-    // }, [subCentreOption]);
 
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
@@ -132,7 +109,7 @@ export const RefractionistTable: React.FC = () => {
 
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Refractionist Name',
+            title: t('TABLE_REFRACTIONIST_NAME'),
             dataIndex: 'refractionist_name',
             key: 'refractionist_name',
             sorter: (a, b) => a.refractionist_name?.length - b.refractionist_name?.length,
@@ -143,7 +120,7 @@ export const RefractionistTable: React.FC = () => {
             }
         },
         {
-            title: 'Refractionist Mobile Number',
+            title: t("TABLE_REFRACTIONIST_MOBILE"),
             dataIndex: 'refractionist_mobile',
             key: 'refractionist_mobile',
             filteredValue:[queryString],
@@ -164,40 +141,40 @@ export const RefractionistTable: React.FC = () => {
             }
         },
         {
-            title: 'District',
+            title: t('TABLE_DISTRICT'),
             dataIndex: 'district',
             key: 'district',
             sorter: (a, b) => a.district.length - b.district.length,
             sortOrder: sortedInfo.columnKey === 'district' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
+                return _?.replace(/\W/g, "").replace(/\d/g, "");
             }
         },
         {
-            title: 'Taluka',
+            title: t('TABLE_TALUKA'),
             dataIndex: 'taluka',
             key: 'taluka',
             sorter: (a, b) => a.taluka.length - b.taluka.length,
             sortOrder: sortedInfo.columnKey === 'taluka' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
+                return _?.replace(/\W/g, "").replace(/\d/g, "");
             }
         },
         {
-            title: 'Sub Centre',
+            title: t("TABLE_SUBCENTRE"),
             key: 'sub_centre',
             dataIndex: 'sub_centre',
             sorter: (a, b) => a.sub_centre.length - b.sub_centre.length,
             sortOrder: sortedInfo.columnKey === 'sub_centre' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
+                return _?.replace(/\W/g, "").replace(/\d/g, "");
             }
         },
         {
-            title: 'Village/Ward',
+            title: t("TABLE_VILLAGE_WARD"),
             key: 'village',
             dataIndex: 'village',
             sorter: (a, b) => a.village.length - b.village.length,
@@ -205,7 +182,7 @@ export const RefractionistTable: React.FC = () => {
             ellipsis: true,
         },
         {
-            title: 'Action',
+            title: t("TABLE_ACTION"),
             key: 'action',
             render: (_, record) => {
                 return (
@@ -243,10 +220,13 @@ export const RefractionistTable: React.FC = () => {
 
 
     const onSave = async (values: any) => {
+        setLoading(true);
+        setVisisble(false);
         let body: any = { ...values, ...{ user_unique_id: editId } };
         let result = await LOGIN_APIS("update_data", body);
         if (result.code == 200) {
             await GetTablData();
+            setLoading(false);
         } else {
             NotificationError("Update Failed")
         }
@@ -280,26 +260,6 @@ export const RefractionistTable: React.FC = () => {
         NotificationSuccess("success");
         setRowsPerPage(Number(value))
     };
-   
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}`);
-    //         setDistrictSelect(data.data);
-    //     })();
-    // }, [rural_urban]);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${districtOption}`);
-    //         setTalukaSelect(data.data);
-    //     })();
-    // }, [districtOption]);
-    // useEffect(() => {
-    //     (async () => {
-    //         let data = await GET_APIS(`all_district_wise?type=${rural_urban}&district=${districtOption}&taluka=${talukaOption}`);
-    //         setSubCentreSelect(data.data);
-    //     })();
-    // }, [talukaOption]);
 
     const handleClickClearFilters = () => {
         setDistrict("");
@@ -339,15 +299,15 @@ export const RefractionistTable: React.FC = () => {
         };
     };
 
-    return (
+    const renderRefractionistData = () => (
         <>
-            {visible ? FormOpen() : ("")}
+        {visible ? FormOpen() : ("")}
             <div className={classNames(styles.refractionistPage, "refractionist-page-list")}>
                 <div className={styles.table}>
                     <Row>
                         <Col sm={3} xs={24} className={styles.statisticsContainer}>
                             <div className={styles.statistics}>
-                                <span className={styles.title}>Filters</span>
+                                <span className={styles.title}>{t("FILTERS")}</span>
                             </div>
                         </Col>
                     </Row>
@@ -377,7 +337,7 @@ export const RefractionistTable: React.FC = () => {
                                         onChange={handleSelectedDistrict}
                                     >
                                         {(Array.from(new Set(districtSelect.map(obj => obj.district))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                            <Option key={String(i)} value={`${obj}`}>{obj?.replace(/\W/g, "")?.replace(/\d/g, "")}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>
@@ -393,7 +353,7 @@ export const RefractionistTable: React.FC = () => {
                                         onChange={handleSelectedTaluka}
                                     >
                                         {(Array.from(new Set(talukaSelect.map(obj => obj.taluka))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                            <Option key={String(i)} value={`${obj}`}>{obj?.replace(/\W/g, "")?.replace(/\d/g, "")}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>
@@ -418,7 +378,7 @@ export const RefractionistTable: React.FC = () => {
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
                                 <Button type="primary" onClick={handleClickClearFilters}>
-                                    Clear Filters
+                                    {t("CLEAR_FILTERS")}
                                 </Button>
                             </div>
                         </Col>
@@ -431,7 +391,7 @@ export const RefractionistTable: React.FC = () => {
                             />
                         </Col>
                         <Col sm={12} xs={12} className={styles.headerRow}>
-                            <span>{"Refractionist"}</span>
+                            <span>{t("REFRACTIONIST")}</span>
                         </Col>
                         <Col sm={8} xs={12} className={styles.searchContainer}>
                                 <Search 
@@ -457,6 +417,12 @@ export const RefractionistTable: React.FC = () => {
                     />
                 </div>
             </div>
+        </>
+    )
+
+    return (
+        <>
+        <Spin spinning={loading}>{renderRefractionistData()}</Spin>
         </>
     )
 }

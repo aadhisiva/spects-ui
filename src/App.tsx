@@ -1,13 +1,11 @@
-import {AuthLayout} from './components/authLayout/authLayout';
+import { AuthLayout } from './components/authLayout/authLayout';
 import './App.css';
-import { BrowserRouter } from 'react-router-dom';
+import "./utilities/Langugae";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
       <AuthLayout />
-      </BrowserRouter>
     </div>
   );
 }

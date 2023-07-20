@@ -3,15 +3,14 @@ import { Row, Col, Image, Button } from "antd";
 import styles from "./DashBoardHierarchy.module.scss";
 import "./DashBoardHierarchy.custom.scss";
 import RefractionistImage from "../../assets/Images/DashBoard/refractionist.png";
-import StudentImage from "../../assets/Images/DashBoard/student.png";
 import BenificiaryImage from "../../assets/Images/DashBoard/benificary.png";
 import { TitleBarComponent } from '../../components/common/titleBar';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { useLocation } from "react-router";
 import { findLoginName } from "../../utilities/reUsableFun";
 import { GET_APIS } from "../../components/api/apisSpectacles";
 import { NotificationError } from "../../components/common/Notifications/Notifications";
+import { useTranslation } from "react-i18next";
 
 const loginArrayData = [
     {
@@ -56,6 +55,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
     const [pendingCount, setPendingCount] = useState(0);
     const [deliveredCount, setDeliveredCount] = useState(0);
     const [allCount, setAllCount] = useState(0);
+    const {t} = useTranslation();
     const naviagte = useNavigate();
 
     const SwitchLoginData = (loginData: any) => {
@@ -78,9 +78,10 @@ export const DashBoardHierarchy: React.FC = (props) => {
             let delivered = await GET_APIS("delivered");
             let pending = await GET_APIS("pending");
             if(all.code == 200){
-                setAllCount(all.data)
-                setPendingCount(pending.data)
-                setDeliveredCount(delivered.data)
+                console.log("all?.data?.count",all?.data[0]?.count)
+                setAllCount(all?.data[0]?.count)
+                setPendingCount(pending?.data[0]?.count)
+                setDeliveredCount(delivered?.data[0]?.count)
             } else {
                 NotificationError("please try again.")
             }
@@ -91,46 +92,43 @@ export const DashBoardHierarchy: React.FC = (props) => {
         SwitchLoginData(findLoginName());
     }, [loginBY])
 
-    const handleClick = () => {
-        naviagte("/school-tracking")
-    };
     const handleClickToNextPage = (role: string, path: string) => {
         naviagte(path, {state: role});
     };
 
     return (
         <>
-            <TitleBarComponent title={"DashBoard"} image={true} />
+            <TitleBarComponent title={t("DASHBOARD")} image={true} />
             <div className={classNames(styles.dashBoardHierarchy, 'dashBoardHierarchy-page')}>
                 {/* statistics */}
                 <Row>
                     <Col sm={3} xs={24} className={styles.statisticsContainer}>
                         <div className={styles.statistics}>
-                            <span className={styles.title}>Statistics</span>
+                            <span className={styles.title}>{t("STATISTICS")}</span>
                         </div>
                     </Col>
                 </Row>
                 <Row justify="space-around" align={"middle"} className={styles.orderItemsContainer}>
                     <Col sm={6} xs={24}>
                         <div className={styles.titleContainer}>
-                            <span className={styles.title}>Order</span>
+                            <span className={styles.title}>{t("ORDERS")}</span>
                         </div>
                     </Col>
                     <Col sm={6} xs={24}>
                         <div className={styles.orderItems}>
-                            <span className={styles.title}>Total</span>
+                            <span className={styles.title}>{t("TOTAL")}</span>
                             <span className={styles.count}>{allCount}</span>
                         </div>
                     </Col>
                     <Col sm={6} xs={24}>
                         <div style={{ backgroundColor: "#3399FF" }} className={styles.orderItems}>
-                            <span className={styles.title}>Delivered</span>
+                            <span className={styles.title}>{t("DELIVERED")}</span>
                             <span className={styles.count}>{deliveredCount}</span>
                         </div>
                     </Col>
                     <Col sm={6} xs={24}>
                         <div style={{ backgroundColor: "#AC8FF2" }} className={styles.orderItems}>
-                            <span className={styles.title}>Pending</span>
+                            <span className={styles.title}>{t("PENDING")}</span>
                             <span className={styles.count}>{pendingCount}</span>
 
                         </div>
@@ -141,7 +139,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify={"start"}>
                     <Col sm={4} xs={24} className={styles.statisticsContainer}>
                         <div className={styles.statistics}>
-                            <span className={styles.title}>Assignment</span>
+                            <span className={styles.title}>{t("ASSIGNMENT")}</span>
                         </div>
                     </Col>
                 </Row>
@@ -162,7 +160,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
                 <Row justify={"start"}>
                     <Col sm={4} xs={24} className={styles.statisticsContainer}>
                         <div className={styles.statistics}>
-                            <span className={styles.title}>Reports</span>
+                            <span className={styles.title}>{t("REPORTS")}</span>
                         </div>
                     </Col>
                 </Row>

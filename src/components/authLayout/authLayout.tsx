@@ -1,62 +1,62 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { LayoutComponent } from '../common/Layout/LayoutComponent'
-import { createBrowserRouter, RouterProvider, Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, BrowserRouter, redirect, Navigate } from 'react-router-dom'
 import { SignInComponent } from './signIn/signInComponent'
-import { AddUser } from '../../pages/AddUser'
 import { DashBoardHierarchy } from '../../pages/DashBoardHierarchy'
 import { AssignmentTable } from '../../pages/AssignmentTable'
 import { ReportsTable } from '../../pages/ReportsTable'
 import ErrorBoundary from './ErrorBoundaries/ErrorBoundaries'
 import { PageNotFound } from './ErrorBoundaries/PageNotFound'
-import ProtectedRoutes from './ErrorBoundaries/ProtectedRoutes'
+import { Button, Modal, Result } from 'antd'
+import { AuthMiddleware } from './AuthMiddelware'
+import { SessionTimeout } from './Sessions/SessionTimeout'
 
-// const router = createBrowserRouter([
-//     {
-//         path: "/dashboard",
-//         element: <DashBoardHierarchy />,
-//     },
-//     {
-//         path: "/add-user",
-//         element: <AddUser />,
-//     },
-//     {
-//         path: "/assignment-list",
-//         element: <AssignmentTable />,
-//     },
-//     {
-//         path: "/reports-list",
-//         element: <ReportsTable />,
-//     },
-// ]);
+const loginUser: any = localStorage.getItem('login_user');
+var condition = navigator.onLine;
 
-// const routes =  createBrowserRouter([
-//     {
-//         path: "/",
-//         element: <SignInComponent />,
-//     },
-// ])
-
-const navigate = useNavigate();
-const loginUser = localStorage.getItem('login_user');
-if (!loginUser) {
-    navigate('/')
-}
-export const AuthLayout: React.FC = () => {
+export const AuthLayout: React.FC = ({t}: any) => {
+    const [isModalOpen, setIsModalOpen] = useState(!condition);
+    const [isAuthenticated, setAuth] = useState(false);
+    const handleClick = () => {
+        setAuth(!isAuthenticated);
+      }
+      const handleOk = () => {
+        setIsModalOpen(false);
+      };
+    
+      const handleCancel = () => {
+        setIsModalOpen(false);
+      };
+    
+    const handleShowInfoPage = () => {
+        return  <Modal title="Network Error" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+         <Result
+            status="warning"
+            title={<h4>There are some problems with your Network.</h4>}
+        />
+      </Modal>
+    };
+     
     return (
         <div>
+            {!condition && handleShowInfoPage()}
+            <SessionTimeout isAuthenticated={isAuthenticated} logOut={handleClick} />
             <ErrorBoundary>
                 <LayoutComponent loginUser={loginUser}>
-                    <Routes>
-                        <Route path='/' element={<SignInComponent />} />
-                        <ProtectedRoutes />
-                        <Route element={<ProtectedRoutes loginUser={loginUser} />}>
-                            <Route path='/dashboard' element={<DashBoardHierarchy />} />
-                            <Route path='/assignment-list' element={<AssignmentTable />} />
-                            <Route path='/reports-list' element={<ReportsTable />} />
-                        </Route>
-                        {/* 👇️ only match this when no other routes match */}
-                        <Route path='*' element={<PageNotFound />} />
-                    </Routes>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path='/' element={<Navigate to={"/signin"} replace/>} />
+                            <Route path='/signin' element={<SignInComponent />} />
+                            <Route element={<AuthMiddleware />}>
+                                <Route path='/dashboard' element={<DashBoardHierarchy />} />
+                                <Route path='/assignment-list' element={<AssignmentTable />} />
+                                <Route path='/reports-list' element={<ReportsTable />} />
+
+                                {/* 👇️ only match this when no other routes match */}
+                                <Route path='*' element={<PageNotFound />} />
+                            </Route>
+                        </Routes>
+                    </BrowserRouter>
                 </LayoutComponent>
             </ErrorBoundary>
         </div>

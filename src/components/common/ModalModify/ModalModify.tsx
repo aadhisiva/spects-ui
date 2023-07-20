@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from "classnames";
 import styles from "./ModalModify.module.scss";
 import "./ModalModify.custom.scss";
-import { Form, Modal, Select } from 'antd';
+import { Form, Modal, Select, Spin } from 'antd';
 import { ReUseInputFeild } from '../ReUseInputFeild';
 import { useLocation } from 'react-router';
 import { Option } from 'antd/es/mentions';
@@ -13,6 +13,7 @@ type mofdifyModalI = {
     onSave?: any;
     onCancel?: () => void;
     editMode?: boolean,
+    loading?: boolean,
     districtsData?: any[],
     setRuralOrUrban?: (e: any) => void
 }
@@ -22,6 +23,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
     onSave,
     onCancel,
     editMode,
+    loading,
     districtsData,
     setRuralOrUrban
 }
@@ -40,126 +42,129 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
         sub_centre: state.sub_centre,
         village: state.village,
     });
-
-    return (
-        <div className={classnames(styles.modifyPage, 'modify-page')}>
-            <Modal
-                open={visible}
-                title={(editMode) ? "Modify Data" : "Add New"}
-                okText={(editMode) ? "Update" : "Create"}
-                cancelText="Cancel"
-                onCancel={onCancel}
-                onOk={() => {
-                    form
-                        .validateFields()
-                        .then((values) => {
-                            form.resetFields();
-                            onSave(values);
-                        })
-                        .catch(info => {
-                            console.log('Validate Failed:', info);
-                        });
-                }}
+const renderForm = () => (
+    <div className={classnames(styles.modifyPage, 'modify-page')}>
+    <Modal
+        open={visible}
+        title={(editMode) ? "Modify Data" : "Add New"}
+        okText={(editMode) ? "Update" : "Create"}
+        cancelText="Cancel"
+        onCancel={onCancel}
+        onOk={() => {
+            form
+                .validateFields()
+                .then((values) => {
+                    form.resetFields();
+                    onSave(values);
+                })
+                .catch(info => {
+                    console.log('Validate Failed:', info);
+                });
+        }}
+    >
+        <Form
+            form={form}
+            layout="vertical"
+            name="form_in_modal"
+        >
+            {location.state == "refraction" ? (
+                <>
+                    <ReUseInputFeild
+                        tabIndex={1}
+                        name={"refractionist_name"}
+                        label={"Refractionist Name"}
+                        disabled={false}
+                    />
+                    <ReUseInputFeild
+                        tabIndex={3}
+                        name={"refractionist_mobile"}
+                        label={"Refractionist Mobile Number"}
+                        required={false}
+                    />
+                </>
+            ) : (
+                <>
+                    <ReUseInputFeild
+                        tabIndex={1}
+                        name={"name"}
+                        label={"Name"}
+                        disabled={false}
+                    />
+                    <ReUseInputFeild
+                        tabIndex={3}
+                        name={"mobile_number"}
+                        label={"Mobile Number"}
+                        required={false}
+                    />
+                </>
+            )}
+            <Form.Item
+                name={"rural_urban"}
+                label="Rural/Urban"
             >
-                <Form
-                    form={form}
-                    layout="vertical"
-                    name="form_in_modal"
+                <Select
+                    defaultValue={""}
+                    placeholder="Rural/Urban"
+                    disabled={true}
+                    onChange={setRuralOrUrban}
                 >
-                    {location.state == "refraction" ? (
-                        <>
-                            <ReUseInputFeild
-                                tabIndex={1}
-                                name={"refractionist_name"}
-                                label={"Refractionist Name"}
-                                disabled={false}
-                            />
-                            <ReUseInputFeild
-                                tabIndex={3}
-                                name={"refractionist_mobile"}
-                                label={"Refractionist Mobile Number"}
-                                required={false}
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <ReUseInputFeild
-                                tabIndex={1}
-                                name={"name"}
-                                label={"Name"}
-                                disabled={false}
-                            />
-                            <ReUseInputFeild
-                                tabIndex={3}
-                                name={"mobile_number"}
-                                label={"Mobile Number"}
-                                required={false}
-                            />
-                        </>
-                    )}
+                    <Option value="">--select--</Option>
+                    <Option value="rural">Rural</Option>
+                    <Option value="urban">Urban</Option>
+                </Select>
+            </Form.Item>
+            <Form.Item
+                name={"district"}
+                label="District"
+            >
+                <Select
+                    defaultValue={""}
+                    placeholder="Rural/Urban"
+                    disabled
+                // onChange={(value) => setRuralOrUrban(value)}
+                >
+                    <Option>--select--</Option>
+                </Select>
+            </Form.Item>
+            {location.state !== "district" ? (
+                <>
                     <Form.Item
-                        name={"rural_urban"}
-                        label="Rural/Urban"
+                        name={"taluka"}
+                        label="Taluka"
                     >
                         <Select
                             defaultValue={""}
-                            placeholder="Rural/Urban"
-                            disabled={true}
-                            onChange={setRuralOrUrban}
-                        >
-                            <Option value="">--select--</Option>
-                            <Option value="rural">Rural</Option>
-                            <Option value="urban">Urban</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
-                        name={"district"}
-                        label="District"
-                    >
-                        <Select
-                            defaultValue={""}
-                            placeholder="Rural/Urban"
+                            placeholder="Taluka"
                             disabled
                         // onChange={(value) => setRuralOrUrban(value)}
                         >
                             <Option>--select--</Option>
                         </Select>
                     </Form.Item>
-                    {location.state !== "district" ? (
+                    {location.state !== "taluka" ? (
                         <>
-                            <Form.Item
-                                name={"taluka"}
-                                label="Taluka"
-                            >
-                                <Select
-                                    defaultValue={""}
-                                    placeholder="Taluka"
-                                    disabled
-                                // onChange={(value) => setRuralOrUrban(value)}
-                                >
-                                    <Option>--select--</Option>
-                                </Select>
-                            </Form.Item>
-                            {location.state !== "taluka" ? (
-                                <>
-                                    <ReUseInputFeild
-                                        tabIndex={6}
-                                        name={"sub_centre"}
-                                        label={"Sub Centre"}
-                                        disabled={true}
-                                    />
-                                    <ReUseInputFeild
-                                        tabIndex={6}
-                                        name={"village"}
-                                        label={"Village/Ward"}
-                                        disabled={true}
-                                    />
-                                </>
-                            ) : ("")}
+                            <ReUseInputFeild
+                                tabIndex={6}
+                                name={"sub_centre"}
+                                label={"Sub Centre"}
+                                disabled={true}
+                            />
+                            <ReUseInputFeild
+                                tabIndex={6}
+                                name={"village"}
+                                label={"Village/Ward"}
+                                disabled={true}
+                            />
                         </>
                     ) : ("")}
-                </Form>
-            </Modal>
-        </div>
+                </>
+            ) : ("")}
+        </Form>
+    </Modal>
+</div>
+)
+
+    return (
+        <>{renderForm()}</>
     )
 };
