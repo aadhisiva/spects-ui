@@ -4,12 +4,14 @@ import styles from "./signInComponent.module.scss";
 import { TitleBarComponent } from '../../common/titleBar';
 import "./signInComponent.custom.scss";
 import { InputFeild } from '../../common/InputFeild';
-import { OtpInputFeild } from '../../common/otpInputFeild/OtpInputFeild';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { DECRYPT_APIS, LOGIN_APIS } from '../../api/apisSpectacles';
+import { LOGIN_APIS, SESSION_GET_APIS } from '../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../common/Notifications/Notifications';
 import { useTranslation } from 'react-i18next';
+import { SessionTimeout } from '../Sessions/SessionTimeout';
+import axios from 'axios';
+import { TimingsShow } from '../../common/Timers/timings';
 
 type otpInterFace = {
   role: string,
@@ -27,30 +29,15 @@ export const SignInComponent: React.FC = () => {
   const [seconds, setSeconds] = useState(60);
   const [isLogin, setLogin] = useState(false);
   const [isClickResend, SetClickResend] = useState(true);
+  
+  // transalation
   const { t } = useTranslation();
+  //navigation
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isLogin) {
-      const interval = setInterval(() => {
-        if (seconds > 0) {
-          setSeconds(seconds - 1);
-        }
 
-        if (seconds === 0) {
-          if (minutes === 0) {
-            clearInterval(interval);
-          } else {
-            setSeconds(59);
-            setMinutes(minutes - 1);
-          }
-        }
-      }, 1000);
-      return () => {
-        clearInterval(interval);
-      };
-    }
-  }, [seconds, isLogin]);
+console.log("DFsdgvl")
+
 
   const onFinish = async () => {
     if(!isLogin){
@@ -73,18 +60,11 @@ export const SignInComponent: React.FC = () => {
         otp: state.otp
       };
       let checkLoginData = await LOGIN_APIS("otp_check", body);
-      console.log("checkLoginData",checkLoginData);
       if (checkLoginData.code == 200) {
-          delete checkLoginData.data.created_at;
-          delete checkLoginData.data.updated_at;
-          delete checkLoginData.data.otp;
-          delete checkLoginData.data.name;
-          delete checkLoginData.data.id;
-          delete checkLoginData.data.mobile_number;
         let localStoreData = { ...checkLoginData.data, ...{ type: state.role } };
         localStorage.setItem('login_user', JSON.stringify(localStoreData));
         NotificationSuccess(checkLoginData.message);
-        navigate("/dashboard", { replace: true });
+        navigate("/dashboard");
       } else {
         NotificationError(checkLoginData.message);
       }
@@ -119,6 +99,15 @@ export const SignInComponent: React.FC = () => {
     }
   };
 
+      useEffect(()=> {
+        (async function() {
+          let data = await SESSION_GET_APIS('session');
+          console.log("data?.login",data?.login)
+          if(data?.login == 200) navigate('/dashboard');
+          else navigate('/signin');
+        })() 
+      },[]);
+
 
   return (
     <div>
@@ -141,6 +130,8 @@ export const SignInComponent: React.FC = () => {
                   wrapperCol={{ span: 12 }}
                   label={t("ROLE")}
                   name={"role"}
+                  required={true}
+                  rules={[{ required: true, message: 'Please input your Role!' }]}
                 >
                   <Select
                     value={state?.role}
@@ -155,6 +146,7 @@ export const SignInComponent: React.FC = () => {
                 </Form.Item>
                 <InputFeild
                   type={"text"}
+                  required={true}
                   tabIndex={2}
                   onChange={(e: any) => handleChange(e)}
                   name={"mobile_number"}
@@ -168,9 +160,16 @@ export const SignInComponent: React.FC = () => {
                   wrapperCol={{ span: 12 }}
                   label={t("OTP")}
                   name={"otp"}
-                  rules={[{ required: true, message: 'Please input your OTP!' }]}
+                  rules={[
+                    { required: true, message: `Please input your otp!` },
+                    {
+                        pattern: /^[0-9]{1,6}$/,
+                        message: `Please enter a valid otp`,
+                    }
+                ]}
                 >
                   <Input
+                    required={true}
                     type={"number"}
                     tabIndex={3}
                     onChange={(e: any) => handleChange(e)}
@@ -197,14 +196,7 @@ export const SignInComponent: React.FC = () => {
                     <Col sm={11} xs={11} className={styles.buttonPlace}>
                       <Space>
                         <a className={styles.resendOtp} style={{pointerEvents: (minutes == 0 && seconds == 0)? 'auto': "none"}} onClick={handleClickResendOtp}>{t("RESEND_OTP")}</a>
-                        {seconds > 0 || minutes > 0 ? (
-                          <> :
-                            <span className={styles.timer}>
-                              {minutes < 10 ? `0${minutes}` : minutes}:
-                              {seconds < 10 ? `0${seconds}` : seconds}
-                            </span>
-                          </>
-                        ) : ("")}
+                        <TimingsShow isLogin={isLogin} styles={styles} setSecondsDup={setMinutes} setMinutesDup={setSeconds} />
                       </Space>
                     </Col>
                   ) : ("")}

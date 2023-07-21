@@ -9,7 +9,7 @@ import { TitleBarComponent } from '../../components/common/titleBar';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { NotificationError, NotificationSuccess } from '../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../components/common/SelectItems/SelectRowsPerPage';
-import { GET_APIS, LOGIN_APIS } from '../../components/api/apisSpectacles';
+import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../components/api/apisSpectacles';
 import { ViewTableData } from '../../components/common/ViewTableData';
 import { findLoginName } from '../../utilities/reUsableFun';
 import { useTranslation } from 'react-i18next';
@@ -96,9 +96,9 @@ export const ReportsTable: React.FC = () => {
     /* first rendering only  */
     useEffect(() => {
         (async () => {
-            let { data } = await LOGIN_APIS(`getUser_data`, loginBY);
+            let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, loginBY, loginBY?.token);
             if (checkUserLogin == "District Officer") {
-                let result = await GET_APIS('reports_data');
+                let result = await GET_APIS('reports_data', loginBY?.token);
                 if (result.code) {
                     let resultFilter = (result?.data || []).filter((obj: any) => obj.district === data[0].district || obj.district === data[1].district);
                     setLoading(false);
@@ -108,7 +108,7 @@ export const ReportsTable: React.FC = () => {
                     NotificationError(result.message);
                 }
             } else if (checkUserLogin == "Taluka") {
-                let result = await GET_APIS('reports_data');
+                let result = await GET_APIS('reports_data', loginBY?.token);
                 if (result.code) {
                     let resultFilter = (result?.data || []).filter((obj: any) => obj.taluka === data[0].taluka || obj.taluka === data[1].taluka);
                     setLoading(false);
@@ -118,7 +118,7 @@ export const ReportsTable: React.FC = () => {
                     NotificationError(result.message);
                 }
             } else {
-                let result = await GET_APIS('reports_data');
+                let result = await GET_APIS('reports_data', loginBY?.token);
                 if (result.code) {
                     setLoading(false);
                     setOriginalTableData(result?.data)
@@ -160,7 +160,6 @@ export const ReportsTable: React.FC = () => {
         }
         // filter types and district and taluka and sub centre and village
         if (refraType && districtOption && talukaOption && subCentreOption && villageOption && selectedDates) {
-            console.log("fsd")
             filteredData = filteredData?.filter(obj => refraType !== 'all' ? obj.type === refraType : obj
                 && obj.district === districtOption && obj.taluka === talukaOption
                 && obj.sub_centre === subCentreOption && obj.village === villageOption &&

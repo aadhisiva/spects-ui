@@ -23,8 +23,6 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
     onSave,
     onCancel,
     editMode,
-    loading,
-    districtsData,
     setRuralOrUrban
 }
 ) => {
@@ -42,6 +40,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
         sub_centre: state.sub_centre,
         village: state.village,
     });
+
 const renderForm = () => (
     <div className={classnames(styles.modifyPage, 'modify-page')}>
     <Modal
@@ -73,13 +72,15 @@ const renderForm = () => (
                         tabIndex={1}
                         name={"refractionist_name"}
                         label={"Refractionist Name"}
-                        disabled={false}
+                        required={true}
+                        regex={true}
                     />
                     <ReUseInputFeild
                         tabIndex={3}
                         name={"refractionist_mobile"}
                         label={"Refractionist Mobile Number"}
-                        required={false}
+                        required={true}
+                        regex={true}
                     />
                 </>
             ) : (
@@ -88,13 +89,15 @@ const renderForm = () => (
                         tabIndex={1}
                         name={"name"}
                         label={"Name"}
-                        disabled={false}
+                        required={true}
+                        regex={true}
                     />
                     <ReUseInputFeild
                         tabIndex={3}
                         name={"mobile_number"}
                         label={"Mobile Number"}
-                        required={false}
+                        required={true}
+                        regex={true}
                     />
                 </>
             )}
@@ -103,7 +106,6 @@ const renderForm = () => (
                 label="Rural/Urban"
             >
                 <Select
-                    defaultValue={""}
                     placeholder="Rural/Urban"
                     disabled={true}
                     onChange={setRuralOrUrban}
@@ -118,10 +120,8 @@ const renderForm = () => (
                 label="District"
             >
                 <Select
-                    defaultValue={""}
                     placeholder="Rural/Urban"
                     disabled
-                // onChange={(value) => setRuralOrUrban(value)}
                 >
                     <Option>--select--</Option>
                 </Select>
@@ -133,10 +133,8 @@ const renderForm = () => (
                         label="Taluka"
                     >
                         <Select
-                            defaultValue={""}
                             placeholder="Taluka"
                             disabled
-                        // onChange={(value) => setRuralOrUrban(value)}
                         >
                             <Option>--select--</Option>
                         </Select>

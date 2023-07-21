@@ -11,6 +11,7 @@ type titlePageI = {
     title: string;
     image: boolean;
     loginUser?: string | any;
+    timer?: any
 };
 
 export const TitleBarComponent: React.FC<titlePageI> = (props) => {
@@ -46,8 +47,8 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                 {loginBy ? (
                     <Col sm={18} xs={12} className={styles.loginUserContainer}>
                         <div className={styles.loginUserTitle}>
-                           {t("WELCOME")} {loginBy?.type == "State Admin" ? t("STATE_ADMIN") :
-                                    loginBy?.type == "District Officer" ? "DHO" : 
+                            {t("WELCOME")} {loginBy?.type == "State Admin" ? t("STATE_ADMIN") :
+                                loginBy?.type == "District Officer" ? "DHO" :
                                     loginBy?.type == "Taluka" ?
                                         "THO" : "PHCO"} | <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
                         </div>

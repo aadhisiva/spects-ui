@@ -9,7 +9,7 @@ import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { TabsPosition } from 'antd/es/tabs';
 import { Option } from 'antd/es/mentions';
 import { findLoginName } from '../../../utilities/reUsableFun';
-import { GET_APIS, LOGIN_APIS } from '../../../components/api/apisSpectacles';
+import { GET_APIS, POSTAPIS_WITH_AUTH } from '../../../components/api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
@@ -55,13 +55,13 @@ export const RefractionistTable: React.FC = () => {
     const checkUserLogin = loginBY?.type;
 
     const GetTablData = async () => {
-        let {data} = checkUserLogin? await LOGIN_APIS(`getUser_data`, loginBY): [];
+        let {data} = checkUserLogin? await POSTAPIS_WITH_AUTH(`getUser_data`, loginBY, loginBY?.token): [];
         if(checkUserLogin == "District Officer"){
             let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district))); 
             let bodyData: any = {
                 districts: uniqueBody
             };
-            let result = await LOGIN_APIS(`all_masters`, bodyData);
+            let result = await POSTAPIS_WITH_AUTH(`all_masters`, bodyData, loginBY?.token);
             if (result.code == 200) {
                 setLoading(false);
                 setOriginalTableData(result?.data);
@@ -74,7 +74,7 @@ export const RefractionistTable: React.FC = () => {
             let bodyData: any = {
                 talukas: uniqueBody
             };
-            let result = await LOGIN_APIS(`all_masters`, bodyData);
+            let result = await POSTAPIS_WITH_AUTH(`all_masters`, bodyData, loginBY?.token);
             if (result.code == 200) {
                 setLoading(false);
                 setOriginalTableData(result?.data);
@@ -83,7 +83,7 @@ export const RefractionistTable: React.FC = () => {
                 NotificationError(result.message)
             }
         } else {
-            let result = await GET_APIS(`all_masters`);
+            let result = await GET_APIS(`all_masters`, loginBY?.token);
             if (result.code == 200) {
                 setLoading(false);
                 setOriginalTableData(result?.data);
@@ -222,8 +222,13 @@ export const RefractionistTable: React.FC = () => {
     const onSave = async (values: any) => {
         setLoading(true);
         setVisisble(false);
+        delete values?.district;
+        delete values?.rural_urban;
+        delete values?.sub_centre;
+        delete values?.taluka;
+        delete values?.village;
         let body: any = { ...values, ...{ user_unique_id: editId } };
-        let result = await LOGIN_APIS("update_data", body);
+        let result = await POSTAPIS_WITH_AUTH("update_data", body, loginBY?.token);
         if (result.code == 200) {
             await GetTablData();
             setLoading(false);
@@ -240,11 +245,6 @@ export const RefractionistTable: React.FC = () => {
         setEditMode("Edit")
     };
 
-    // const handleAddNewUser = () => {
-    //     setVisisble(true);
-    //     setFormData("");
-    //     setEditMode("")
-    // };
     const FormOpen = () => {
         return <ModalModify
             districtsData={districtSelect}

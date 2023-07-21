@@ -11,9 +11,7 @@ export const AddUser = () => {
     const naviage = useNavigate();
 
     const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
-    const handleChange = (e: { target: { value: any; }; }) => {
-        console.log(e.target.value)
-    };
+
 
     const handleClick = (path: string) => {
         naviage(path)

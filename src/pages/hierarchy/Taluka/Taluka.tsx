@@ -9,7 +9,7 @@ import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { TabsPosition } from 'antd/es/tabs';
 import { Option } from 'antd/es/mentions';
 import { findLoginName } from '../../../utilities/reUsableFun';
-import { GET_APIS, LOGIN_APIS } from '../../../components/api/apisSpectacles';
+import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../../components/api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
@@ -57,12 +57,12 @@ export const TalukaTable: React.FC = () => {
 
     const GetTablData = async () => {
         if (checkUserLogin) {
-            let { data } = await LOGIN_APIS(`getUser_data`, loginBY);
+            let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, loginBY, loginBY?.token);
             let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district)));
             let bodyData: any = {
                 districts: uniqueBody
             };
-            let result = await LOGIN_APIS(`talukas_data`, bodyData);
+            let result = await POSTAPIS_WITH_AUTH(`talukas_data`, bodyData, loginBY?.token);
             let uniqueData: any = _.uniqBy(result?.data, 'taluka');
             if (result.code == 200) {
                 setLoading(false);
@@ -72,7 +72,7 @@ export const TalukaTable: React.FC = () => {
                 NotificationError(result.message)
             }
         } else {
-            let result = await GET_APIS(`talukas_data`);
+            let result = await GET_APIS(`talukas_data`, loginBY?.token);
             if (result.code == 200) {
                 let uniqueData: any = _.uniqBy(result?.data, 'taluka');
                 setLoading(false);
@@ -188,7 +188,7 @@ export const TalukaTable: React.FC = () => {
         delete values?.district;
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
-        let result = await LOGIN_APIS("update_taluka_data", body);
+        let result = await POSTAPIS_WITH_AUTH("update_taluka_data", body, loginBY?.token);
         if (result.code == 200) {
             await GetTablData();
             setLoading(false);

@@ -1,34 +1,43 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Component } from "react";
 
-interface Props {
-  children?: ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-}
-
-class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false
-  };
-
-  public static getDerivedStateFromError(_: Error): State {
+export default class ErrorBoundary extends Component {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+ 
+  static getDerivedStateFromError(error: any) {
     // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+    console.log("errraddddddd",error)
+    return {
+      hasError: true,
+      error,
+    };
   }
-
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+ 
+  componentDidCatch(error: any, errorInfo: any) {
+    // You can also log the error to an error reporting service like AppSignal
+    // logErrorToMyService(error, errorInfo);
   }
-
-  public render() {
-    if (this.state.hasError) {
-      return <h1>Sorry.. there was an error</h1>;
+ 
+  render() {
+    const { hasError, error }: any = this.state;
+    const { children }: any = this.props;
+ 
+    if (hasError) {
+      // You can render any custom fallback UI
+      return <ErrorFallback error={error} />;
     }
-
-    return this.props.children;
+ 
+    return children;
   }
 }
 
-export default ErrorBoundary;
+const ErrorFallback = ({ error }: any) => (
+  <div>
+    <p>Something went wrong 😭</p>
+ 
+    {error.message && <span>Here's the error: {error.message}</span>}
+  </div>
+);
+ 

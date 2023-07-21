@@ -34,12 +34,6 @@ export const SessionTimeout:React.FC<SessionTimeout> = ({isAuthenticated, logOut
       }
   };
 
-  const handleContinue = () => {
-    setTimeoutModalOpen(false);
-    clearSessionInterval();
-    clearSessionTimeout();
-  };
-
   const onActive = () => {
     if (!timeoutModalOpen) {
       clearSessionInterval();
@@ -64,19 +58,17 @@ export const SessionTimeout:React.FC<SessionTimeout> = ({isAuthenticated, logOut
       }, delay);
     }
   };
-
   return (
     <>
-      {/* <IdelTimer
+      <IdelTimer
         ref={idleTimer}
         onActive={onActive}
         onIdle={onIdle}
         debounce={250}
         timeout={5000}
-      /> */}
+      />
       <SessionTimeoutDialog
         countdown={timeoutCountdown}
-        onContinue={handleContinue}
         onLogout={() => handleLogout(false)}
         open={timeoutModalOpen}
       />

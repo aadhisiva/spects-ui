@@ -31,10 +31,9 @@ type SessionTimeoutDialogProps = {
     open: boolean,
     countdown: number,
     onLogout: () => void,
-    onContinue: () => void
 };
 
-export const SessionTimeoutDialog:React.FC<SessionTimeoutDialogProps> = ({ open, countdown, onLogout, onContinue }) => {
+export const SessionTimeoutDialog:React.FC<SessionTimeoutDialogProps> = ({ open, countdown, onLogout }) => {
 
     return (
         <>
@@ -48,21 +47,13 @@ export const SessionTimeoutDialog:React.FC<SessionTimeoutDialogProps> = ({ open,
                     // className={classNames(classes.logout, classes.button)}
                 >
                     Logout
-                </Button>,
-                <Button
-                    onClick={onContinue}
-                    color="primary"
-                    // className={classes.button}
-                >
-                    Continue Session
                 </Button>
                 ]}
             >
                 <Typography>
-                    The current session is about to expire in{" "}
-                    {/* <span className={"classes"."countdown"}>{countdown}</span> seconds. */}
+                    The current session is about to expire in {" "}
+                    <span className={""}>{countdown}</span> seconds.
                 </Typography>
-                <Typography>{`Would you like to continue the session?`}</Typography>
             </Modal>
         </>
 

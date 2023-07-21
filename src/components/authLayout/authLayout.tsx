@@ -16,10 +16,7 @@ var condition = navigator.onLine;
 
 export const AuthLayout: React.FC = ({t}: any) => {
     const [isModalOpen, setIsModalOpen] = useState(!condition);
-    const [isAuthenticated, setAuth] = useState(false);
-    const handleClick = () => {
-        setAuth(!isAuthenticated);
-      }
+
       const handleOk = () => {
         setIsModalOpen(false);
       };
@@ -40,7 +37,6 @@ export const AuthLayout: React.FC = ({t}: any) => {
     return (
         <div>
             {!condition && handleShowInfoPage()}
-            <SessionTimeout isAuthenticated={isAuthenticated} logOut={handleClick} />
             <ErrorBoundary>
                 <LayoutComponent loginUser={loginUser}>
                     <BrowserRouter>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input } from "antd";
+import { Form, Input, message } from "antd";
 
 type InputFeildI = {
     type: string,
@@ -9,6 +9,7 @@ type InputFeildI = {
     autoComplete: string,
     label: string,
     value: string,
+    required: boolean
 }
 export const InputFeild: React.FC<InputFeildI> = ({
     type,
@@ -17,7 +18,8 @@ export const InputFeild: React.FC<InputFeildI> = ({
     name,
     autoComplete,
     label,
-    value
+    value,
+    required
 }) => {
     return (
         <div>
@@ -26,7 +28,13 @@ export const InputFeild: React.FC<InputFeildI> = ({
                 wrapperCol={{ span: 12 }}
                 label={label}
                 name={name}
-                rules={[{ required: true, message: 'Please input your Role!' }]}
+                rules={[
+                    { required: true, message: `Please input your ${label}!` },
+                    {
+                        pattern: /^[0-9]{1,10}$/,
+                        message: `Please enter a valid ${label}`,
+                    }
+                ]}
             >
                 <Input
                     type={type}
