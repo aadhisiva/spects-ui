@@ -112,7 +112,7 @@ export const DistrictOfficerTable: React.FC = () => {
             sortOrder: sortedInfo.columnKey === 'district' ? sortedInfo.order : null,
             ellipsis: true,
             render: (_, record) => {
-                return _.replace(/\W/g, "").replace(/\d/g, "");
+                return _?.replace(/\W/g, "")?.replace(/\d/g, "");
             }
         },
         {
@@ -233,7 +233,7 @@ export const DistrictOfficerTable: React.FC = () => {
                                         onChange={handleSelectedDistrict}
                                     >
                                         {(districtSelect || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj.district}`}>{obj.district.replace(/\W/g, "").replace(/\d/g, "")}</Option>
+                                            <Option key={String(i)} value={`${obj.district}`}>{obj?.district?.replace(/\W/g, "")?.replace(/\d/g, "")}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>

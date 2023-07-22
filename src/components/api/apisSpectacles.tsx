@@ -21,7 +21,7 @@ export const GET_APIS = async (url: string, token: string) => {
         let res = response?.data;
         return res;
     } catch (e: any) {
-        throw Error(e);
+        return e;
     };
 };
 
@@ -31,7 +31,7 @@ export const LOGIN_APIS = async (url: string, data: string) => {
         let res = response?.data;
         return res;
     } catch (e: any) {
-        throw Error(e);
+        return e;
     }
 };
 
@@ -41,7 +41,7 @@ export const SESSION_GET_APIS = async (url: string) => {
         let res = response?.data;
         return res;
     } catch (e: any) {
-        throw Error(e);
+        return e;
     }
 };
 export const POSTAPIS_WITH_AUTH = async (url: string, data: string, token: string) => {
@@ -60,6 +60,6 @@ export const POSTAPIS_WITH_AUTH = async (url: string, data: string, token: strin
         let res = response?.data;
         return res;
     } catch (e: any) {
-        throw Error(e);
+        return e;
     }
 };

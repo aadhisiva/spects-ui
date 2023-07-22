@@ -37,7 +37,6 @@ export const AuthLayout: React.FC = ({t}: any) => {
     return (
         <div>
             {!condition && handleShowInfoPage()}
-            <ErrorBoundary>
                 <LayoutComponent loginUser={loginUser}>
                     <BrowserRouter>
                         <Routes>
@@ -54,7 +53,6 @@ export const AuthLayout: React.FC = ({t}: any) => {
                         </Routes>
                     </BrowserRouter>
                 </LayoutComponent>
-            </ErrorBoundary>
         </div>
     )
 };
