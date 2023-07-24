@@ -1,0 +1,11 @@
+
+export const RESET_APP = 'RESET_APP';
+
+export const INITIATE_LOGIN = "INITIATE_LOGIN";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAILED = "LOGIN_FAILED";
+
+
+export const VERIFY_OTP = 'VERIFY_OTP';
+export const VERIFY_OTP_SUCCESS = 'VERIFY_OTP_SUCCESS';
+export const VERIFY_OTP_FAILED = 'VERIFY_OTP_FAILED';

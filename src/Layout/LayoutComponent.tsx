@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
-import { FooterComponent } from '../Footer/FooterComponent'
-import { HeaderCompenent } from '../Header/HeaderComponent';
+import { FooterComponent } from '../components/common/Footer/FooterComponent'
+import { HeaderCompenent } from '../components/common/Header/HeaderComponent';
 import styles from "./LayoutComponent.module.scss";
 import "./LayoutComponent.custom.scss";
 import classNames from "classnames";

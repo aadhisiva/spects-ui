@@ -6,6 +6,10 @@ import { UserOutlined } from '@ant-design/icons';
 import { findLoginName } from '../../../utilities/reUsableFun';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useFetchUserData } from '../../../utilities/userDataHook';
+import { clearSession } from '../../../utilities';
+import { dispatchStore } from '../../../redux/store';
+import { RESET_APP } from '../../../redux/actionTypes';
 
 type titlePageI = {
     title: string;
@@ -15,13 +19,16 @@ type titlePageI = {
 };
 
 export const TitleBarComponent: React.FC<titlePageI> = (props) => {
-    const navigate = useNavigate();
+    // translation
     const { t } = useTranslation();
-
-    const loginBy: any = findLoginName();
+    // session user data
+    const [userData] = useFetchUserData();
+    
+    const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem("login_user");
+        clearSession();
+        dispatchStore({ type: RESET_APP })
         navigate("/");
 
     };
@@ -44,12 +51,12 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                 <Col sm={4} xs={7} className={styles.titleContainer}>
                     <span className={styles.title}>{props.title ? props.title : ("")}</span>
                 </Col>
-                {loginBy ? (
+                {userData ? (
                     <Col sm={18} xs={12} className={styles.loginUserContainer}>
                         <div className={styles.loginUserTitle}>
-                            {t("WELCOME")} {loginBy?.type == "State Admin" ? t("STATE_ADMIN") :
-                                loginBy?.type == "District Officer" ? "DHO" :
-                                    loginBy?.type == "Taluka" ?
+                            {t("WELCOME")} {userData?.name == "State Admin" ? t("STATE_ADMIN") :
+                                userData?.name == "District Officer" ? "DHO" :
+                                userData?.name == "Taluka" ?
                                         "THO" : "PHCO"} | <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
                         </div>
                     </Col>)

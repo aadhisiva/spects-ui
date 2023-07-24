@@ -1,12 +1,14 @@
 import axios from "axios";
-import { LogoutModal } from "../common/logoutModal/logoutModal";
+import { LogoutModal } from "../components/common/logoutModal/logoutModal";
+import { readSessionKey } from "../utilities";
 
 // const baseUrl = "http://ec2-3-109-68-73.ap-south-1.compute.amazonaws.com:8889/";
-const baseUrl = "http://localhost:8889/";
+export const baseUrl = "http://localhost:8889/";
 
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
-export const GET_APIS = async (url: string, token: string) => {
+export const GET_APIS = async (url: string) => {
+    const {token, type}: any = await readSessionKey();
     try {
         let response = await axios.post(`${baseUrl}admin/${url}`, "",
             {
@@ -44,8 +46,10 @@ export const SESSION_GET_APIS = async (url: string) => {
         return e;
     }
 };
-export const POSTAPIS_WITH_AUTH = async (url: string, data: string, token: string) => {
+
+export const POSTAPIS_WITH_AUTH = async (url: string, data: string) => {
     try {
+        const {token, type}: any = await readSessionKey();
         let response = await axios.post(`${baseUrl}admin/${url}`, data, {
             headers:
             {

@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { TabsPosition } from 'antd/es/tabs';
 import { findLoginName } from '../../../utilities/reUsableFun';
-import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../../components/api/apisSpectacles';
+import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
@@ -50,7 +50,7 @@ export const DistrictOfficerTable: React.FC = () => {
     const [editId, setEditId] = useState([]);
 
     const GetTablData = async () => {
-        let data = await GET_APIS(`districts_data`, loginBY?.token);
+        let data = await GET_APIS(`districts_data`);
         if (data.code == 200) {
             let uniqueData: any = _.uniqBy(data?.data, 'district')
             setLoading(false);
@@ -147,7 +147,7 @@ export const DistrictOfficerTable: React.FC = () => {
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
         setLoading(true);
-        let result = await POSTAPIS_WITH_AUTH("update_districts_Data", body, loginBY?.token);
+        let result = await POSTAPIS_WITH_AUTH("update_districts_Data", body);
         if (result.code == 200) {
             await GetTablData();
             setLoading(false);

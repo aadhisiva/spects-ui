@@ -1,16 +1,20 @@
 import React, { useRef, useState } from "react";
-import  IdelTimer from "react-idle-timer";
-import {SessionTimeoutDialog} from "./SessionTimeoutDialog";
-
+import IdelTimer from "react-idle-timer";
+import { SESSION_TIME_OUT } from "../../../utilities";
+import {
+  Modal,
+  Button,
+  Typography,
+} from "antd"
 let countdownInterval: any;
 let timeout: any;
 
 type SessionTimeout = {
-    isAuthenticated: boolean
-    logOut: () => void
+  isAuthenticated: boolean
+  logOut: () => void
 }
 
-export const SessionTimeout:React.FC<SessionTimeout> = ({isAuthenticated, logOut}) => {
+export const SessionTimeout: React.FC<SessionTimeout> = ({ isAuthenticated, logOut }) => {
   const [timeoutModalOpen, setTimeoutModalOpen] = useState(false);
   const [timeoutCountdown, setTimeoutCountdown] = useState(0);
   const idleTimer = useRef(null);
@@ -19,24 +23,24 @@ export const SessionTimeout:React.FC<SessionTimeout> = ({isAuthenticated, logOut
     clearTimeout(timeout);
   };
 
-  const clearSessionInterval = () => {
+  const clearTimeDownInterval = () => {
     clearInterval(countdownInterval);
   };
 
-  const handleLogout = async (isTimedOut = false) => {
+  const handlePopUpClose = async (isTimedOut = false) => {
     try {
-        setTimeoutModalOpen(false);
-        clearSessionInterval();
-        clearSessionTimeout();
-        logOut();
-     } catch (err) {
-        console.error(err);
-      }
+      setTimeoutModalOpen(false);
+      clearTimeDownInterval();
+      clearSessionTimeout();
+      logOut();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const onActive = () => {
     if (!timeoutModalOpen) {
-      clearSessionInterval();
+      clearTimeDownInterval();
       clearSessionTimeout();
     }
   };
@@ -52,12 +56,18 @@ export const SessionTimeout:React.FC<SessionTimeout> = ({isAuthenticated, logOut
           if (countDown > 0) {
             setTimeoutCountdown(--countDown);
           } else {
-            handleLogout(true);
+            handlePopUpClose(true);
           }
         }, 1000);
       }, delay);
     }
   };
+  const handleContinue = () => {
+    setTimeoutModalOpen(false);
+    clearTimeDownInterval();
+    clearSessionTimeout();
+  };
+  console.log("##timeoutModalOpen", timeoutModalOpen);
   return (
     <>
       <IdelTimer
@@ -65,13 +75,37 @@ export const SessionTimeout:React.FC<SessionTimeout> = ({isAuthenticated, logOut
         onActive={onActive}
         onIdle={onIdle}
         debounce={250}
-        timeout={5000}
+        timeout={SESSION_TIME_OUT}
       />
-      <SessionTimeoutDialog
-        countdown={timeoutCountdown}
-        onLogout={() => handleLogout(false)}
+      <Modal
         open={timeoutModalOpen}
-      />
+        title="Title"
+        onCancel={() => handlePopUpClose(false)}
+        footer={[
+          <Button
+            onClick={() => {
+              setTimeoutModalOpen(false);
+              clearTimeDownInterval();
+              clearSessionTimeout();
+              logOut()
+            }}
+          >
+            Logout
+          </Button>,
+          <Button
+            color="primary"
+            onClick={handleContinue}
+          >
+            Continue Session
+          </Button>
+        ]}
+      >
+        <Typography>
+          The current session is about to expire in {" "}
+          <span className={""}>{timeoutCountdown}</span> seconds.
+        </Typography>
+        <Typography>{`Would you like to continue the session?`}</Typography>
+      </Modal>
     </>
   );
 }

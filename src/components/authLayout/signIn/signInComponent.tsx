@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { Dispatch, useEffect, useState } from 'react'
 import { Row, Col, Form, Button, Space, Select, Input, Spin } from "antd";
+import { useSelector, useDispatch } from "react-redux"
+import { loginUser, verifyOTP, TLoginUser } from '../../../redux/actions/userActions';
+import { dispatchStore, IStoreType } from '../../../redux/store';
+
 import styles from "./signInComponent.module.scss";
 import { TitleBarComponent } from '../../common/titleBar';
 import "./signInComponent.custom.scss";
 import { InputFeild } from '../../common/InputFeild';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { LOGIN_APIS, SESSION_GET_APIS } from '../../api/apisSpectacles';
+import { LOGIN_APIS, SESSION_GET_APIS } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../common/Notifications/Notifications';
 import { useTranslation } from 'react-i18next';
 import { SessionTimeout } from '../Sessions/SessionTimeout';
@@ -24,50 +28,56 @@ export const SignInComponent: React.FC = () => {
     role: "",
     mobile_number: "",
     otp: ""
-  })
+  });
   const [minutes, setMinutes] = useState(1);
   const [seconds, setSeconds] = useState(60);
-  const [isLogin, setLogin] = useState(false);
   const [isClickResend, SetClickResend] = useState(true);
-  
+
+  // redux-snippets
+  // const dispatch  = useDispatch();
+  const { isUserVerified } = useSelector((state: IStoreType) => state.user);
+  // const storedata = useSelector((state: IStoreInfo) => state);
+  // const { isUserVerified } = storedata;
+  // console.log("##isUserVerified: ", storedata);
+
   // transalation
   const { t } = useTranslation();
   //navigation
   const navigate = useNavigate();
 
-
-console.log("DFsdgvl")
-
-
   const onFinish = async () => {
-    if(!isLogin){
+    if (!isUserVerified) {
       let body: any = {
         mobile_number: state.mobile_number,
         type: state.role
       }
-      let LoginData = await LOGIN_APIS("login", body);
-      if (LoginData.code == 200) {
-        setLogin(true);
-        NotificationSuccess(LoginData.message);
-      } else {
-        setLogin(false);
-        NotificationError(LoginData.message);
-      }
+      // dispatch(loginUser({ ...body }));
+      dispatchStore(loginUser(body));
+      // let LoginData = await LOGIN_APIS("login", body);
+      // if (LoginData.code == 200) {
+      //   setLogin(true);
+      //   NotificationSuccess(LoginData.message);
+      // } else {
+      //   setLogin(false);
+      //   NotificationError(LoginData.message);
+      // }
     } else {
       let body: any = {
         mobile_number: state.mobile_number,
         type: state.role,
         otp: state.otp
       };
-      let checkLoginData = await LOGIN_APIS("otp_check", body);
-      if (checkLoginData.code == 200) {
-        let localStoreData = { ...checkLoginData.data, ...{ type: state.role } };
-        localStorage.setItem('login_user', JSON.stringify(localStoreData));
-        NotificationSuccess(checkLoginData.message);
-        navigate("/dashboard");
-      } else {
-        NotificationError(checkLoginData.message);
-      }
+
+      dispatchStore(verifyOTP(body, () => navigate("/dashboard", { replace: true})));
+      // let checkLoginData = await LOGIN_APIS("otp_check", body);
+      // if (checkLoginData.code == 200) {
+      //   let localStoreData = { ...checkLoginData.data, ...{ type: state.role } };
+      //   localStorage.setItem('login_user', JSON.stringify(localStoreData));
+      //   NotificationSuccess(checkLoginData.message);
+      //   navigate("/dashboard");
+      // } else {
+      //   NotificationError(checkLoginData.message);
+      // }
     }
   };
 
@@ -99,14 +109,14 @@ console.log("DFsdgvl")
     }
   };
 
-      useEffect(()=> {
-        (async function() {
-          let data = await SESSION_GET_APIS('session');
-          console.log("data?.login",data?.login)
-          if(data?.login == 200) navigate('/dashboard');
-          else navigate('/signin');
-        })() 
-      },[]);
+  // useEffect(() => {
+  //   (async function () {
+  //     let data = await SESSION_GET_APIS('session');
+  //     console.log("data?.login", data?.login)
+  //     if (data?.login == 200) navigate('/dashboard');
+  //     else navigate('/signin');
+  //   })()
+  // }, []);
 
 
   return (
@@ -154,49 +164,49 @@ console.log("DFsdgvl")
                   label={t("MOBILE_NUMBER")}
                   autoComplete={"off"}
                 />
-                {isLogin? (
-                <Form.Item
-                  labelCol={{ span: 10 }}
-                  wrapperCol={{ span: 12 }}
-                  label={t("OTP")}
-                  name={"otp"}
-                  rules={[
-                    { required: true, message: `Please input your otp!` },
-                    {
+                {isUserVerified ? (
+                  <Form.Item
+                    labelCol={{ span: 10 }}
+                    wrapperCol={{ span: 12 }}
+                    label={t("OTP")}
+                    name={"otp"}
+                    rules={[
+                      { required: true, message: `Please input your otp!` },
+                      {
                         pattern: /^[0-9]{1,6}$/,
                         message: `Please enter a valid otp`,
-                    }
-                ]}
-                >
-                  <Input
-                    required={true}
-                    type={"number"}
-                    tabIndex={3}
-                    onChange={(e: any) => handleChange(e)}
-                    name={"otp"}
-                    maxLength={6}
-                    autoComplete={"off"}
-                    value={state.otp}
-                  />
-                </Form.Item>
-                ): ("")}
+                      }
+                    ]}
+                  >
+                    <Input
+                      required={true}
+                      type={"number"}
+                      tabIndex={3}
+                      onChange={(e: any) => handleChange(e)}
+                      name={"otp"}
+                      maxLength={6}
+                      autoComplete={"off"}
+                      value={state.otp}
+                    />
+                  </Form.Item>
+                ) : ("")}
                 <Row >
                   <Col sm={12} xs={12} className={styles.buttonPlace}>
-                    {(!isLogin) ? (
+                    {(!isUserVerified) ? (
                       <Button disabled={seconds == 0 || minutes == 0} type="primary" htmlType="submit">
                         {t("SEND_OTP")}
                       </Button>
                     ) : (
-                        <Button  disabled={isClickResend ? minutes == 0 && seconds == 0: false} type="primary" htmlType="submit">
-                          {t("LOGIN")}
-                        </Button>
+                      <Button disabled={isClickResend ? minutes == 0 && seconds == 0 : false} type="primary" htmlType="submit">
+                        {t("LOGIN")}
+                      </Button>
                     )}
                   </Col>
-                  {(isLogin) ? (
+                  {(isUserVerified) ? (
                     <Col sm={11} xs={11} className={styles.buttonPlace}>
                       <Space>
-                        <a className={styles.resendOtp} style={{pointerEvents: (minutes == 0 && seconds == 0)? 'auto': "none"}} onClick={handleClickResendOtp}>{t("RESEND_OTP")}</a>
-                        <TimingsShow isLogin={isLogin} styles={styles} setSecondsDup={setMinutes} setMinutesDup={setSeconds} />
+                        <a className={styles.resendOtp} style={{ pointerEvents: (minutes == 0 && seconds == 0) ? 'auto' : "none" }} onClick={handleClickResendOtp}>{t("RESEND_OTP")}</a>
+                        <TimingsShow isLogin={isUserVerified} styles={styles} setSecondsDup={setMinutes} setMinutesDup={setSeconds} />
                       </Space>
                     </Col>
                   ) : ("")}

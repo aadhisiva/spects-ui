@@ -6,14 +6,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StyleProvider } from '@ant-design/cssinjs';
 
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <StyleProvider hashPriority='high'>
-      <App />
-    </StyleProvider>
+    <Provider store={store}>
+      <StyleProvider hashPriority='high'>
+        <App />
+      </StyleProvider>
+    </Provider>
   </React.StrictMode>
 );
 

@@ -2,7 +2,7 @@ import { Button, Col, Form, Row, Select } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { SelectItems } from '../SelectItems'
 import { findLoginName, validateMessages } from '../../../utilities/reUsableFun';
-import { GET_APIS } from '../../api/apisSpectacles';
+import { GET_APIS } from '../../../api/apisSpectacles';
 import { NotificationError } from '../Notifications/Notifications';
 import { Option } from 'antd/es/mentions';
 
