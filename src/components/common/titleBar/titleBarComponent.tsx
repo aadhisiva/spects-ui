@@ -1,15 +1,12 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import styles from "./titleBarComponent.module.scss";
-import { Avatar, Button, Col, Dropdown, Image, MenuProps, Row, Space } from 'antd';
+import { Col, Image, Row } from 'antd';
 import HomeImage from "../../../assets/Images/TitleBar/home.png";
-import { UserOutlined } from '@ant-design/icons';
-import { findLoginName } from '../../../utilities/reUsableFun';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useFetchUserData } from '../../../utilities/userDataHook';
-import { clearSession } from '../../../utilities';
-import { dispatchStore } from '../../../redux/store';
-import { RESET_APP } from '../../../redux/actionTypes';
+import { useDispatch } from "react-redux";
+import { LogOut, reset } from '../../../redux/features/authSlice';
 
 type titlePageI = {
     title: string;
@@ -22,15 +19,17 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
     // translation
     const { t } = useTranslation();
     // session user data
-    const [userData] = useFetchUserData();
+    const [user] = useFetchUserData();
     
+    // dispatch
+    const dispatch: Dispatch<any> = useDispatch();
+
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        clearSession();
-        dispatchStore({ type: RESET_APP })
+        dispatch(LogOut())
+        dispatch(reset());
         navigate("/");
-
     };
 
     return (
@@ -51,18 +50,19 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                 <Col sm={4} xs={7} className={styles.titleContainer}>
                     <span className={styles.title}>{props.title ? props.title : ("")}</span>
                 </Col>
-                {userData ? (
+                {user?.userData ? (
                     <Col sm={18} xs={12} className={styles.loginUserContainer}>
                         <div className={styles.loginUserTitle}>
-                            {t("WELCOME")} {userData?.name == "State Admin" ? t("STATE_ADMIN") :
-                                userData?.name == "District Officer" ? "DHO" :
-                                userData?.name == "Taluka" ?
-                                        "THO" : "PHCO"} | <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
+                            {t("WELCOME")} {user?.userData?.type == "state_admin" ? t("STATE_ADMIN") :
+                                user?.userData?.type == "district_officer" ? "DHO" :
+                                    user?.userData?.type == "taluka" ?
+                                        "THO" : "PHCO"} |
+                            <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
                         </div>
                     </Col>)
                     : ("")
                 }
             </Row>
         </div>
-    )
-}
+    );
+};

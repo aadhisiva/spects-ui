@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Image} from "antd";
+import React, { Dispatch, useEffect, useState } from "react";
+import { Row, Col, Image } from "antd";
 import styles from "./DashBoardHierarchy.module.scss";
 import "./DashBoardHierarchy.custom.scss";
 import RefractionistImage from "../../assets/Images/DashBoard/refractionist.png";
@@ -7,8 +7,7 @@ import BenificiaryImage from "../../assets/Images/DashBoard/benificary.png";
 import { TitleBarComponent } from '../../components/common/titleBar';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { findLoginName } from "../../utilities/reUsableFun";
-import { GET_APIS} from "../../api/apisSpectacles";
+import { GET_APIS } from "../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../utilities/userDataHook";
 
@@ -50,33 +49,29 @@ type LoginUserI = {
 };
 
 export const DashBoardHierarchy: React.FC = (props) => {
-    const [loginBY, setLoginBy] = useState(findLoginName());
+
     const [loginUser, setLoginUser] = useState<LoginUserI[]>([])
     const [pendingCount, setPendingCount] = useState(0);
     const [deliveredCount, setDeliveredCount] = useState(0);
     const [allCount, setAllCount] = useState(0);
 
-    // session user Data
+    //redux session
     const [userData] = useFetchUserData();
-
-    //timer
-    const [minutes, setMinutes] = useState(59);
-    const [seconds, setSeconds] = useState(60);
+    const token = userData?.userData?.token;
+    // console.log("SDfs", token)
 
     // translation
     const { t } = useTranslation();
-
     // navigate
     const navigate = useNavigate();
 
     const SwitchLoginData = (loginData: any) => {
-        console.log("loginData", loginData)
         switch (loginData) {
-            case "State Admin":
+            case "state_admin":
                 return setLoginUser(loginArrayData);
-            case "District Officer":
+            case "district_officer":
                 return setLoginUser(loginArrayData.slice(1, 3));
-            case "Taluka":
+            case "taluka":
                 return setLoginUser(loginArrayData.slice(2, 3));
             default:
                 return setLoginUser(loginArrayData.slice(3, 3));
@@ -85,20 +80,20 @@ export const DashBoardHierarchy: React.FC = (props) => {
 
     useEffect(() => {
         (async () => {
-            let all = await GET_APIS("get_orders_count");
-            let delivered = await GET_APIS("delivered");
-            let pending = await GET_APIS("pending");
+            let all = await GET_APIS("get_orders_count", token);
+            let delivered = await GET_APIS("delivered", token);
+            let pending = await GET_APIS("pending", token);
             if (all.code == 200) {
                 setAllCount(all?.data[0]?.count)
                 setPendingCount(pending?.data[0]?.count)
                 setDeliveredCount(delivered?.data[0]?.count)
             }
         })()
-    }, [])
+    }, [token])
 
     useEffect(() => {
-        SwitchLoginData(userData?.name);
-    }, [userData])
+        SwitchLoginData(userData?.userData?.type);
+    }, [userData?.success]);
 
     const handleClickToNextPage = (role: string, path: string) => {
         navigate(path, { state: role });

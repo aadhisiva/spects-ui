@@ -11,12 +11,11 @@ type LayoutI = {
 }
 
 export const LayoutComponent: React.FC<LayoutI> = ({
-    loginUser, 
     children
 }) => {
     return (
         <>
-            <HeaderCompenent loginUser={loginUser}/>
+            <HeaderCompenent/>
             <div className={classNames(styles.layoutPage, 'layout-page')}>
                 {children}
             </div>

@@ -8,15 +8,14 @@ import { useLocation, useNavigate } from 'react-router';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { TabsPosition } from 'antd/es/tabs';
 import { Option } from 'antd/es/mentions';
-import { findLoginName } from '../../../utilities/reUsableFun';
-import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
+import { GET_APIS, POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
 import Search from 'antd/es/input/Search';
-import { setTimeout } from 'timers';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useFetchUserData } from '../../../utilities/userDataHook';
 
 interface DataType {
     key: string,
@@ -30,7 +29,6 @@ interface DataType {
 };
 
 export const TalukaTable: React.FC = () => {
-    const [loginBY, setLoginBy] = useState(findLoginName());
     const [editmode, setEditMode] = useState('');
     const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
@@ -53,16 +51,22 @@ export const TalukaTable: React.FC = () => {
     const [queryString, setQueryString] = useState<string>("");
     const [editId, setEditId] = useState([]);
 
-    const checkUserLogin = loginBY?.type == "District Officer";
+    // auth user
+    const [userData] = useFetchUserData()
+    const token = userData?.userData?.token;
+    const type = userData?.userData?.type;
+
+    const checkUserLogin = type == "district_officer";
+    const unique_id: any = {unique_id: userData?.userData?.unique_id, type: userData?.userData?.type};
 
     const GetTablData = async () => {
         if (checkUserLogin) {
-            let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, loginBY);
+            let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, unique_id, token);
             let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district)));
             let bodyData: any = {
                 districts: uniqueBody
             };
-            let result = await POSTAPIS_WITH_AUTH(`talukas_data`, bodyData);
+            let result = await POSTAPIS_WITH_AUTH(`talukas_data`, bodyData, token);
             let uniqueData: any = _.uniqBy(result?.data, 'taluka');
             if (result.code == 200) {
                 setLoading(false);
@@ -72,7 +76,7 @@ export const TalukaTable: React.FC = () => {
                 NotificationError(result.message)
             }
         } else {
-            let result = await GET_APIS(`talukas_data`);
+            let result = await GET_APIS(`talukas_data`, token);
             if (result.code == 200) {
                 let uniqueData: any = _.uniqBy(result?.data, 'taluka');
                 setLoading(false);
@@ -188,7 +192,7 @@ export const TalukaTable: React.FC = () => {
         delete values?.district;
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
-        let result = await POSTAPIS_WITH_AUTH("update_taluka_data", body);
+        let result = await POSTAPIS_WITH_AUTH("update_taluka_data", body, token);
         if (result.code == 200) {
             await GetTablData();
             setLoading(false);

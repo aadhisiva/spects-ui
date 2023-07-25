@@ -1,21 +1,19 @@
-import React, { Dispatch, useEffect, useState } from 'react'
+import React, { Dispatch, useEffect, useRef, useState } from 'react'
 import { Row, Col, Form, Button, Space, Select, Input, Spin } from "antd";
 import { useSelector, useDispatch } from "react-redux"
-import { loginUser, verifyOTP, TLoginUser } from '../../../redux/actions/userActions';
-import { dispatchStore, IStoreType } from '../../../redux/store';
-
 import styles from "./signInComponent.module.scss";
-import { TitleBarComponent } from '../../common/titleBar';
 import "./signInComponent.custom.scss";
 import { InputFeild } from '../../common/InputFeild';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { LOGIN_APIS, SESSION_GET_APIS } from '../../../api/apisSpectacles';
+import { LOGIN_APIS, REACT_APP_SITE_KEY,  verifyToken } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../common/Notifications/Notifications';
 import { useTranslation } from 'react-i18next';
-import { SessionTimeout } from '../Sessions/SessionTimeout';
-import axios from 'axios';
 import { TimingsShow } from '../../common/Timers/timings';
+import { LoginUser, reset, verifyOTP } from '../../../redux/features/authSlice';
+import { IStateValues } from '../../../type';
+import { LoginTitleBarComponent } from '../../common/LoginTitleBar';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 type otpInterFace = {
   role: string,
@@ -33,51 +31,49 @@ export const SignInComponent: React.FC = () => {
   const [seconds, setSeconds] = useState(60);
   const [isClickResend, SetClickResend] = useState(true);
 
+  //captch 
+  const captchaRef: any = useRef(null);
   // redux-snippets
-  // const dispatch  = useDispatch();
-  const { isUserVerified } = useSelector((state: IStoreType) => state.user);
-  // const storedata = useSelector((state: IStoreInfo) => state);
-  // const { isUserVerified } = storedata;
-  // console.log("##isUserVerified: ", storedata);
+  const dispatch: Dispatch<any> = useDispatch();
+
+  const userData: any = useSelector((state: IStateValues) => state?.auth);
+  const { isLoginCLick, user, isSuccess, isOtpVerfity } = userData;
 
   // transalation
   const { t } = useTranslation();
   //navigation
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (isOtpVerfity) {
+      if (user || isSuccess) {
+        navigate("/dashboard", {replace: true});
+      }
+      dispatch(reset());
+    }
+  }, [user, isSuccess, dispatch, navigate]);
+
+
   const onFinish = async () => {
-    if (!isUserVerified) {
-      let body: any = {
+    if (!isLoginCLick) {
+      let body = {
         mobile_number: state.mobile_number,
         type: state.role
       }
-      // dispatch(loginUser({ ...body }));
-      dispatchStore(loginUser(body));
-      // let LoginData = await LOGIN_APIS("login", body);
-      // if (LoginData.code == 200) {
-      //   setLogin(true);
-      //   NotificationSuccess(LoginData.message);
-      // } else {
-      //   setLogin(false);
-      //   NotificationError(LoginData.message);
-      // }
+      dispatch(LoginUser(body))
     } else {
-      let body: any = {
+      let body = {
         mobile_number: state.mobile_number,
         type: state.role,
         otp: state.otp
       };
+      //captch capture
+      let token = await captchaRef?.current?.executeAsync();
+      captchaRef?.current?.reset();
+      let valid_token = await verifyToken(token);
 
-      dispatchStore(verifyOTP(body, () => navigate("/dashboard", { replace: true})));
-      // let checkLoginData = await LOGIN_APIS("otp_check", body);
-      // if (checkLoginData.code == 200) {
-      //   let localStoreData = { ...checkLoginData.data, ...{ type: state.role } };
-      //   localStorage.setItem('login_user', JSON.stringify(localStoreData));
-      //   NotificationSuccess(checkLoginData.message);
-      //   navigate("/dashboard");
-      // } else {
-      //   NotificationError(checkLoginData.message);
-      // }
+      if (!valid_token?.success) return NotificationError("Sorry!! Token invalid");
+      dispatch(verifyOTP(body));
     }
   };
 
@@ -109,19 +105,9 @@ export const SignInComponent: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   (async function () {
-  //     let data = await SESSION_GET_APIS('session');
-  //     console.log("data?.login", data?.login)
-  //     if (data?.login == 200) navigate('/dashboard');
-  //     else navigate('/signin');
-  //   })()
-  // }, []);
-
-
   return (
     <div>
-      <TitleBarComponent title={t("LOGIN_PAGE")} image={false} />
+      <LoginTitleBarComponent />
       <div className={classNames(styles.signInPage, "signin-page")}>
         <Row justify="space-around" align="middle">
           <Col md={13} xs={24} className={styles.box}>
@@ -150,8 +136,6 @@ export const SignInComponent: React.FC = () => {
                     <Select.Option value="state_admin">State Admin</Select.Option>
                     <Select.Option value="district_officer">District Officer</Select.Option>
                     <Select.Option value="taluka">Taluka</Select.Option>
-                    {/* <Select.Option value="subcenter">Sub Center</Select.Option> */}
-                    {/* <Select.Option value="refractionist">Refractionist</Select.Option> */}
                   </Select>
                 </Form.Item>
                 <InputFeild
@@ -164,7 +148,7 @@ export const SignInComponent: React.FC = () => {
                   label={t("MOBILE_NUMBER")}
                   autoComplete={"off"}
                 />
-                {isUserVerified ? (
+                {isLoginCLick ? (
                   <Form.Item
                     labelCol={{ span: 10 }}
                     wrapperCol={{ span: 12 }}
@@ -190,9 +174,10 @@ export const SignInComponent: React.FC = () => {
                     />
                   </Form.Item>
                 ) : ("")}
+                <ReCAPTCHA sitekey={REACT_APP_SITE_KEY} ref={captchaRef} size='invisible' />
                 <Row >
                   <Col sm={12} xs={12} className={styles.buttonPlace}>
-                    {(!isUserVerified) ? (
+                    {(!isLoginCLick) ? (
                       <Button disabled={seconds == 0 || minutes == 0} type="primary" htmlType="submit">
                         {t("SEND_OTP")}
                       </Button>
@@ -202,11 +187,11 @@ export const SignInComponent: React.FC = () => {
                       </Button>
                     )}
                   </Col>
-                  {(isUserVerified) ? (
+                  {(isLoginCLick) ? (
                     <Col sm={11} xs={11} className={styles.buttonPlace}>
                       <Space>
                         <a className={styles.resendOtp} style={{ pointerEvents: (minutes == 0 && seconds == 0) ? 'auto' : "none" }} onClick={handleClickResendOtp}>{t("RESEND_OTP")}</a>
-                        <TimingsShow isLogin={isUserVerified} styles={styles} setSecondsDup={setMinutes} setMinutesDup={setSeconds} />
+                        <TimingsShow isLogin={isLoginCLick} styles={styles} setSecondsDup={setMinutes} setMinutesDup={setSeconds} />
                       </Space>
                     </Col>
                   ) : ("")}

@@ -12,7 +12,7 @@ import { useFetchUserData } from '../../utilities/userDataHook';
 
 export const AssignmentTable: React.FC = () => {
   // session user Data  
-  const [userData] = useFetchUserData();
+  const [user] = useFetchUserData();
 
   // translation
   const { t } = useTranslation();
@@ -21,14 +21,14 @@ export const AssignmentTable: React.FC = () => {
   const location: any = useLocation();
 
   const Routes = () => {
-    if (userData?.name == "State Admin") {
+    if (user?.userData?.type == "state_admin") {
       if (location.state === "district") return <DistrictOfficerTable />
       if (location.state === "taluka") return <TalukaTable />
       if (location.state === "refraction") return <RefractionistTable />
-    } else if (userData?.name == "District Officer") {
+    } else if (user?.userData?.type == "district_officer") {
       if (location.state === "taluka") return <TalukaTable />
       if (location.state === "refraction") return <RefractionistTable />
-    } else if (userData?.name == "Taluka") {
+    } else if (user?.userData?.type == "taluka") {
       if (location.state === "refraction") return <RefractionistTable />
     }
   }

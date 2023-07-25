@@ -4,17 +4,15 @@ import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./District.module.scss";
 import classNames from 'classnames';
 import "./District.custom.scss";
-import { useLocation, useNavigate } from 'react-router';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
-import { TabsPosition } from 'antd/es/tabs';
-import { findLoginName } from '../../../utilities/reUsableFun';
-import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
+import { GET_APIS, POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
 import { ModalModify } from '../../../components/common/ModalModify';
 import Search from 'antd/es/input/Search';
 import _ from "lodash";
 import { useTranslation } from 'react-i18next';
+import { useFetchUserData } from '../../../utilities/userDataHook';
 
 const { Option } = Select;
 interface DataType {
@@ -30,9 +28,8 @@ interface DataType {
 
 export const DistrictOfficerTable: React.FC = () => {
     const [editmode, setEditMode] = useState('');
-    const { t }  = useTranslation();
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
-    const [loginBY, setLoginBy] = useState(findLoginName());
 
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
     const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
@@ -49,8 +46,14 @@ export const DistrictOfficerTable: React.FC = () => {
     const [queryString, setQueryString] = useState<string>("");
     const [editId, setEditId] = useState([]);
 
+    // auth user
+    const [userData] = useFetchUserData()
+    const token = userData?.userData?.token;
+
+
     const GetTablData = async () => {
-        let data = await GET_APIS(`districts_data`);
+        
+        let data = await GET_APIS(`districts_data`, token);
         if (data.code == 200) {
             let uniqueData: any = _.uniqBy(data?.data, 'district')
             setLoading(false);
@@ -59,7 +62,8 @@ export const DistrictOfficerTable: React.FC = () => {
         } else {
             NotificationError(data.message)
         }
-    }
+    };
+
 
     useEffect(() => {
         (async () => {
@@ -147,7 +151,7 @@ export const DistrictOfficerTable: React.FC = () => {
         delete values?.rural_urban;
         let body: any = { ...values, ...{ unique_id: editId } };
         setLoading(true);
-        let result = await POSTAPIS_WITH_AUTH("update_districts_Data", body);
+        let result = await POSTAPIS_WITH_AUTH("update_districts_Data", body, token);
         if (result.code == 200) {
             await GetTablData();
             setLoading(false);
@@ -198,9 +202,9 @@ export const DistrictOfficerTable: React.FC = () => {
         };
     };
 
-    const rednerDistrictsData = () =>(
+    const rednerDistrictsData = () => (
         <>
-        {visible ? FormOpen() : ("")}
+            {visible ? FormOpen() : ("")}
             <div className={classNames(styles.districtPage, "district-page-list")}>
                 <div className={styles.table}>
                     <Row>
@@ -287,7 +291,7 @@ export const DistrictOfficerTable: React.FC = () => {
 
     return (
         <>
-        {<Spin spinning={loading}>{rednerDistrictsData()}</Spin>}
+            {<Spin spinning={loading}>{rednerDistrictsData()}</Spin>}
         </>
     )
 }

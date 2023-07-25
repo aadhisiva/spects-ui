@@ -4,15 +4,15 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-export default function requireAuth(WrappedComponent: any) {
+export default function RequireAuth(WrappedComponent: any) {
 
     interface IAuthentication {
-        authenticated: boolean,
+        authenticated: boolean
     }
     class Authentication extends Component<IAuthentication> {
         render() {
-
-            if (!this.props?.authenticated) {
+            console.log("this?.props?.authenticated", this?.props)
+            if (!this?.props?.authenticated) {
                 return <Navigate to="/signin" />
             }
 
@@ -20,8 +20,7 @@ export default function requireAuth(WrappedComponent: any) {
         }
     }
     function mapStateToProps({session} :any) {
-        console.log("##auth: ", session);
-        return { authenticated: session?.authenticated }
+        return { authenticated: session?.authenticated}
     }
 
     return connect(mapStateToProps)(Authentication);

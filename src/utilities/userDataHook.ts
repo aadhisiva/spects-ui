@@ -1,19 +1,29 @@
-import { useState, useEffect } from "react";
-import { sessionService } from "redux-react-session";
+import { useState, useEffect, Dispatch } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { IStateValues } from "../type";
+import { useNavigate } from "react-router";
+import { getMe } from "../redux/features/authSlice";
 
-type TuseFetchUserDataProps = {
-    name: string,
-    token?: string,
-    unique_id?: string,
-    user_unique_id?: string
-}
 export const useFetchUserData = () => {
-  const [sessionUserData, setSessionUserData] = useState<TuseFetchUserDataProps>();
+  // session user Data
+  // const [userData] = useFetchUserData();
+
+  const userStore: any = useSelector((state: IStateValues) => state?.auth);
+  const { isError, user } = userStore;
+  //redux session
+  const dispatch: Dispatch<any> = useDispatch();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    sessionService.loadUser()
-      .then((currentUser) => setSessionUserData(currentUser));
-  }, []);
+    if (isError) {
+      navigate("/signin");
+    }
+  }, [isError, navigate]);
 
-  return [sessionUserData];
+  useEffect(() => {
+    dispatch(getMe(''));
+  }, [dispatch]);
+
+  return [user];
 };

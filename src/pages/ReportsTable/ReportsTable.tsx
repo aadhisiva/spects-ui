@@ -11,8 +11,8 @@ import { NotificationError, NotificationSuccess } from '../../components/common/
 import SelectRowsPerPage from '../../components/common/SelectItems/SelectRowsPerPage';
 import { GET_APIS,  POSTAPIS_WITH_AUTH } from '../../api/apisSpectacles';
 import { ViewTableData } from '../../components/common/ViewTableData';
-import { findLoginName } from '../../utilities/reUsableFun';
 import { useTranslation } from 'react-i18next';
+import { useFetchUserData } from '../../utilities/userDataHook';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -82,10 +82,9 @@ export const ReportsTable: React.FC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [queryString, setQueryString] = useState<string>("");
 
-    const [loginBY, setLoginBy] = useState(findLoginName());
     /* naviagte */
     const navigate = useNavigate();
-    const checkUserLogin = loginBY?.type;
+
     /* custom pagination */
     const handleChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter) => {
         setCurrentPage(Number(pagination?.current));
@@ -93,12 +92,20 @@ export const ReportsTable: React.FC = () => {
         setFilteredInfo(filters);
         setSortedInfo(sorter as SorterResult<DataType>);
     };
+
+   // auth user
+   const [userData] = useFetchUserData()
+   const token = userData?.userData?.token;
+   const type = userData?.userData?.type;
+
+   const unique_id: any = { unique_id: userData?.userData?.unique_id, type: userData?.userData?.type };
+
     /* first rendering only  */
     useEffect(() => {
         (async () => {
-            let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, loginBY);
-            if (checkUserLogin == "District Officer") {
-                let result = await GET_APIS('reports_data');
+            let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, unique_id, token);
+            if (type == 'district_officer') {
+                let result = await GET_APIS('reports_data', token);
                 if (result.code) {
                     let resultFilter = (result?.data || []).filter((obj: any) => obj.district === data[0].district || obj.district === data[1].district);
                     setLoading(false);
@@ -107,8 +114,8 @@ export const ReportsTable: React.FC = () => {
                 } else {
                     NotificationError(result.message);
                 }
-            } else if (checkUserLogin == "Taluka") {
-                let result = await GET_APIS('reports_data');
+            } else if (type == "taluka") {
+                let result = await GET_APIS('reports_data', token);
                 if (result.code) {
                     let resultFilter = (result?.data || []).filter((obj: any) => obj.taluka === data[0].taluka || obj.taluka === data[1].taluka);
                     setLoading(false);
@@ -118,7 +125,7 @@ export const ReportsTable: React.FC = () => {
                     NotificationError(result.message);
                 }
             } else {
-                let result = await GET_APIS('reports_data');
+                let result = await GET_APIS('reports_data', token);
                 if (result.code) {
                     setLoading(false);
                     setOriginalTableData(result?.data)

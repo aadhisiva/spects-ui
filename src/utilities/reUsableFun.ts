@@ -15,24 +15,3 @@ export const validateMessages = {
         range: '${label} must be between ${min} and ${max}',
     },
 };
-
-export const findLoginName = () => {
-    let parseData: any = localStorage.getItem("login_user");
-    let switchData = JSON.parse(parseData);
-    if(!switchData){
-        return null
-    } else {
-    switch (switchData.type) {
-        case "state_admin":
-            return { ...switchData, ...{ type: "State Admin" } };
-        case "district_officer":
-            return { ...switchData, ...{ type: "District Officer" } };
-        case "taluka":
-            return { ...switchData, ...{ type: "Taluka" } };
-        case "subcenter":
-            return { ...switchData, ...{ type: "Sub Centre" } };
-        default:
-            return { ...switchData, ...{ type: "Refractionist" } };
-    };
-}
-};

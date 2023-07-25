@@ -67,7 +67,7 @@ export const SessionTimeout: React.FC<SessionTimeout> = ({ isAuthenticated, logO
     clearTimeDownInterval();
     clearSessionTimeout();
   };
-  console.log("##timeoutModalOpen", timeoutModalOpen);
+
   return (
     <>
       <IdelTimer
@@ -79,10 +79,12 @@ export const SessionTimeout: React.FC<SessionTimeout> = ({ isAuthenticated, logO
       />
       <Modal
         open={timeoutModalOpen}
-        title="Title"
+        title="LogOut"
         onCancel={() => handlePopUpClose(false)}
         footer={[
           <Button
+            type="primary"
+            danger
             onClick={() => {
               setTimeoutModalOpen(false);
               clearTimeDownInterval();
@@ -93,7 +95,7 @@ export const SessionTimeout: React.FC<SessionTimeout> = ({ isAuthenticated, logO
             Logout
           </Button>,
           <Button
-            color="primary"
+            type="primary"
             onClick={handleContinue}
           >
             Continue Session
@@ -104,7 +106,7 @@ export const SessionTimeout: React.FC<SessionTimeout> = ({ isAuthenticated, logO
           The current session is about to expire in {" "}
           <span className={""}>{timeoutCountdown}</span> seconds.
         </Typography>
-        <Typography>{`Would you like to continue the session?`}</Typography>
+        <Typography><b>{`Would you like to continue the session?`}</b></Typography>
       </Modal>
     </>
   );

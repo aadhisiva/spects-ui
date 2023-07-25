@@ -5,7 +5,7 @@ type Timeout = ReturnType<typeof setTimeout>
 let timer: Timeout;
 
 // export const SESSION_TIME_OUT = 1000 * 60 * 0.5; // milliseconds[[1-1000]] * seconds[1-60] * minutes[1-60] * hours[1-24] * days[any-number]
-export const SESSION_TIME_OUT = 1000 * 60 * 10; // milliseconds[[1-1000]] * seconds[1-60] * minutes[1-60] * hours[1-24] * days[any-number]
+export const SESSION_TIME_OUT = 1000 * 60 * 30; // milliseconds[[1-1000]] * seconds[1-60] * minutes[1-60] * hours[1-24] * days[any-number]
 export const clearSession = () => {
     sessionService.deleteSession();
     sessionService.deleteUser();
