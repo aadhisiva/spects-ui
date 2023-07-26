@@ -52,7 +52,7 @@ export const DistrictOfficerTable: React.FC = () => {
 
 
     const GetTablData = async () => {
-        
+
         let data = await GET_APIS(`districts_data`, token);
         if (data.code == 200) {
             let uniqueData: any = _.uniqBy(data?.data, 'district')

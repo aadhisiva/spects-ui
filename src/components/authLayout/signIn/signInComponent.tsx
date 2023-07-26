@@ -6,7 +6,7 @@ import "./signInComponent.custom.scss";
 import { InputFeild } from '../../common/InputFeild';
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { LOGIN_APIS, REACT_APP_SITE_KEY,  verifyToken } from '../../../api/apisSpectacles';
+import { LOGIN_APIS, REACT_APP_SITE_KEY, verifyToken } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../common/Notifications/Notifications';
 import { useTranslation } from 'react-i18next';
 import { TimingsShow } from '../../common/Timers/timings';
@@ -46,12 +46,10 @@ export const SignInComponent: React.FC = () => {
 
   useEffect(() => {
     if (isOtpVerfity) {
-      if (user || isSuccess) {
-        navigate("/dashboard", {replace: true});
-      }
-      dispatch(reset());
+      navigate("/dashboard", { replace: true });
     }
-  }, [user, isSuccess, dispatch, navigate]);
+    dispatch(reset());
+  }, [isOtpVerfity]);
 
 
   const onFinish = async () => {
@@ -72,7 +70,7 @@ export const SignInComponent: React.FC = () => {
       captchaRef?.current?.reset();
       let valid_token = await verifyToken(token);
 
-      if (!valid_token?.success) return NotificationError("Sorry!! Token invalid");
+      if (!valid_token?.success) return NotificationError("Sorry!! Invalid Captcha");
       dispatch(verifyOTP(body));
     }
   };

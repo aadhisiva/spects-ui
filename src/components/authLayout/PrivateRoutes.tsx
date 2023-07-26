@@ -7,20 +7,22 @@ import { Navigate } from "react-router-dom";
 export default function RequireAuth(WrappedComponent: any) {
 
     interface IAuthentication {
-        authenticated: boolean
+        auth: boolean
     }
     class Authentication extends Component<IAuthentication> {
         render() {
-            console.log("this?.props?.authenticated", this?.props)
-            if (!this?.props?.authenticated) {
+            const { user }: any = this.props.auth;
+            console.log("user", user.success);
+            if (!user.sucess) {
                 return <Navigate to="/signin" />
-            }
+            };
 
             return <WrappedComponent {...this.props} />
-        }
-    }
-    function mapStateToProps({session} :any) {
-        return { authenticated: session?.authenticated}
+        };
+    };
+
+    function mapStateToProps({ auth }: any) {
+        return { auth: auth }
     }
 
     return connect(mapStateToProps)(Authentication);

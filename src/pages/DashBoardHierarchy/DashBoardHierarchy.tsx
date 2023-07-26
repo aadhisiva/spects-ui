@@ -58,7 +58,6 @@ export const DashBoardHierarchy: React.FC = (props) => {
     //redux session
     const [userData] = useFetchUserData();
     const token = userData?.userData?.token;
-    // console.log("SDfs", token)
 
     // translation
     const { t } = useTranslation();
@@ -80,13 +79,15 @@ export const DashBoardHierarchy: React.FC = (props) => {
 
     useEffect(() => {
         (async () => {
-            let all = await GET_APIS("get_orders_count", token);
-            let delivered = await GET_APIS("delivered", token);
-            let pending = await GET_APIS("pending", token);
-            if (all.code == 200) {
-                setAllCount(all?.data[0]?.count)
-                setPendingCount(pending?.data[0]?.count)
-                setDeliveredCount(delivered?.data[0]?.count)
+            if (token !== undefined) {
+                let all = await GET_APIS("get_orders_count", token);
+                let delivered = await GET_APIS("delivered", token);
+                let pending = await GET_APIS("pending", token);
+                if (all.code == 200) {
+                    setAllCount(all?.data[0]?.count)
+                    setPendingCount(pending?.data[0]?.count)
+                    setDeliveredCount(delivered?.data[0]?.count)
+                }
             }
         })()
     }, [token])

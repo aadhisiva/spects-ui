@@ -30,7 +30,7 @@ const AuthLayout: React.FC = () => {
     dispatch(reset());
   };
 
-  
+  console.log("userStore",userStore)
 
   return (
     <div>
@@ -39,9 +39,9 @@ const AuthLayout: React.FC = () => {
         <SessionTimeout isAuthenticated={userStore?.isSuccess} logOut={handleLogOut} />
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Navigate to={"/signin"} replace />} />
+            <Route path='/' element={<Navigate to={"/signin"} replace={true} />} />
             <Route path='/signin' element={<SignInComponent />} />
-            <Route path='/dashboard' Component={RequireAuth(DashBoardHierarchy)} />
+            <Route path='/dashboard' element={<DashBoardHierarchy />} />
             <Route path='/assignment-list' element={<AssignmentTable />} />
             <Route path='/reports-list' element={<ReportsTable />} />
             <Route path='*' element={<PageNotFound />} />

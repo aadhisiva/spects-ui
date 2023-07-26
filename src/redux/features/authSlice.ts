@@ -41,7 +41,6 @@ export const getMe = createAsyncThunk("user/getMe", async(_: string, thunkAPI) =
 export const verifyOTP = createAsyncThunk("user/verifyOtp", async(data: ILoginInfo, thunkAPI) => {
     try {
         const response = await axios.post(`${baseUrl}admin/otp_check`, data);
-        sessionService.saveSession(response.data);
         return response.data;
     } catch (error: any) {
         if(error.response){

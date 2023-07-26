@@ -10,6 +10,5 @@ export const store = configureStore({
   },
 });
 export default store;
-sessionService.initSessionService(store)
 
 export const dispatchStore = store.dispatch as typeof store.dispatch | Dispatch<AnyAction>
