@@ -10,7 +10,6 @@ import { SessionTimeout } from '../common/Sessions/SessionTimeout'
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut, getMe, reset } from '../../redux/features/authSlice'
 import { IStateValues } from '../../type'
-import RequireAuth from './PrivateRoutes'
 import { ShowInfoPageForOnline } from '../common/OnlineOroffline'
 
 var condition = navigator.onLine;
@@ -27,10 +26,8 @@ const AuthLayout: React.FC = () => {
 
   const handleLogOut = () => {
     dispatch(LogOut());
-    dispatch(reset());
+    dispatch(reset("logout"));
   };
-
-  console.log("userStore",userStore)
 
   return (
     <div>

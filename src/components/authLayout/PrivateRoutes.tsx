@@ -12,7 +12,6 @@ export default function RequireAuth(WrappedComponent: any) {
     class Authentication extends Component<IAuthentication> {
         render() {
             const { user }: any = this.props.auth;
-            console.log("user", user.success);
             if (!user.sucess) {
                 return <Navigate to="/signin" />
             };

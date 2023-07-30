@@ -11,7 +11,8 @@ export interface ILoginIntialState {
     isLoading: boolean,
     message: string | unknown,
     isLoginCLick: boolean,
-    isOtpVerfity: boolean
+    isOtpVerfity: boolean,
+    loginTime: any
 };
 
 export interface IStateValues {

@@ -7,11 +7,19 @@ import rightLogo from "../../../assets/Images/HeaderImages/rightLogo.png";
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import i18n from "i18next";
+import {useSelector, useDispatch} from "react-redux";
+import { useFetchUserData } from '../../../utilities/userDataHook';
+import { IStateValues } from '../../../type';
 
 const { Header } = Layout;
 
 export const HeaderCompenent: React.FC = () => {
+    // translation
     const { t } = useTranslation();
+
+    // redux and fetch auth user
+    const userStore: any = useSelector((state: IStateValues) => state?.auth);
+     const { isError } = userStore;
 
     const hanndleChange = (type: string) => {
         localStorage.setItem('type', type);
@@ -40,6 +48,7 @@ export const HeaderCompenent: React.FC = () => {
                     <Col xs={0} sm={4} className={styles.rightSideContent}>
                         <p className={styles.title}>{t("NHM")}</p>
                         <p className={styles.subTitle}><a onClick={() => hanndleChange("ka")}>ಕನ್ನಡ</a> | <a onClick={() => hanndleChange("en")}>English</a></p>
+                        <p className={styles.loginTime}>Logged In :{" "}{userStore?.loginTime}</p>
                     </Col>
                     <Col xs={1} sm={2} className={styles.rightSideImage}>
                         <Image

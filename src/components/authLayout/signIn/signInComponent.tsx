@@ -37,7 +37,7 @@ export const SignInComponent: React.FC = () => {
   const dispatch: Dispatch<any> = useDispatch();
 
   const userData: any = useSelector((state: IStateValues) => state?.auth);
-  const { isLoginCLick, user, isSuccess, isOtpVerfity } = userData;
+  const { isLoginCLick, isOtpVerfity } = userData;
 
   // transalation
   const { t } = useTranslation();
@@ -48,7 +48,7 @@ export const SignInComponent: React.FC = () => {
     if (isOtpVerfity) {
       navigate("/dashboard", { replace: true });
     }
-    dispatch(reset());
+    dispatch(reset(''));
   }, [isOtpVerfity]);
 
 
@@ -69,7 +69,6 @@ export const SignInComponent: React.FC = () => {
       let token = await captchaRef?.current?.executeAsync();
       captchaRef?.current?.reset();
       let valid_token = await verifyToken(token);
-
       if (!valid_token?.success) return NotificationError("Sorry!! Invalid Captcha");
       dispatch(verifyOTP(body));
     }

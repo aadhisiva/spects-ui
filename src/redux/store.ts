@@ -1,13 +1,22 @@
-import { AnyAction, configureStore } from '@reduxjs/toolkit';
-import authReducer from "../redux/features/authSlice";
 import { Dispatch } from 'react';
-import { sessionReducer, sessionService } from 'redux-react-session';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import { AnyAction, configureStore} from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist'
+import { rootReducers } from './reducers';
+import thunk from 'redux-thunk';
+
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+
+const persistedReducer = persistReducer(persistConfig, rootReducers);
 
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    session: sessionReducer
-  },
+  reducer: persistedReducer,
+  devTools: process.env.NODE_ENV !== 'production',
+  middleware: [thunk],
 });
 export default store;
 

@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Row, Select, Spin, Table, } from 'antd';
+import { Button, Col, Row, Select, Spin, Table, } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./Refractionist.module.scss";
 import classNames from 'classnames';
 import "./Refractionist.custom.scss";
-import { useLocation, useNavigate } from 'react-router';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
-import { TabsPosition } from 'antd/es/tabs';
-import { Option } from 'antd/es/mentions';
 import { GET_APIS, POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
@@ -28,28 +25,34 @@ interface DataType {
 };
 
 export const RefractionistTable: React.FC = () => {
-    const [editmode, setEditMode] = useState('');
+    // translation
     const { t } = useTranslation();
+    // loading
     const [loading, setLoading] = useState(true);
-
+    const [visible, setVisisble] = useState(false);
+    // table data
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
     const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
-
-    const [rural_urban, setRuralOrUrban] = useState("");
-    const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
-    const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
-    const [currentPage, setCurrentPage] = useState(1);
-    const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
-    const [visible, setVisisble] = useState(false);
-    const [formData, setFormData] = useState({});
-    const [districtOption, setDistrict] = useState("");
-    const [talukaOption, setTalukaOption] = useState("");
-    const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
-    const [subCentreOption, setSubCentreOption] = useState("");
-    const [subCentreSelect, setSubCentreSelect] = useState<DataType[]>([]);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [queryString, setQueryString] = useState<string>("");
+    // edit content
+    const [editmode, setEditMode] = useState('');
     const [editId, setEditId] = useState([]);
+    const [formData, setFormData] = useState({});
+    // antd table content
+    const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
+    const [queryString, setQueryString] = useState<string>("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
+    // select values
+    const [rural_urban, setRuralOrUrban] = useState("");
+    const [talukaOption, setTalukaOption] = useState("");
+    const [districtOption, setDistrict] = useState("");
+    const [subCentreOption, setSubCentreOption] = useState("");
+    // selected content
+    const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
+    const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
+    const [subCentreSelect, setSubCentreSelect] = useState<DataType[]>([]);
+
 
     // auth user
     const [userData] = useFetchUserData()
@@ -318,65 +321,56 @@ export const RefractionistTable: React.FC = () => {
                     <Row className={styles.selectItemsContainer}>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"rural_urban"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder="Rural/Urban"
+                                    onChange={handleRuralOrUrban}
                                 >
-                                    <Select
-                                        defaultValue={""}
-                                        placeholder="Rural/Urban"
-                                        onChange={handleRuralOrUrban}
-                                    >
-                                        <Option value="Rural">Rural</Option>
-                                        <Option value="Urban">Urban</Option>
-                                    </Select>
-                                </Form.Item>
+                                    <Select.Option value="Rural">Rural</Select.Option>
+                                    <Select.Option value="Urban">Urban</Select.Option>
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"district"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder="Select District"
+                                    disabled={rural_urban ? false : true}
+                                    onChange={handleSelectedDistrict}
                                 >
-                                    <Select
-                                        placeholder="Select District"
-                                        disabled={rural_urban ? false : true}
-                                        onChange={handleSelectedDistrict}
-                                    >
-                                        {(Array.from(new Set(districtSelect.map(obj => obj.district))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj?.replace(/\W/g, "")?.replace(/\d/g, "")}</Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
+                                    {(Array.from(new Set(districtSelect.map(obj => obj.district))) || [])?.map((obj: any, i) => (
+                                        <Select.Option key={String(i)} value={`${obj}`}>{obj?.replace(/\W/g, "")?.replace(/\d/g, "")}</Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"taluka"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder="Select Taluka"
+                                    disabled={districtOption ? false : true}
+                                    onChange={handleSelectedTaluka}
                                 >
-                                    <Select
-                                        placeholder="Select Taluka"
-                                        disabled={districtOption ? false : true}
-                                        onChange={handleSelectedTaluka}
-                                    >
-                                        {(Array.from(new Set(talukaSelect.map(obj => obj.taluka))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj?.replace(/\W/g, "")?.replace(/\d/g, "")}</Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
+                                    {(Array.from(new Set(talukaSelect.map(obj => obj.taluka))) || [])?.map((obj: any, i) => (
+                                        <Select.Option key={String(i)} value={`${obj}`}>{obj?.replace(/\W/g, "")?.replace(/\d/g, "")}</Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"sub_centre"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder="Select Sub Centre"
+                                    disabled={talukaOption ? false : true}
+                                    onChange={handleSubCentreOption}
                                 >
-                                    <Select
-                                        placeholder="Select Sub Centre"
-                                        disabled={talukaOption ? false : true}
-                                        onChange={handleSubCentreOption}
-                                    >
-                                        {(Array.from(new Set(subCentreSelect.map(obj => obj.sub_centre))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj}</Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
+                                    {(Array.from(new Set(subCentreSelect.map(obj => obj.sub_centre))) || [])?.map((obj: any, i) => (
+                                        <Select.Option key={String(i)} value={`${obj}`}>{obj}</Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>

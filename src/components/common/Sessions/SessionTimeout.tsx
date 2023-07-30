@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import IdelTimer from "react-idle-timer";
 import { SESSION_TIME_OUT } from "../../../utilities";
 import {
@@ -79,8 +79,10 @@ export const SessionTimeout: React.FC<SessionTimeout> = ({ isAuthenticated, logO
       />
       <Modal
         open={timeoutModalOpen}
-        title="LogOut"
-        onCancel={() => handlePopUpClose(false)}
+        maskClosable={false}
+        title="Do you want to logOut.?"
+        closeIcon={null}
+        cancelButtonProps={{hidden: false}}
         footer={[
           <Button
             type="primary"

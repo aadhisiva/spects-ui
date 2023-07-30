@@ -20,7 +20,7 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
     const { t } = useTranslation();
     // session user data
     const [user] = useFetchUserData();
-    
+
     // dispatch
     const dispatch: Dispatch<any> = useDispatch();
 
@@ -28,7 +28,7 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
 
     const handleLogout = () => {
         dispatch(LogOut())
-        dispatch(reset());
+        dispatch(reset("logout"));
         navigate("/");
     };
 
@@ -45,7 +45,9 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                                 height={25}
                                 src={HomeImage}
                             />
-                        ) : <span className={styles.image}></span>}
+                        ) : 
+                        <span className={styles.image}></span>
+                    }
                 </Col>
                 <Col sm={4} xs={7} className={styles.titleContainer}>
                     <span className={styles.title}>{props.title ? props.title : ("")}</span>
@@ -53,10 +55,10 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                 {user?.userData ? (
                     <Col sm={18} xs={12} className={styles.loginUserContainer}>
                         <div className={styles.loginUserTitle}>
-                            {t("WELCOME")} {user?.userData?.type == "state_admin" ? t("STATE_ADMIN") :
+                            {t("WELCOME")} {user?.userData?.type == "state_admin" ?  t("STATE_ADMIN") :
                                 user?.userData?.type == "district_officer" ? "DHO" :
                                     user?.userData?.type == "taluka" ?
-                                        "THO" : "PHCO"} |
+                                        "THO" : "PHCO"} | {" "}
                             <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
                         </div>
                     </Col>)

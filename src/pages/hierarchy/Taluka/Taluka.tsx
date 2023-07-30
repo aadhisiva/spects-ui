@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Row, Select, Spin, Table, } from 'antd';
+import { Button, Col, Row, Select, Spin, Table, } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import styles from "./Taluka.module.scss";
 import classNames from 'classnames';
 import "./Taluka.custom.scss";
-import { useLocation, useNavigate } from 'react-router';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
-import { TabsPosition } from 'antd/es/tabs';
-import { Option } from 'antd/es/mentions';
 import { GET_APIS, POSTAPIS_WITH_AUTH } from '../../../api/apisSpectacles';
 import { NotificationError, NotificationSuccess } from '../../../components/common/Notifications/Notifications';
 import SelectRowsPerPage from '../../../components/common/SelectItems/SelectRowsPerPage';
@@ -16,6 +13,7 @@ import Search from 'antd/es/input/Search';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useFetchUserData } from '../../../utilities/userDataHook';
+import Loader from '../../../components/common/Loader/Loader';
 
 interface DataType {
     key: string,
@@ -29,35 +27,39 @@ interface DataType {
 };
 
 export const TalukaTable: React.FC = () => {
-    const [editmode, setEditMode] = useState('');
+    // translation
     const { t } = useTranslation();
+    // loading
     const [loading, setLoading] = useState(true);
-
+    const [visible, setVisisble] = useState(false);
+    // table data
     const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
     const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<DataType[]>([]);
 
-    const [rural_urban, setRuralOrUrban] = useState("");
+    const [formData, setFormData] = useState({});
+    const [editmode, setEditMode] = useState('');
+    const [queryString, setQueryString] = useState<string>("");
+    const [editId, setEditId] = useState([]);
+    // antd table content
     const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
     const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
     const [currentPage, setCurrentPage] = useState(1);
-    const [tableData, setTableData] = useState<DataType[]>([]);
-    const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
-    const [visible, setVisisble] = useState(false);
-    const [formData, setFormData] = useState({});
-    const [districtOption, setDistrict] = useState("");
-    const [talukaOption, setTalukaOption] = useState("");
-    const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [queryString, setQueryString] = useState<string>("");
-    const [editId, setEditId] = useState([]);
+    // select values
+    const [rural_urban, setRuralOrUrban] = useState("");
+    const [talukaOption, setTalukaOption] = useState("");
+    const [districtOption, setDistrict] = useState("");
+    // selected values
+    const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
+    const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
 
     // auth user
     const [userData] = useFetchUserData()
     const token = userData?.userData?.token;
     const type = userData?.userData?.type;
-
+    // login data
     const checkUserLogin = type == "district_officer";
-    const unique_id: any = {unique_id: userData?.userData?.unique_id, type: userData?.userData?.type};
+    const unique_id: any = { unique_id: userData?.userData?.unique_id, type: userData?.userData?.type };
 
     const GetTablData = async () => {
         if (checkUserLogin) {
@@ -266,49 +268,43 @@ export const TalukaTable: React.FC = () => {
                     <Row className={styles.selectItemsContainer}>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"rural_urban"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder="Rural/Urban"
+                                    onChange={handleRuralOrUrban}
                                 >
-                                    <Select
-                                        defaultValue={""}
-                                        placeholder="Rural/Urban"
-                                        onChange={handleRuralOrUrban}
-                                    >
-                                        <Option value="Rural">Rural</Option>
-                                        <Option value="Urban">Urban</Option>
-                                    </Select>
-                                </Form.Item>
+                                    <Select.Option value="Rural">Rural</Select.Option>
+                                    <Select.Option value="Urban">Urban</Select.Option>
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"district"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    searchValue=''
+                                    placeholder="Select District"
+                                    disabled={rural_urban ? false : true}
+                                    onChange={handleSelectedDistrict}
                                 >
-                                    <Select
-                                        placeholder="Select District"
-                                        disabled={rural_urban ? false : true}
-                                        onChange={handleSelectedDistrict}
-                                    >
-                                        {(Array.from(new Set(districtSelect.map(obj => obj.district))) || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
+                                    {(Array.from(new Set(districtSelect.map(obj => obj.district))) || [])?.map((obj: any, i) => (
+                                        <Select.Option key={String(i)} value={`${obj}`}>{obj.replace(/\W/g, "").replace(/\d/g, "")}</Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>
                             <div className={styles.selecttypes}>
-                                <Form.Item name={"taluka"}
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder="Select Taluka"
+                                    disabled={districtOption ? false : true}
+                                    onChange={handleSelectedTaluka}
                                 >
-                                    <Select
-                                        placeholder="Select Taluka"
-                                        disabled={districtOption ? false : true}
-                                        onChange={handleSelectedTaluka}
-                                    >
-                                        {(talukaSelect || [])?.map((obj: any, i) => (
-                                            <Option key={String(i)} value={`${obj.taluka}`}>{obj.taluka.replace(/\W/g, "").replace(/\d/g, "")}</Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
+                                    {(talukaSelect || [])?.map((obj: any, i) => (
+                                        <Select.Option key={String(i)} value={`${obj.taluka}`}>{obj.taluka.replace(/\W/g, "").replace(/\d/g, "")}</Select.Option>
+                                    ))}
+                                </Select>
                             </div>
                         </Col>
                         <Col sm={6} xs={24}>
@@ -358,7 +354,9 @@ export const TalukaTable: React.FC = () => {
     )
 
     return (
-        <><Spin spinning={loading}>{renderTalukaData()}</Spin>
+        <>
+        {loading ? <Loader /> : ("")}
+        {renderTalukaData()}
         </>
     )
 }
