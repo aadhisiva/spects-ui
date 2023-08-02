@@ -1,0 +1,36 @@
+.signInPage {
+    .signinConatiner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .cardConatiner {
+            border: 1px solid black;
+            margin: 40px 0;
+            width: 600px;
+            padding: 0 0 20px 0;
+            border-radius: 40px;
+        }
+
+        .cardTitle {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .divider {
+            margin: 10px 30px 30px;
+            border: 0.1px solid #000000;
+        }
+        .buttonPlace {
+            text-align: end;
+            .resendOtp {
+                align-items: end;
+                color: #30930D;
+            }
+            .timer {
+                color: #F24E1E;
+            }
+        }
+    }
+}

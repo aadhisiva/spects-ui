@@ -107,7 +107,9 @@ export const ReportsTable: React.FC = () => {
             if (type == 'district_officer') {
                 let result = await GET_APIS('reports_data', token);
                 if (result.code) {
-                    let resultFilter = (result?.data || []).filter((obj: any) => obj.district === data[0].district || obj.district === data[1].district);
+                    let resultFilter = (result?.data || []).filter((obj: any) => obj.district === data[0]?.district || 
+                            obj.district === data[1]?.district || obj.district === data[2]?.district || obj.district === data[3]?.district 
+                            || obj.district === data[4]?.district || obj.district === data[5]?.district  );
                     setLoading(false);
                     setOriginalTableData(resultFilter)
                     setCopyOfOriginalTableData(resultFilter)
@@ -117,7 +119,9 @@ export const ReportsTable: React.FC = () => {
             } else if (type == "taluka") {
                 let result = await GET_APIS('reports_data', token);
                 if (result.code) {
-                    let resultFilter = (result?.data || []).filter((obj: any) => obj.taluka === data[0].taluka || obj.taluka === data[1].taluka);
+                    let resultFilter = (result?.data || []).filter((obj: any) => obj.taluka === data[0]?.taluka || obj.taluka === data[1]?.taluka
+                            || obj.taluka === data[2]?.taluka || obj.taluka === data[3]?.taluka || obj.taluka === data[4]?.taluka 
+                            || obj.taluka === data[5]?.taluka);
                     setLoading(false);
                     setOriginalTableData(resultFilter)
                     setCopyOfOriginalTableData(resultFilter)

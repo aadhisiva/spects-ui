@@ -48,7 +48,7 @@ export const HeaderCompenent: React.FC = () => {
                     <Col xs={0} sm={4} className={styles.rightSideContent}>
                         <p className={styles.title}>{t("NHM")}</p>
                         <p className={styles.subTitle}><a onClick={() => hanndleChange("ka")}>ಕನ್ನಡ</a> | <a onClick={() => hanndleChange("en")}>English</a></p>
-                        <p className={styles.loginTime}>Logged In :{" "}{userStore?.loginTime}</p>
+                        {/* <p className={styles.loginTime}>Logged In :{" "}{userStore?.loginTime}</p> */}
                     </Col>
                     <Col xs={1} sm={2} className={styles.rightSideImage}>
                         <Image

@@ -11,7 +11,7 @@ const initialState: ILoginIntialState = {
     isOtpVerfity: false,
     isLoading: false,
     message: "",
-    loginTime : "",
+    loginTime: "",
     isLoginCLick: false
 };
 
@@ -22,7 +22,7 @@ const initialStateReset: any = {
     isLoading: false,
     message: "",
     isLoginCLick: false
-}; 
+};
 
 export const LoginUser = createAsyncThunk("user/LoginUser", async (user: ILoginInfo, thunkAPI) => {
     try {
@@ -51,11 +51,7 @@ export const getMe = createAsyncThunk("user/getMe", async (_: string, thunkAPI) 
 export const verifyOTP = createAsyncThunk("user/verifyOtp", async (data: ILoginInfo, thunkAPI) => {
     try {
         const response = await axios.post(`${baseUrl}admin/otp_check`, data);
-        if (response?.data.code == 200) {
-            return response.data;
-        } else {
-            NotificationError(response.data?.messsage)
-        }
+        return response.data;
     } catch (error: any) {
         if (error.response) {
             const message = error.response.data.msg;
@@ -74,24 +70,27 @@ export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        reset: (state, action) => {
-                state.isError= false,
-                state.isSuccess= false,
-                state.isOtpVerfity= false,
-                state.isLoading= false,
-                state.message= "",
-                state.loginTime= action.payload == 'logout' ? ""  : localDate.toISOString(),
-                state.isLoginCLick= false
-        },
+        // reset: (state, action) => {
+        //         state.isError= false,
+        //         state.isSuccess= false,
+        //         state.isOtpVerfity= false,
+        //         state.isLoading= false,
+        //         state.message= "",
+        //         state.loginTime= action.payload == 'logout' ? ""  : localDate.toISOString(),
+        //         state.isLoginCLick= false
+        // },
+        reset: (state, action) => initialState,
     },
     extraReducers: (builder) => {
         builder.addCase(LoginUser.pending, (state) => {
+            state.isLoginCLick = false;
         });
         builder.addCase(LoginUser.fulfilled, (state, action) => {
-            state.isLoginCLick = true;
-            state.user = action.payload?.data;
+            state.isLoginCLick = action.payload && true;
+            state.user = action.payload;
         });
         builder.addCase(LoginUser.rejected, (state, action) => {
+            state.isLoginCLick = false;
             state.message = action.payload;
             state.message = "please try again."
         })

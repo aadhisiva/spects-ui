@@ -13,7 +13,6 @@ import Search from 'antd/es/input/Search';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useFetchUserData } from '../../../utilities/userDataHook';
-import Loader from '../../../components/common/Loader/Loader';
 
 interface DataType {
     key: string,
@@ -355,8 +354,7 @@ export const TalukaTable: React.FC = () => {
 
     return (
         <>
-        {loading ? <Loader /> : ("")}
-        {renderTalukaData()}
+            {<Spin spinning={loading}>{renderTalukaData()}</Spin>}
         </>
     )
 }

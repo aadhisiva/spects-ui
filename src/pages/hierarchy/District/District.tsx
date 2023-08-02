@@ -13,7 +13,6 @@ import Search from 'antd/es/input/Search';
 import _ from "lodash";
 import { useTranslation } from 'react-i18next';
 import { useFetchUserData } from '../../../utilities/userDataHook';
-import Loader from '../../../components/common/Loader/Loader';
 
 const { Option } = Select;
 interface DataType {
@@ -292,8 +291,7 @@ export const DistrictOfficerTable: React.FC = () => {
 
     return (
         <>
-            {/* {<Spin spinning={loading}>{rednerDistrictsData()}</Spin>} */}
-            {loading ? <Loader /> : rednerDistrictsData()}
+            {<Spin spinning={loading}>{rednerDistrictsData()}</Spin>}
         </>
     )
 }

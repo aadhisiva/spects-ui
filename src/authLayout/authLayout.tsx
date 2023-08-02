@@ -1,16 +1,16 @@
 import React, { Dispatch, useEffect, useState } from 'react'
-import { LayoutComponent } from '../../Layout/LayoutComponent'
+import { LayoutComponent } from '../Layout/LayoutComponent'
 import { Routes, Route, BrowserRouter, redirect, Navigate } from 'react-router-dom'
 import { SignInComponent } from './signIn/signInComponent'
-import { DashBoardHierarchy } from '../../pages/DashBoardHierarchy'
-import { AssignmentTable } from '../../pages/AssignmentTable'
-import { ReportsTable } from '../../pages/ReportsTable'
-import { PageNotFound } from '../common/ErrorBoundaries/PageNotFound'
-import { SessionTimeout } from '../common/Sessions/SessionTimeout'
+import { DashBoardHierarchy } from '../pages/DashBoardHierarchy'
+import { AssignmentTable } from '../pages/AssignmentTable'
+import { ReportsTable } from '../pages/ReportsTable'
+import { PageNotFound } from '../components/common/ErrorBoundaries/PageNotFound'
+import { SessionTimeout } from '../components/common/Sessions/SessionTimeout'
 import { useDispatch, useSelector } from "react-redux";
-import { LogOut, getMe, reset } from '../../redux/features/authSlice'
-import { IStateValues } from '../../type'
-import { ShowInfoPageForOnline } from '../common/OnlineOroffline'
+import { LogOut, getMe, reset } from '../redux/features/authSlice'
+import { IStateValues } from '../type'
+import { ShowInfoPageForOnline } from '../components/common/OnlineOroffline'
 
 var condition = navigator.onLine;
 

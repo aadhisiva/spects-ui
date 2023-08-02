@@ -1,4 +1,4 @@
-import AuthLayout  from './components/authLayout/authLayout';
+import AuthLayout  from './authLayout/authLayout';
 import './App.css';
 import "./utilities/Langugae";
 import withErrorHandling from './components/common/Errors/withErrorHandling';
