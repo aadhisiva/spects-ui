@@ -272,7 +272,6 @@ export const DistrictOfficerTable: React.FC = () => {
                         </Col>
                     </Row>
                     <Table
-                        style={{ tableLayout: 'auto' }}
                         columns={columns}
                         dataSource={copyOfOriginalTableData}
                         pagination={{
