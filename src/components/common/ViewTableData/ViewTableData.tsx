@@ -20,11 +20,13 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
     const [form] = Form.useForm();
 
     form.setFieldsValue({
+        order_number: state.order_number,
         refractionist_name: state.refractionist_name,
         name: state.name,
         phone_number: state.phone_number,
         district: state.district,
         taluka: state.taluka,
+        health_facility: state.health_facility,
         sub_centre: state.sub_centre,
         village: state.village,
         status: state.status,
@@ -73,6 +75,13 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                         </Col>
                         <Col sm={7} xs={24}>
                             <ReUseInputFeild
+                                name={"order_number"}
+                                label={"Order Number"}
+                                readOnly={true}
+                            />
+                        </Col>
+                        <Col sm={7} xs={24}>
+                            <ReUseInputFeild
                                 name={"name"}
                                 label={"Name"}
                                 readOnly={true}
@@ -110,6 +119,13 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                             <ReUseInputFeild
                                 name={"taluka"}
                                 label={"Taluka"}
+                                readOnly={true}
+                            />
+                        </Col>
+                        <Col sm={7} xs={24}>
+                            <ReUseInputFeild
+                                name={"health_facility"}
+                                label={"PHC/Health Facility"}
                                 readOnly={true}
                             />
                         </Col>

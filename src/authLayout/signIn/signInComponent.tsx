@@ -6,8 +6,6 @@ import "./signInComponent.custom.scss";
 import classNames from "classnames";
 import { LoginTitleBarComponent } from "../../components/common/LoginTitleBar";
 import { InputFeild } from "../../components/common/InputFeild";
-import { NotificationError, NotificationSuccess } from "../../components/common/Notifications/Notifications";
-import { LOGIN_APIS } from "../../api/apisSpectacles";
 import { useDispatch, useSelector } from "react-redux";
 import { IStateValues } from "../../type";
 import { useTranslation } from "react-i18next";
@@ -96,6 +94,8 @@ export const SignInComponent: FC = () => {
                                     <Select.Option value="state_admin">State Admin</Select.Option>
                                     <Select.Option value="district_officer">District Officer</Select.Option>
                                     <Select.Option value="taluka">Taluka</Select.Option>
+                                    <Select.Option value="phco">Phco</Select.Option>
+                                    <Select.Option disabled={true} value="vendor">Vendor (Coming soon)</Select.Option>
                                 </Select>
                             </Form.Item>
                             <InputFeild

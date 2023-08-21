@@ -74,5 +74,12 @@
         .searchContainer {
             text-align: right;
         }
+        .tableActions {
+            display: flex;
+            flex-direction: row;
+            Button {
+                margin: 5px;
+            }
+        } 
     }
 }

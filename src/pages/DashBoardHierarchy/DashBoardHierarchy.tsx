@@ -16,27 +16,28 @@ const loginArrayData = [
         role: "District Officer",
         color: "#62A76C",
         name: "district",
-        small: Number(24 / 3),
+        small: Number(24 / 4),
         image: RefractionistImage,
     },
     {
         role: "Taluka",
         color: "#3399FF",
         name: "taluka",
-        small: Number(24 / 3),
+        small: Number(24 / 4),
         image: BenificiaryImage,
     },
-    // {
-    //     role: "Sub Center",
-    //     color: "#AC8FF2",
-    //     small: Number(24 / 4),
-    //     image: StudentImage,
-    // },
+    {
+        role: "PHCO",
+        color: "#AC8FF2",
+        name: "phco",
+        small: Number(24 / 4),
+        image: BenificiaryImage,
+    },
     {
         role: "Refractionist",
         color: "#ce7e7e",
         name: "refraction",
-        small: Number(24 / 3),
+        small: Number(24 / 4),
         image: BenificiaryImage,
     }];
 
@@ -69,11 +70,13 @@ export const DashBoardHierarchy: React.FC = (props) => {
             case "state_admin":
                 return setLoginUser(loginArrayData);
             case "district_officer":
-                return setLoginUser(loginArrayData.slice(1, 3));
+                return setLoginUser(loginArrayData.slice(1, 4));
             case "taluka":
-                return setLoginUser(loginArrayData.slice(2, 3));
-            default:
-                return setLoginUser(loginArrayData.slice(3, 3));
+                return setLoginUser(loginArrayData.slice(2, 4));
+            case "phco":
+                return setLoginUser(loginArrayData.slice(3, 4));
+            default: 
+                return setLoginUser(loginArrayData.slice(4, 4));
         };
     };
 

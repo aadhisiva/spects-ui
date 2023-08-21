@@ -1,8 +1,8 @@
-.reportsTable {
+.phcoPage {
 
     .table {
         @media only screen and (min-width: 600px) {
-            margin: 40px 40px;
+            margin: 40px 60px;
         }
         @media only screen and (max-width: 600px) {
             margin: 10px;
@@ -14,7 +14,7 @@
         .statisticsContainer {
             .statistics {
                 text-align: center;
-                padding: 7px;
+                padding: 5px;
                 background-color: #124f8c;
                 border: 1px solid #000000;
                 border-radius: 10px 10px 0px 0px;
@@ -60,6 +60,14 @@
                 @media only screen and (min-width: 600px) {
                     max-width: 100px;
                 }
+            }
+        }
+        .headerRow{
+            display: flex;
+            align-items: center;
+            span {
+                font-size: 18px;
+                font-weight: 600;
             }
         }
 

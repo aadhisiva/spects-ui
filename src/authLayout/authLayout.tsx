@@ -1,6 +1,6 @@
 import React, { Dispatch, useEffect, useState } from 'react'
 import { LayoutComponent } from '../Layout/LayoutComponent'
-import { Routes, Route, BrowserRouter, redirect, Navigate } from 'react-router-dom'
+import { Routes, Route, BrowserRouter, redirect, Navigate, HashRouter } from 'react-router-dom'
 import { SignInComponent } from './signIn/signInComponent'
 import { DashBoardHierarchy } from '../pages/DashBoardHierarchy'
 import { AssignmentTable } from '../pages/AssignmentTable'

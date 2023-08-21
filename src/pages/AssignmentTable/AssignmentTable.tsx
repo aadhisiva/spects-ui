@@ -9,6 +9,7 @@ import { useLocation } from 'react-router';
 import { RefractionistTable } from '../hierarchy/Refractionist/Refractionist';
 import { useTranslation } from 'react-i18next';
 import { useFetchUserData } from '../../utilities/userDataHook';
+import { PhcoTable } from '../hierarchy/phco';
 
 export const AssignmentTable: React.FC = () => {
   // session user Data  
@@ -24,11 +25,16 @@ export const AssignmentTable: React.FC = () => {
     if (user?.userData?.type == "state_admin") {
       if (location.state === "district") return <DistrictOfficerTable />
       if (location.state === "taluka") return <TalukaTable />
+      if (location.state === "phco") return <PhcoTable />
       if (location.state === "refraction") return <RefractionistTable />
     } else if (user?.userData?.type == "district_officer") {
       if (location.state === "taluka") return <TalukaTable />
+      if (location.state === "phco") return <PhcoTable />
       if (location.state === "refraction") return <RefractionistTable />
     } else if (user?.userData?.type == "taluka") {
+      if (location.state === "refraction") return <RefractionistTable />
+      if (location.state === "phco") return <PhcoTable />
+    } else if (user?.userData?.type == "phco") {
       if (location.state === "refraction") return <RefractionistTable />
     }
   }

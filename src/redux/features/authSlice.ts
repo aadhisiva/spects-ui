@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { ILoginInfo, ILoginIntialState } from "../../type";
-import { baseUrl } from "../../api/apisSpectacles";
-import { NotificationError } from "../../components/common/Notifications/Notifications";
+import axiosRequest from "../../axios/axios_interceptors";
 
 const initialState: ILoginIntialState = {
     user: { success: false },
@@ -26,7 +24,7 @@ const initialStateReset: any = {
 
 export const LoginUser = createAsyncThunk("user/LoginUser", async (user: ILoginInfo, thunkAPI) => {
     try {
-        const response = await axios.post(`${baseUrl}admin/login`, user);
+        const response = await axiosRequest.post(`admin/login`, user);
         return response.data;
     } catch (error: any) {
         if (error.response) {
@@ -38,7 +36,7 @@ export const LoginUser = createAsyncThunk("user/LoginUser", async (user: ILoginI
 
 export const getMe = createAsyncThunk("user/getMe", async (_: string, thunkAPI) => {
     try {
-        const response = await axios.get(`${baseUrl}admin/getMe`);
+        const response = await axiosRequest.post(`admin/getMe`);
         return response.data;
     } catch (error: any) {
         if (error.response) {
@@ -50,7 +48,7 @@ export const getMe = createAsyncThunk("user/getMe", async (_: string, thunkAPI) 
 
 export const verifyOTP = createAsyncThunk("user/verifyOtp", async (data: ILoginInfo, thunkAPI) => {
     try {
-        const response = await axios.post(`${baseUrl}admin/otp_check`, data);
+        const response = await axiosRequest.post(`admin/otp_check`, data);
         return response.data;
     } catch (error: any) {
         if (error.response) {
@@ -61,7 +59,8 @@ export const verifyOTP = createAsyncThunk("user/verifyOtp", async (data: ILoginI
 });
 
 export const LogOut = createAsyncThunk("user/LogOut", async () => {
-    await axios.post(`${baseUrl}admin/logout`);
+    // Cookie.remove('user');
+    return await axiosRequest.post(`admin/logout`);
 });
 
 const d = new Date();

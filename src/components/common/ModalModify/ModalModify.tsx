@@ -14,7 +14,6 @@ type mofdifyModalI = {
     onCancel?: () => void;
     editMode?: boolean,
     loading?: boolean,
-    districtsData?: any[],
     setRuralOrUrban?: (e: any) => void
 }
 export const ModalModify: React.FC<mofdifyModalI> = ({
@@ -30,8 +29,8 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
     const location = useLocation();
 
     form.setFieldsValue({
-        refractionist_name: state.refractionist_name,
-        refractionist_mobile: state.refractionist_mobile,
+        refractionist_name: editMode? state.refractionist_name: "",
+        refractionist_mobile: editMode? state.refractionist_mobile: "",
         name: state.name,
         mobile_number: state.mobile_number,
         district: state.district,
@@ -39,6 +38,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
         taluka: state.taluka,
         sub_centre: state.sub_centre,
         village: state.village,
+        health_facility: state.health_facility,
     });
 
 const renderForm = () => (
@@ -141,18 +141,28 @@ const renderForm = () => (
                     </Form.Item>
                     {location.state !== "taluka" ? (
                         <>
-                            <ReUseInputFeild
-                                tabIndex={6}
-                                name={"sub_centre"}
-                                label={"Sub Centre"}
-                                disabled={true}
-                            />
-                            <ReUseInputFeild
-                                tabIndex={6}
-                                name={"village"}
-                                label={"Village/Ward"}
-                                disabled={true}
-                            />
+                                <ReUseInputFeild
+                                    tabIndex={6}
+                                    name={"health_facility"}
+                                    label={"PHC/Health Facility)"}
+                                    disabled={true}
+                                />
+                                {location.state !== "phco" ?(
+                                    <>
+                                    <ReUseInputFeild
+                                        tabIndex={6}
+                                        name={"sub_centre"}
+                                        label={"Sub Centre"}
+                                        disabled={true}
+                                    />
+                                    <ReUseInputFeild
+                                        tabIndex={6}
+                                        name={"village"}
+                                        label={"Village/Ward"}
+                                        disabled={true}
+                                    />
+                                    </>
+                                ): ("")}
                         </>
                     ) : ("")}
                 </>

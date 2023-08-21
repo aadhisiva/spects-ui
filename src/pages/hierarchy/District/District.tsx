@@ -169,7 +169,6 @@ export const DistrictOfficerTable: React.FC = () => {
 
     const FormOpen = () => {
         return <ModalModify
-            districtsData={districtSelect}
             editMode={editmode ? true : false}
             state={formData}
             setRuralOrUrban={(e) => setRuralOrUrban(e)}

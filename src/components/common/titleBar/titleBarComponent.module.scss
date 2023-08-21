@@ -4,7 +4,10 @@
         height: 35px;
         // display: flex;
         align-items: center;
-        color: hsl(0, 0%, 100%);  
+        color: hsl(0, 0%, 100%);
+        .image{
+            cursor: pointer;
+        }  
         .titleContainer{
             text-align: start;  
             overflow: hidden;

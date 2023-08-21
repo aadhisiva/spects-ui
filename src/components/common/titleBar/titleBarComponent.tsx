@@ -39,6 +39,7 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                     {
                         props.image ? (
                             <Image
+                                onClick={() => navigate("/dashboard")}
                                 preview={false}
                                 className={styles.image}
                                 width={25}
@@ -57,8 +58,8 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                         <div className={styles.loginUserTitle}>
                             {t("WELCOME")} {user?.userData?.type == "state_admin" ?  t("STATE_ADMIN") :
                                 user?.userData?.type == "district_officer" ? "DHO" :
-                                    user?.userData?.type == "taluka" ?
-                                        "THO" : "PHCO"} | {" "}
+                                    user?.userData?.type == "taluka" ? "THO" :
+                                    user?.userData?.type == "phco" ?  "PHCO": "VENDOR"} | {" "}
                             <span style={{ cursor: 'pointer' }} onClick={handleLogout}>{t("LOG_OUT")}</span>
                         </div>
                     </Col>)
