@@ -31,7 +31,7 @@ export const HeaderCompenent: React.FC = () => {
         <div className={classNames(styles.homePage, 'header-page')}>
             <Header className={styles.headerContainer}>
                 <Row className={styles.headerRow}>
-                    <Col xs={4} sm={5} className={styles.leftSideImage}>
+                    <Col xs={4} sm={8} className={styles.leftSideImage}>
                         <Image
                             preview={false}
                             width={70}
@@ -39,13 +39,13 @@ export const HeaderCompenent: React.FC = () => {
                             src={leftLogo}
                         />
                     </Col>
-                    <Col xs={15} sm={13}>
+                    <Col xs={15} sm={8}>
                         <div className={styles.centerName}>
                             <p className={styles.title}>{t("GOV_NAME")}</p>
                             <p className={styles.subTitle}>{t("PROJECT_TITLE")}</p>
                         </div>
                     </Col>
-                    <Col xs={0} sm={4} className={styles.rightSideContent}>
+                    <Col xs={0} sm={6} className={styles.rightSideContent}>
                         <p className={styles.title}>{t("NHM")}</p>
                         <p className={styles.subTitle}><a onClick={() => hanndleChange("ka")}>ಕನ್ನಡ</a> | <a onClick={() => hanndleChange("en")}>English</a></p>
                         {/* <p className={styles.loginTime}>Logged In :{" "}{userStore?.loginTime}</p> */}

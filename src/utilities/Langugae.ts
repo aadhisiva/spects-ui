@@ -32,11 +32,13 @@ i18n.use(initReactI18next).init({
         REFRACTIONIST_TABLE: "Refractionist",
         REPORTS_TABLE: "Reports",
         DASHBOARD: "Dashboard",
+        RURAL_URBAN: "Rural/Urban",
          /* District officer table  */
          FILTERS : "Filters",
          CLEAR_FILTERS: "Clear Filters",
          DISTRICT_HEALTH_OFFICER: "District Health Officer",
          TALUKA_HEALTH_OFFICER : "Taluka Health Officer",
+         PHCO_HEALTH_OFFICER : "PHC Health Officer",
          TABLE_NAME: "Name",
          TABLE_MOBILE: "Mobile Number",
          TABLE_DISTRICT: "District",
@@ -51,7 +53,14 @@ i18n.use(initReactI18next).init({
          TABLE_STATUS: 'Status',
          TABLE_DETAILS: "Details",
          TABLE_VIEW: "View",
-         REPORTS_LIST: "Reports List"
+         REPORTS_LIST: "Reports List",
+         PHCO: "PHC(Health Facility)",
+         FOOTER: "Government of Karnataka 2023, Directorate Of EDCS",
+         DEVELOPED: "Developed By Mobile One",
+         ORDER_NUMBER: 'Order Number',
+         DOWNLOAD: 'Download',
+         MODIFY: 'Modify',
+         ADD: "Add"
       }
     },
     ka: {
@@ -87,6 +96,7 @@ i18n.use(initReactI18next).init({
         CLEAR_FILTERS: "ಸ್ಪಷ್ಟ ಫಿಲ್ಟರ್‌ಗಳು",
         DISTRICT_HEALTH_OFFICER: "ಜಿಲ್ಲಾ ಆರೋಗ್ಯಾಧಿಕಾರಿ",
         TALUKA_HEALTH_OFFICER:"ತಾಲೂಕು ಆರೋಗ್ಯ ಅಧಿಕಾರಿ",
+        PHCO_HEALTH_OFFICER : "ಆರೋಗ್ಯ ಸೌಲಭ್ಯ ಅಧಿಕಾರಿ",
         TABLE_NAME: "ಹೆಸರು",
         TABLE_MOBILE: "ಮೊಬೈಲ್ ನಂಬರ",
         TABLE_DISTRICT: "ಜಿಲ್ಲೆ",
@@ -101,8 +111,15 @@ i18n.use(initReactI18next).init({
          TABLE_STATUS: 'ಸ್ಥಿತಿ',
          TABLE_DETAILS: 'ವಿವರಗಳು',
          TABLE_VIEW: "ನೋಟ",
-         REPORTS_LIST: "ವರದಿಗಳ ಪಟ್ಟಿ"
-
+         REPORTS_LIST: "ವರದಿಗಳ ಪಟ್ಟಿ",
+         PHCO: "ಆರೋಗ್ಯ_ಸೌಲಭ್ಯ",
+         FOOTER: "ಕರ್ನಾಟಕ ಸರ್ಕಾರ 2023, EDCS ನಿರ್ದೇಶನಾಲಯ",
+         DEVELOPED: "ಮೊಬೈಲ್ ಒನ್‌ನಿಂದ ಅಭಿವೃದ್ಧಿಪಡಿಸಲಾಗಿದೆ",
+         ORDER_NUMBER: 'ಆದೇಶ ಸಂಖ್ಯೆ',
+         DOWNLOAD: 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+         RURAL_URBAN: "ಗ್ರಾಮೀಣ/ನಗರ",
+         MODIFY: 'ಮಾರ್ಪಡಿಸಿ',
+         ADD: 'ಸೇರಿಸಿ'
       }
     },
   },

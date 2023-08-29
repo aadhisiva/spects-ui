@@ -1,10 +1,21 @@
 .loginTitleBarPage {
+    @media only screen and (max-width: 480px) {
+        .rightSideContent {
+            cursor: pointer;
+            color: #FFFFFF;
+    }
+    }
+    @media only screen and (min-width: 480px) {
+        .rightSideContent {
+            display: none;
+        } 
+    }
     .titleBarContainer{
         background-color: #1C8BCE;
         height: 35px;
         // display: flex;
         align-items: center;
-        color: hsl(0, 0%, 100%);  
+        color: hsl(0, 0%, 100%); 
         .titleContainer{
             // text-align: start;
             overflow: hidden;

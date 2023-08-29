@@ -15,16 +15,14 @@ import styles from "./ReportsTable.module.scss";
 import classNames from "classnames";
 import "./ReportsTable.custom.scss";
 import { useNavigate } from "react-router";
-import { TitleBarComponent } from "../../components/common/titleBar";
+import { TitleBarComponent } from "../../../components/common/titleBar";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
-import {
-  NotificationError,
-} from "../../components/common/Notifications/Notifications";
-import SelectRowsPerPage from "../../components/common/SelectItems/SelectRowsPerPage";
-import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../api/apisSpectacles";
-import { ViewTableData } from "../../components/common/ViewTableData";
+import { NotificationError } from "../../../components/common/Notifications/Notifications";
+import SelectRowsPerPage from "../../../components/common/SelectItems/SelectRowsPerPage";
+import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
+import { ViewTableData } from "../../../components/common/ViewTableData";
 import { useTranslation } from "react-i18next";
-import { useFetchUserData } from "../../utilities/userDataHook";
+import { useFetchUserData } from "../../../utilities/userDataHook";
 import * as XLSX from "xlsx";
 
 const { Search } = Input;
@@ -126,68 +124,39 @@ export const ReportsTable: React.FC = () => {
   const token = userData?.userData?.token;
   const type = userData?.userData?.type;
 
-  const unique_id: any = {
-    unique_id: userData?.userData?.unique_id,
+  const bodyData: any = {
+    codes: userData?.userData?.codes,
     type: userData?.userData?.type,
   };
-
   /* first rendering only  */
   useEffect(() => {
     (async () => {
-      let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, unique_id, token);
       if (type == "district_officer") {
-        let result = await GET_APIS("reports_data", token);
+        let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
         if (result.code) {
-          let resultFilter = (result?.data || []).filter(
-            (obj: any) =>
-              obj.district === data[0]?.district ||
-              obj.district === data[1]?.district ||
-              obj.district === data[2]?.district ||
-              obj.district === data[3]?.district ||
-              obj.district === data[4]?.district ||
-              obj.district === data[5]?.district
-          );
           setLoading(false);
-          setOriginalTableData(resultFilter);
-          setCopyOfOriginalTableData(resultFilter);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
         } else {
           NotificationError(result.message);
         }
       } else if (type == "taluka") {
-        let result = await GET_APIS("reports_data", token);
+        let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
         if (result.code) {
-          let resultFilter = (result?.data || []).filter(
-            (obj: any) =>
-              obj.taluka === data[0]?.taluka ||
-              obj.taluka === data[1]?.taluka ||
-              obj.taluka === data[2]?.taluka ||
-              obj.taluka === data[3]?.taluka ||
-              obj.taluka === data[4]?.taluka ||
-              obj.taluka === data[5]?.taluka
-          );
           setLoading(false);
-          setOriginalTableData(resultFilter);
-          setCopyOfOriginalTableData(resultFilter);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
         } else {
           NotificationError(result.message);
         }
       } else if (type == "phco") {
-        let result = await GET_APIS("reports_data", token);
+        let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
         if (result.code) {
-          let resultFilter = (result?.data || []).filter(
-            (obj: any) =>
-              obj.taluka === data[0]?.health_facility ||
-              obj.taluka === data[1]?.health_facility ||
-              obj.taluka === data[2]?.health_facility ||
-              obj.taluka === data[3]?.health_facility ||
-              obj.taluka === data[4]?.health_facility ||
-              obj.taluka === data[5]?.health_facility
-          );
           setLoading(false);
-          setOriginalTableData(resultFilter);
-          setCopyOfOriginalTableData(resultFilter);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
         } else {
-          NotificationError(result.message);
+          NotificationError(result?.message);
         }
       } else {
         let result = await GET_APIS("reports_data", token);
@@ -229,22 +198,41 @@ export const ReportsTable: React.FC = () => {
             obj.taluka === talukaOption
       );
     }
-    // filter types and district and taluka and sub centre
-    if (refraType && districtOption && talukaOption && subCentreOption) {
+    // filter types and district and taluka and phco(health_facility)
+    if (refraType && districtOption && talukaOption && phcoOption) {
+      filteredData = filteredData?.filter((obj) =>
+        refraType !== "all"
+          ? obj.type === refraType
+          : obj &&
+            obj.district === districtOption &&
+            obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption
+      );
+    }
+    // filter types and district and taluka and phco(health_facility) and sub centre
+    if (
+      refraType &&
+      districtOption &&
+      talukaOption &&
+      phcoOption &&
+      subCentreOption
+    ) {
       filteredData = filteredData?.filter((obj) =>
         refraType !== "all"
           ? obj.type === refraType
           : obj &&
             obj.district == districtOption &&
             obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption &&
             obj.sub_centre === subCentreOption
       );
     }
-    // filter types and district and taluka and sub centre and village
+    // filter types and district and taluka and phco(health_facility) and sub centre and village
     if (
       refraType &&
       districtOption &&
       talukaOption &&
+      phcoOption &&
       subCentreOption &&
       villageOption
     ) {
@@ -254,15 +242,17 @@ export const ReportsTable: React.FC = () => {
           : obj &&
             obj.district === districtOption &&
             obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption &&
             obj.sub_centre === subCentreOption &&
             obj.village === villageOption
       );
     }
-    // filter types and district and taluka and sub centre and village
+    // filter types and district and taluka and phco(health_facility) and sub centre and village and dates
     if (
       refraType &&
       districtOption &&
       talukaOption &&
+      phcoOption &&
       subCentreOption &&
       villageOption &&
       selectedDates
@@ -273,17 +263,19 @@ export const ReportsTable: React.FC = () => {
           : obj &&
             obj.district === districtOption &&
             obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption &&
             obj.sub_centre === subCentreOption &&
             obj.village === villageOption &&
             obj.created_at.split("T")[0] > selectedDates[0] &&
             obj.created_at.split("T")[0] < selectedDates[1]
       );
     }
-    // filter types and district and taluka and sub centre and village and status
+    // filter types and district and taluka and phco(health_facility) and sub centre and village and status
     if (
       refraType &&
       districtOption &&
       talukaOption &&
+      phcoOption &&
       subCentreOption &&
       villageOption &&
       selectedDates &&
@@ -295,6 +287,7 @@ export const ReportsTable: React.FC = () => {
           : obj &&
             obj.district === districtOption &&
             obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption &&
             obj.sub_centre === subCentreOption &&
             obj.village === villageOption &&
             obj.created_at.split("T")[0] > selectedDates[0] &&
@@ -304,11 +297,12 @@ export const ReportsTable: React.FC = () => {
           : obj
       );
     }
-    // filter types and details and district and taluka and sub centre and village and status
+    // filter types and details and district and taluka and phco(health_facility) and sub centre and village and status
     if (
       refraType &&
       districtOption &&
       talukaOption &&
+      phcoOption &&
       subCentreOption &&
       villageOption &&
       selectedDates &&
@@ -321,6 +315,7 @@ export const ReportsTable: React.FC = () => {
           : obj &&
             obj.district === districtOption &&
             obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption &&
             obj.sub_centre === subCentreOption &&
             obj.village === villageOption &&
             obj.created_at.split("T")[0] > selectedDates[0] &&
@@ -341,6 +336,7 @@ export const ReportsTable: React.FC = () => {
     subCentreOption,
     statusOption,
     selectedDates,
+    phcoOption,
   ]);
 
   const columns: ColumnsType<DataType> = [
@@ -507,19 +503,29 @@ export const ReportsTable: React.FC = () => {
   };
 
   const handleClickClearFilters = () => {
+    setRefraTypes("");
     setDistrictOption("");
     setTalukaOption("");
-    setRefraDetails("");
-    setRefraTypes("");
+    setPhcoOption("");
     setSubCentreOption("");
-    setStatusOption("");
+    setVillageOption("");
     setSelectedDates("");
+    setStatusOption("");
+    setRefraDetails("");
   };
 
   const handleRefraTypes = (value: string) => {
     if (value !== refraType) {
       setRefraTypes(value);
-      let reset = copyOfOriginalTableData.filter((obj) =>
+      setDistrictOption("");
+      setTalukaOption("");
+      setPhcoOption("");
+      setSubCentreOption("");
+      setVillageOption("");
+      setSelectedDates("");
+      setStatusOption("");
+      setRefraDetails("");
+      let reset = originalTableData.filter((obj) =>
         value !== "all" ? obj.type == value : obj
       );
       setDistrictSelect(reset);
@@ -535,6 +541,13 @@ export const ReportsTable: React.FC = () => {
   const handleDistrictOption = (value: string) => {
     if (value !== districtOption) {
       setDistrictOption(value);
+      setTalukaOption("");
+      setPhcoOption("");
+      setSubCentreOption("");
+      setVillageOption("");
+      setSelectedDates("");
+      setStatusOption("");
+      setRefraDetails("");
       let reset = districtSelect.filter((obj) => obj.district == value);
       setTalukaSelect(reset);
     }
@@ -543,6 +556,12 @@ export const ReportsTable: React.FC = () => {
   const handleTalukaOption = (value: string) => {
     if (value !== talukaOption) {
       setTalukaOption(value);
+      setPhcoOption("");
+      setSubCentreOption("");
+      setVillageOption("");
+      setSelectedDates("");
+      setStatusOption("");
+      setRefraDetails("");
       let reset = talukaSelect.filter((obj) => obj.taluka == value);
       setPhcoSelected(reset);
     }
@@ -551,6 +570,11 @@ export const ReportsTable: React.FC = () => {
   const handleSelectedPhco = (value: string) => {
     if (value !== phcoOption) {
       setPhcoOption(value);
+      setSubCentreOption("");
+      setVillageOption("");
+      setSelectedDates("");
+      setStatusOption("");
+      setRefraDetails("");
       let reset = phcoSelected.filter((obj) => obj.health_facility === value);
       setSubCentreSelect(reset);
     }
@@ -559,6 +583,10 @@ export const ReportsTable: React.FC = () => {
   const handleSubCentreOption = (value: string) => {
     if (value !== subCentreOption) {
       setSubCentreOption(value);
+      setVillageOption("");
+      setSelectedDates("");
+      setStatusOption("");
+      setRefraDetails("");
       let reset = subCentreSelect.filter((obj) => obj.sub_centre == value);
       setVillageSelect(reset);
     }
@@ -573,19 +601,20 @@ export const ReportsTable: React.FC = () => {
   const handleStatusOption = (value: string) => {
     if (value !== statusOption) {
       setStatusOption(value);
+      setRefraDetails("");
       let reset = villageSelect.filter((obj) =>
         value !== "all" ? obj.status == value : obj
       );
       setRefraDetailsSelect(reset);
     }
   };
-const handleClickDownloadToXlsx = () => {
-  let newDate = new Date().toJSON().split('T')[0];
-  const worksheet = XLSX.utils.json_to_sheet(copyOfOriginalTableData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-  XLSX.writeFile(workbook, `spectacles_${new Date().toJSON().split('T')[0]}.xlsx`);
-}
+  const handleClickDownloadToXlsx = () => {
+    let newDate = new Date().toJSON().split("T")[0];
+    const worksheet = XLSX.utils.json_to_sheet(copyOfOriginalTableData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, `spectacles_${newDate}.xlsx`);
+  };
 
   const renderReports = () => {
     return (
@@ -606,9 +635,12 @@ const handleClickDownloadToXlsx = () => {
                 <div className={styles.selecttypes}>
                   <Form.Item>
                     <Select
-                      placeholder="Types"
+                      placeholder="Select Types"
                       onChange={(value) => handleRefraTypes(value)}
+                      defaultValue={""}
+                      value={refraType}
                     >
+                      <Option value="">Select Types</Option>
                       <Option value="all">All</Option>
                       <Option value="school">School</Option>
                       <Option value="otherBenificiary">Benificiary</Option>
@@ -621,9 +653,12 @@ const handleClickDownloadToXlsx = () => {
                   <Form.Item>
                     <Select
                       disabled={refraType ? false : true}
-                      placeholder="District"
+                      placeholder="Select District"
                       onChange={handleDistrictOption}
+                      defaultValue={""}
+                      value={districtOption}
                     >
+                      <Option value="">Select District</Option>
                       {(
                         Array.from(
                           new Set(
@@ -644,9 +679,12 @@ const handleClickDownloadToXlsx = () => {
                   <Form.Item>
                     <Select
                       disabled={districtOption ? false : true}
-                      placeholder="taluka"
+                      placeholder="Select taluka"
                       onChange={handleTalukaOption}
+                      defaultValue={""}
+                      value={talukaOption}
                     >
+                      <Option value="">Select taluka</Option>
                       {(
                         Array.from(
                           new Set(talukaSelect.map((item: any) => item.taluka))
@@ -664,10 +702,13 @@ const handleClickDownloadToXlsx = () => {
                 <div className={styles.selecttypes}>
                   <Select
                     style={{ width: "100%" }}
-                    placeholder="Select Phc"
+                    placeholder="Select PHC"
                     disabled={talukaOption ? false : true}
                     onChange={handleSelectedPhco}
+                    defaultValue={""}
+                    value={phcoOption}
                   >
+                    <Option value="">Select PHC</Option>
                     {(
                       Array.from(
                         new Set(phcoSelected.map((obj) => obj.health_facility))
@@ -685,9 +726,12 @@ const handleClickDownloadToXlsx = () => {
                   <Form.Item>
                     <Select
                       disabled={phcoOption ? false : true}
-                      placeholder="sub_centre"
+                      placeholder="Select Sub Centre"
                       onChange={handleSubCentreOption}
+                      defaultValue={""}
+                      value={subCentreOption}
                     >
+                      <Option value="">Select Sub Centre</Option>
                       {(
                         Array.from(
                           new Set(
@@ -708,9 +752,12 @@ const handleClickDownloadToXlsx = () => {
                   <Form.Item>
                     <Select
                       disabled={subCentreOption ? false : true}
-                      placeholder="village/Ward"
+                      placeholder="Select village/Ward"
                       onChange={handleVillageOption}
+                      defaultValue={""}
+                      value={villageOption}
                     >
+                      <Option value="">Select village/Ward</Option>
                       {(
                         Array.from(
                           new Set(
@@ -730,7 +777,6 @@ const handleClickDownloadToXlsx = () => {
                 <div className={styles.selecttypes}>
                   <Form.Item
                     name={"From and To Date"}
-                    // hasFeedback={!selctedData.dates ? false : true}
                     rules={[{ required: true }]}
                   >
                     <RangePicker
@@ -746,10 +792,13 @@ const handleClickDownloadToXlsx = () => {
                 <div className={styles.selecttypes}>
                   <Form.Item>
                     <Select
-                      placeholder="status"
+                      placeholder="Select status"
                       disabled={selectedDates ? false : true}
                       onChange={handleStatusOption}
+                      defaultValue={""}
+                      value={statusOption}
                     >
+                      <Option value="">Select status</Option>
                       <Option value="all">All</Option>
                       <Option value="order_pending">Order Pending</Option>
                       <Option value="ready_to_deliver">Ready To Deliver</Option>
@@ -763,9 +812,12 @@ const handleClickDownloadToXlsx = () => {
                   <Form.Item>
                     <Select
                       disabled={statusOption ? false : true}
-                      placeholder="Details"
+                      placeholder="Select Details"
                       onChange={handleRefraDetails}
+                      defaultValue={""}
+                      value={refraDeatils}
                     >
+                      <Option value="">Select Details</Option>
                       {(
                         Array.from(
                           new Set(
@@ -777,15 +829,6 @@ const handleClickDownloadToXlsx = () => {
                           {obj}
                         </Option>
                       ))}
-                      {refraType !== "school" ? (
-                        <>
-                          {/* <Option value="rc">Rc</Option>
-                                            <Option value="aadhar">Aadhar</Option> */}
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      {/* <Option value="all">All</Option> */}
                     </Select>
                   </Form.Item>
                 </div>
@@ -805,7 +848,9 @@ const handleClickDownloadToXlsx = () => {
                 <SelectRowsPerPage handleCh={handleCh} />
               </Col>
               <Col sm={6} xs={12} className={styles.searchContainer}>
-               <Button type="primary" onClick={handleClickDownloadToXlsx}>Download</Button>
+                <Button type="primary" onClick={handleClickDownloadToXlsx}>
+                  {t("DOWNLOAD")}
+                </Button>
               </Col>
               <Col sm={6} xs={12} className={styles.searchContainer}>
                 <Search
@@ -819,6 +864,7 @@ const handleClickDownloadToXlsx = () => {
             <Table
               columns={columns}
               dataSource={copyOfOriginalTableData}
+              bordered
               pagination={{
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} of ${total} items`,

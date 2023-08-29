@@ -1,15 +1,19 @@
 .titleBarPage {
+    @media only screen and (max-width: 480px) {
+        .titleContainer {
+         display: none;
+        }
+      }
     .titleBarContainer{
+        height: 6vh;
         background-color: #1C8BCE;
-        height: 35px;
-        // display: flex;
         align-items: center;
         color: hsl(0, 0%, 100%);
         .image{
             cursor: pointer;
         }  
         .titleContainer{
-            text-align: start;  
+            text-align: left;  
             overflow: hidden;
             .title {
                 font-weight: 600;

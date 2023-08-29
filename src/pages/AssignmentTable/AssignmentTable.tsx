@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "./AssignmentTable.module.scss";
 import classNames from 'classnames';
 import "./AssignmentTable.custom.scss";
@@ -20,7 +20,7 @@ export const AssignmentTable: React.FC = () => {
 
   // location
   const location: any = useLocation();
-
+  
   const Routes = () => {
     if (user?.userData?.type == "state_admin") {
       if (location.state === "district") return <DistrictOfficerTable />
@@ -37,7 +37,8 @@ export const AssignmentTable: React.FC = () => {
     } else if (user?.userData?.type == "phco") {
       if (location.state === "refraction") return <RefractionistTable />
     }
-  }
+  };
+
   return (
     <>
       <TitleBarComponent title={t("ASSIGNMENT_LIST")} image={true} />

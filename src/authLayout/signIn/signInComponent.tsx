@@ -91,11 +91,11 @@ export const SignInComponent: FC = () => {
                                     value={state.role}
                                     onChange={(e) => handleChange(e)}
                                 >
-                                    <Select.Option value="state_admin">State Admin</Select.Option>
-                                    <Select.Option value="district_officer">District Officer</Select.Option>
-                                    <Select.Option value="taluka">Taluka</Select.Option>
-                                    <Select.Option value="phco">Phco</Select.Option>
-                                    <Select.Option disabled={true} value="vendor">Vendor (Coming soon)</Select.Option>
+                                    <Select.Option value="state_admin">{t("STATE_ADMIN")}</Select.Option>
+                                    <Select.Option value="district_officer">{t("DISTRICT_HEALTH_OFFICER")}</Select.Option>
+                                    <Select.Option value="taluka">{t("TALUKA_HEALTH_OFFICER")}</Select.Option>
+                                    <Select.Option value="phco">{t("PHCO_HEALTH_OFFICER")}</Select.Option>
+                                    {/* <Select.Option disabled={true} value="vendor">Vendor (Coming soon)</Select.Option> */}
                                 </Select>
                             </Form.Item>
                             <InputFeild

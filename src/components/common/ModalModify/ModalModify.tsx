@@ -39,6 +39,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
         sub_centre: state.sub_centre,
         village: state.village,
         health_facility: state.health_facility,
+        health_block: state.health_block,
     });
 
 const renderForm = () => (
@@ -54,6 +55,7 @@ const renderForm = () => (
                 .validateFields()
                 .then((values) => {
                     form.resetFields();
+                    values.health_block = state.health_block;
                     onSave(values);
                 })
                 .catch(info => {

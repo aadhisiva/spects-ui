@@ -1,15 +1,15 @@
 .district-page-list {
-    .css-txh9fw.ant-table-wrapper .ant-table-thead {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-thead {
         color: #000000;
         font-weight: 600;
         font-size: 13px;
     }
 
-    .css-txh9fw.ant-table-wrapper .ant-table-thead>tr>th {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-thead>tr>th {
         background-color: #ABD2F6;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     }
-    .css-txh9fw.ant-table-wrapper table {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper table {
         border-collapse: collapse;
         width: auto;
         @media only screen and (min-width: 1000px) {
@@ -17,19 +17,19 @@
         }
     }
 
-    .css-txh9fw.ant-table-wrapper .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
         display: none;
     }
 
-    .css-txh9fw.ant-table-wrapper .ant-table-container table>thead>tr:first-child>*:last-child {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-container table>thead>tr:first-child>*:last-child {
         border-radius: 0 10px 10px 0;
     }
 
-    .css-txh9fw.ant-table-wrapper .ant-table-container table>thead>tr:first-child>*:first-child {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-container table>thead>tr:first-child>*:first-child {
         border-radius: 10px 0 0 10px;
     }
 
-    .css-txh9fw.ant-table-wrapper .ant-table-tbody {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-tbody {
         border: 1.4px solid #b4a6a6;
         border-radius: 10px;
         font-size: 12px;
@@ -37,19 +37,19 @@
         font-style: normal;
     }
 
-    .css-txh9fw.ant-form-item  {
+    .css-dev-only-do-not-override-txh9fw.ant-form-item  {
         margin-bottom: 3px;
     }
-    .css-txh9fw.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    .css-dev-only-do-not-override-txh9fw.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
         border: 0.5px solid #5b5454;
     }
-    .css-txh9fw.ant-table-wrapper {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper {
         overflow-y: auto;
     }
-    .css-txh9fw.ant-pagination .ant-pagination-options {
+    .css-dev-only-do-not-override-txh9fw.ant-pagination .ant-pagination-options {
         display: none;
     }
-    .css-txh9fw.ant-table-wrapper .ant-table-pagination-right  {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-pagination-right  {
         // display: inline-table;
         justify-content: center;
     }

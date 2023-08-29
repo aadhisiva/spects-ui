@@ -4,13 +4,14 @@ import { Routes, Route, BrowserRouter, redirect, Navigate, HashRouter } from 're
 import { SignInComponent } from './signIn/signInComponent'
 import { DashBoardHierarchy } from '../pages/DashBoardHierarchy'
 import { AssignmentTable } from '../pages/AssignmentTable'
-import { ReportsTable } from '../pages/ReportsTable'
+import { ReportsTable } from '../pages/Reports/ReportsTable'
 import { PageNotFound } from '../components/common/ErrorBoundaries/PageNotFound'
 import { SessionTimeout } from '../components/common/Sessions/SessionTimeout'
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut, getMe, reset } from '../redux/features/authSlice'
 import { IStateValues } from '../type'
 import { ShowInfoPageForOnline } from '../components/common/OnlineOroffline'
+import { PrimaryScreeningReports } from '../pages/Reports/PScreeningReports'
 
 var condition = navigator.onLine;
 
@@ -41,6 +42,7 @@ const AuthLayout: React.FC = () => {
             <Route path='/dashboard' element={<DashBoardHierarchy />} />
             <Route path='/assignment-list' element={<AssignmentTable />} />
             <Route path='/reports-list' element={<ReportsTable />} />
+            <Route path='/primary-screening-list' element={<PrimaryScreeningReports />} />
             <Route path='*' element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>

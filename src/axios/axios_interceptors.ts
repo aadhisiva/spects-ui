@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// export const baseUrl = "http://103.138.197.145:8083/";
+// export const baseUrl = "https://spectacles.karnataka.gov.in/";
 export const baseUrl = "http://localhost:8889/";
 
 const axiosRequest = axios.create({

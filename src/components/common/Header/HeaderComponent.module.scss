@@ -1,8 +1,4 @@
 .homePage {
-    // width: 100em;
-    // @media only screen and (max-width: 600px) {
-    //     width: 60vh;
-    // }
     .headerContainer {
         background-color: #124f8c;
         height: 70px;
@@ -34,7 +30,10 @@
         }
 
         .rightSideContent {
-            text-align: right;
+            @media only screen and (max-width: 780px) {
+                text-align: center;
+            }
+            text-align: end;
 
             .title {
                 color: white;

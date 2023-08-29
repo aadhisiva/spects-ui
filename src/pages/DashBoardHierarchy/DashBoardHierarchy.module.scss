@@ -1,6 +1,6 @@
 .dashBoardHierarchy {
     display: block;
-    margin: 1% 8% 3% 8% !important;
+    margin: 1% 8% 3% 8%;
     padding: 1%;
 
     .statisticsContainer {
@@ -17,6 +17,42 @@
                 font-weight: 600;
                 font-size: 18px;
                 line-height: 130%;
+            }
+        }
+    }
+    @media only screen and (max-width: 480px){
+        .userName{
+            display: none;
+        }
+        .statisticsLoginUser{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .statistics {
+                .title {
+                    color: black;
+                    font-weight: 700;
+                    font-size: 18px;
+                    line-height: 130%;
+                }
+            }
+        }
+    }
+    @media only screen and (min-width: 481px){
+        .statisticsLoginUser {
+            display: none;
+        } 
+        .userName{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .statistics {
+                .title {
+                    color: black;
+                    font-weight: 700;
+                    font-size: 18px;
+                    line-height: 130%;
+                }
             }
         }
     }
@@ -95,7 +131,6 @@
             border-radius: 0px 0 20px 20px;
         }
         border: 1px solid #000000;
-        // border-radius: 40px;
         border-radius: 0px 20px 20px 20px;
         text-align: center;
         .menuItems {
@@ -110,6 +145,7 @@
 
             // align-items: center;
             .title {
+                margin: 20px 20px 0 20px;
                 font-weight: 600;
                 font-size: 18px;
                 line-height: 130%;

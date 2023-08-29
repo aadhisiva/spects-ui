@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, MutableRefObject, useRef, useState } from 'react'
 import { CustomCaptch } from '../../components/common/cutomCaptch/customCaptch'
-import { Button, Col, Form, Input, Row, Space } from 'antd'
+import { Button, Col, Form, Input, Row, Space, message } from 'antd'
 import { t } from 'i18next'
 import { TimingsShow } from '../../components/common/Timers/timings'
 import { LOGIN_APIS } from '../../api/apisSpectacles'
@@ -36,11 +36,7 @@ export const OtpValidate: FC<TOtpValidate> = ({
             type: state.role
         }
         let resendOtp = await LOGIN_APIS("resend_otp", body);
-        if (resendOtp.code == 200) {
-            NotificationSuccess(resendOtp.message);
-        } else {
-            NotificationError(resendOtp.message);
-        }
+        if (resendOtp.code !== 200) return message.warning(resendOtp.message);
     };
 
     const onFinish = async () => {
@@ -50,14 +46,9 @@ export const OtpValidate: FC<TOtpValidate> = ({
             otp: inputRef.current.input.value
         };
         let originalCaptcha = captch.split(" ").join("");
-        if(captchValue.length !== 6){
-            alert("Please enter correct captch.")
-        }
+        if(captchValue.length !== 6) return message.warning("Please Enter Correct Captha.")
         // captch checking here
-        if (originalCaptcha !== captchValue) {
-            alert("Captha Failed. Please try again") 
-            return;
-        }
+        if (originalCaptcha !== captchValue) return message.warning("Captha Failed. Please Try Again");
         dispatch(verifyOTP(body));
     };
     return (
@@ -71,10 +62,10 @@ export const OtpValidate: FC<TOtpValidate> = ({
                     label={t("OTP")}
                     name={"otp"}
                     rules={[
-                        { required: true, message: `Please input your otp!` },
+                        { required: true, message: `Please Input Your Otp!` },
                         {
                             pattern: /^[0-9]{1,6}$/,
-                            message: `Please enter a valid otp`,
+                            message: `Please Enter A Valid Otp`,
                         }
                     ]}
                 >
