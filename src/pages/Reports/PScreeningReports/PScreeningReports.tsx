@@ -18,15 +18,19 @@ import { useNavigate } from "react-router";
 import { TitleBarComponent } from "../../../components/common/titleBar";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import SelectRowsPerPage from "../../../components/common/SelectItems/SelectRowsPerPage";
-import { POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
+import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
+import { NotificationError } from "../../../components/common/Notifications/Notifications";
+import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
 
+const {Option} = Select;
 const { Search } = Input;
 
 interface DataType {
   key: string;
   district: string;
+  rural_urban: string;
   taluka: string;
   sub_centre: string;
   village: string;
@@ -47,6 +51,21 @@ export const PrimaryScreeningReports: React.FC = () => {
 
   /** data */
   const [originalTableData, setOriginalTableData] = useState<DataType[]>([]);
+  const [copyOfOriginalTableData, setCopyOfOriginalTableData] = useState<
+    DataType[]
+  >([]);
+
+   // select values
+   const [rural_urban, setRuralOrUrban] = useState("");
+   const [talukaOption, setTalukaOption] = useState("");
+   const [districtOption, setDistrict] = useState("");
+   const [subCentreOption, setSubCentreOption] = useState("");
+   const [phcoOption, setPhcoOption] = useState("");
+   // selected content
+   const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
+   const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
+   const [subCentreSelect, setSubCentreSelect] = useState<DataType[]>([]);
+   const [phcoSelected, setPhcoSelected] = useState<DataType[]>([]);
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [queryString, setQueryString] = useState<string>("");
@@ -66,21 +85,119 @@ export const PrimaryScreeningReports: React.FC = () => {
   // auth user
   const [userData] = useFetchUserData();
   const token = userData?.userData?.token;
-  let bodyData: any = { codes: userData?.userData?.codes };
+  const type = userData?.userData?.type;
+  // let bodyData: any = { codes: userData?.userData?.codes };
+  const bodyData: any = {
+    codes: userData?.userData?.codes,
+    type: userData?.userData?.type,
+  };
+
+
+  // useEffect(() => {
+  //   if(ty)
+  //   (async function () {
+  //     let result = await POSTAPIS_WITH_AUTH(
+  //       `get_phco_wise_data`,
+  //       bodyData,
+  //       token
+  //     );
+  //     if (result.code === 200) {
+  //       setOriginalTableData(result.data);
+  //     }
+  //     setLoading(false);
+  //   })();
+  // }, []);
+
+  const GetTablData = async () => {
+    if (type == "district_officer") {
+      let result = await POSTAPIS_WITH_AUTH(`get_phco_wise_data`, bodyData, token);
+      if (result.code == 200) {
+        setLoading(false);
+        setOriginalTableData(result?.data);
+        setCopyOfOriginalTableData(result?.data);
+      } else {
+        NotificationError(result.message);
+      }
+    } else if (type == "taluka") {
+      let result = await POSTAPIS_WITH_AUTH(`get_phco_wise_data`, bodyData, token);
+      if (result.code == 200) {
+        setLoading(false);
+        setOriginalTableData(result?.data);
+        setCopyOfOriginalTableData(result?.data);
+      } else {
+        NotificationError(result.message);
+      }
+    } else if (type == "phco") {
+      let result = await POSTAPIS_WITH_AUTH(`get_phco_wise_data`, bodyData, token);
+      if (result.code == 200) {
+        setLoading(false);
+        setOriginalTableData(result?.data);
+        setCopyOfOriginalTableData(result?.data);
+      } else {
+        NotificationError(result.message);
+      }
+    } else {
+      let result = await GET_APIS(`get_phco_wise_data`, token);
+      if (result.code == 200) {
+        setLoading(false);
+        setOriginalTableData(result?.data);
+        setCopyOfOriginalTableData(result?.data);
+      } else {
+        NotificationError(result.message);
+      }
+    }
+  };
 
   useEffect(() => {
-    (async function () {
-      let result = await POSTAPIS_WITH_AUTH(
-        `get_phco_wise_data`,
-        bodyData,
-        token
-      );
-      if (result.code === 200) {
-        setOriginalTableData(result.data);
-      }
-      setLoading(false);
+    (async () => {
+      await GetTablData();
     })();
   }, []);
+
+  useEffect(() => {
+    let filterData = originalTableData;
+    // filter rural/urban
+    if (rural_urban) {
+      filterData = filterData.filter((obj) => obj.rural_urban === rural_urban);
+    }
+    // filter rural/urban and district
+    if (rural_urban && districtOption) {
+      filterData = filterData.filter(
+        (obj) =>
+          obj.rural_urban === rural_urban && obj.district === districtOption
+      );
+    }
+    // filter rural/urban and district and taluka
+    if (rural_urban && districtOption && talukaOption) {
+      filterData = filterData.filter(
+        (obj) =>
+          obj.rural_urban === rural_urban &&
+          obj.district === districtOption &&
+          obj.taluka === talukaOption
+      );
+    }
+    // filter rural/urban and district and taluka and phco(health facility)
+    if (rural_urban && districtOption && talukaOption && phcoOption) {
+      filterData = filterData.filter(
+        (obj) =>
+          obj.rural_urban === rural_urban &&
+          obj.district === districtOption &&
+          obj.taluka === talukaOption &&
+          obj.health_facility === phcoOption
+      );
+    }
+    // filter rural/urban and district and taluka and sub centre
+    if (rural_urban && districtOption && talukaOption && subCentreOption) {
+      filterData = filterData.filter(
+        (obj) =>
+          obj.rural_urban === rural_urban &&
+          obj.district === districtOption &&
+          obj.taluka === talukaOption &&
+          obj.sub_centre === subCentreOption
+      );
+    }
+    setCopyOfOriginalTableData(filterData);
+  }, [rural_urban, districtOption, talukaOption, subCentreOption, phcoOption]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -165,17 +282,199 @@ export const PrimaryScreeningReports: React.FC = () => {
     setRowsPerPage(Number(value));
   };
 
+  const handleClickClearFilters = () => {
+    setRuralOrUrban("");
+    setDistrict("");
+    setTalukaOption("");
+    setPhcoOption("");
+    setSubCentreOption("");
+  };
+
+  const handleRuralOrUrban = (value: string) => {
+    if (value !== rural_urban) {
+      setRuralOrUrban(value);
+      setDistrict("");
+      setTalukaOption("");
+      setPhcoOption("");
+      setSubCentreOption("");
+      let reset = originalTableData.filter((obj) => obj.rural_urban === value);
+      setDistrictSelect(reset);
+    }
+  };
+
+  const handleSelectedDistrict = (value: string) => {
+    if (value !== districtOption) {
+      setDistrict(value);
+      setTalukaOption("");
+      setPhcoOption("");
+      setSubCentreOption("");
+      let reset = districtSelect.filter((obj) => obj.district === value);
+      setTalukaSelect(reset);
+    }
+  };
+
+  const handleSelectedTaluka = (value: string) => {
+    if (value !== talukaOption) {
+      setTalukaOption(value);
+      setPhcoOption("");
+      setSubCentreOption("");
+      let reset = talukaSelect.filter((obj) => obj.taluka === value);
+      setPhcoSelected(reset);
+    }
+  };
+
+  const handleSelectedPhco = (value: string) => {
+    if (value !== phcoOption) {
+      setPhcoOption(value);
+      setSubCentreOption("");
+      let reset = phcoSelected.filter((obj) => obj.health_facility === value);
+      setSubCentreSelect(reset);
+    }
+  };
+
+  const handleSubCentreOption = (value: string) => {
+    if (value !== subCentreOption) {
+      setSubCentreOption(value);
+    }
+  };
+
   const renderReports = () => {
     return (
       <>
-        <TitleBarComponent title={t("PRIMARY-SCREENING-LIST")} image={true} />
+        <TitleBarComponent title={t("PRIMARY_SCREENING_LIST")} image={true} />
         <div
           className={classNames(
             styles.PrimaryReportsPage,
             "primary-report-page-list"
           )}
         >
-          <div className={styles.table}>
+      <div className={styles.table}>
+          <Row>
+            <Col sm={3} xs={24} className={styles.statisticsContainer}>
+              <div className={styles.statistics}>
+                <span className={styles.title}>{t("FILTERS")}</span>
+              </div>
+            </Col>
+          </Row>
+          <Row className={styles.selectItemsContainer}>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Rural/Urban"
+                  onChange={handleRuralOrUrban}
+                  defaultValue={""}
+                  value={rural_urban}
+                >
+                  <Option value={""}>Select Rural/Urban</Option>
+                  {(RURAL_OR_URBAN_FILTER_OPTIONS || []).map((name) => (
+                    <Option key={name} value={name}>
+                      {name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select District"
+                  disabled={rural_urban ? false : true}
+                  onChange={handleSelectedDistrict}
+                  defaultValue={""}
+                  value={districtOption}
+                >
+                  <Option value={""}>Select District</Option>
+                  {(
+                    Array.from(
+                      new Set(districtSelect.map((obj) => obj.district))
+                    ) || []
+                  )?.map((obj: any, i) => (
+                    <Option key={String(i)} value={`${obj}`}>
+                      {obj?.replace(/\W/g, "")?.replace(/\d/g, "")}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select Taluka"
+                  disabled={districtOption ? false : true}
+                  onChange={handleSelectedTaluka}
+                  defaultValue={""}
+                  value={talukaOption}
+                >
+                  <Option value={""}>Select Taluka</Option>
+                  {(
+                    Array.from(
+                      new Set(talukaSelect.map((obj) => obj.taluka))
+                    ) || []
+                  )?.map((obj: any, i) => (
+                    <Option key={String(i)} value={`${obj}`}>
+                      {obj?.replace(/\W/g, "")?.replace(/\d/g, "")}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select Phc"
+                  disabled={talukaOption ? false : true}
+                  onChange={handleSelectedPhco}
+                  defaultValue={""}
+                  value={phcoOption}
+                >
+                  <Option value={""}>Select PHC</Option>
+                  {(
+                    Array.from(
+                      new Set(phcoSelected.map((obj) => obj.health_facility))
+                    ) || []
+                  )?.map((obj: any, i) => (
+                    <Option key={String(i)} value={`${obj}`}>
+                      {obj}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select Sub Centre"
+                  disabled={phcoOption ? false : true}
+                  onChange={handleSubCentreOption}
+                  defaultValue={""}
+                  value={subCentreOption}
+                >
+                  <Option value={""}>Select Sub Centre</Option>
+                  {(
+                    Array.from(
+                      new Set(subCentreSelect.map((obj) => obj.sub_centre))
+                    ) || []
+                  )?.map((obj: any, i) => (
+                    <Option key={String(i)} value={`${obj}`}>
+                      {obj}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Button type="primary" onClick={handleClickClearFilters}>
+                  {t("CLEAR_FILTERS")}
+                </Button>
+              </div>
+            </Col>
+          </Row>
             {/* search and select rows */}
             <Row>
               <Col sm={17} xs={12} className={styles.slectRows}>
@@ -191,15 +490,16 @@ export const PrimaryScreeningReports: React.FC = () => {
               </Col>
             </Row>
             <Table
+            style={{ tableLayout: "auto" }}
               bordered
               columns={columns}
-              dataSource={originalTableData}
+              dataSource={copyOfOriginalTableData}
               pagination={{
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} of ${total} items`,
                 current: currentPage,
                 pageSize: rowsPerPage,
-                total: originalTableData?.length || 0,
+                total: copyOfOriginalTableData?.length || 0,
               }}
               onChange={handleChange}
             />

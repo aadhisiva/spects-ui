@@ -7,12 +7,13 @@ import BenificiaryImage from "../../assets/Images/DashBoard/benificary.png";
 import { TitleBarComponent } from "../../components/common/titleBar";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import { GET_APIS } from "../../api/apisSpectacles";
+import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { getMe } from "../../redux/features/authSlice";
 import { IStateValues } from "../../type";
 import { PhocLoginFirstTIme } from "../../components/common/phcoLoginFirstTime/phocLoginFirstTIme";
+import { NotificationError } from "../../components/common/Notifications/Notifications";
 
 const loginArrayData = [
   {
@@ -55,8 +56,8 @@ type LoginUserI = {
 
 export const DashBoardHierarchy: React.FC = (props) => {
   // phco login is first time or not
-  const [isPhcoLoginFirstTime, setPhcoLoginFirstTime] =
-    useState<boolean>(false);
+  // const [isPhcoLoginFirstTime, setPhcoLoginFirstTime] =
+  //   useState<boolean>(false);
 
   const [loginUser, setLoginUser] = useState<LoginUserI[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
@@ -99,29 +100,96 @@ export const DashBoardHierarchy: React.FC = (props) => {
         return setLoginUser(loginArrayData.slice(4, 4));
     }
   };
+  const type = user?.userData?.type;
+
+  const bodyData: any = {
+    codes: user?.userData?.codes,
+    type: user?.userData?.type,
+  };
+
+  const GetCounts = async () => {
+    if (type == "district_officer") {
+      let result = await POSTAPIS_WITH_AUTH(
+        `get_orders_count`,
+        bodyData,
+        token
+      );
+      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+      if (result.code == 200) {
+        setAllCount(result?.data[0]?.count);
+        setPendingCount(pending?.data[0]?.count);
+        setDeliveredCount(delivered?.data[0]?.count);
+      } else {
+        NotificationError(result.message);
+      }
+    } else if (type == "taluka") {
+      let result = await POSTAPIS_WITH_AUTH(
+        `get_orders_count`,
+        bodyData,
+        token
+      );
+      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+      if (result.code == 200) {
+        setAllCount(result?.data[0]?.count);
+        setPendingCount(pending?.data[0]?.count);
+        setDeliveredCount(delivered?.data[0]?.count);
+      } else {
+        NotificationError(result.message);
+      }
+    } else if (type == "phco") {
+      let result = await POSTAPIS_WITH_AUTH(
+        `get_orders_count`,
+        bodyData,
+        token
+      );
+      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+      if (result.code == 200) {
+        setAllCount(result?.data[0]?.count);
+        setPendingCount(pending?.data[0]?.count);
+        setDeliveredCount(delivered?.data[0]?.count);
+      } else {
+        NotificationError(result.message);
+      }
+    } else {
+      let result = await GET_APIS(`get_orders_count`, token);
+      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+      if (result.code == 200) {
+        setAllCount(result?.data[0]?.count);
+        setPendingCount(pending?.data[0]?.count);
+        setDeliveredCount(delivered?.data[0]?.count);
+      } else {
+        NotificationError(result.message);
+      }
+    }
+  };
 
   useEffect(() => {
     (async () => {
       if (token !== undefined) {
-        let all = await GET_APIS("get_orders_count", token);
-        let delivered = await GET_APIS("delivered", token);
-        let pending = await GET_APIS("pending", token);
-        if (all.code == 200) {
-          setAllCount(all?.data[0]?.count);
-          setPendingCount(pending?.data[0]?.count);
-          setDeliveredCount(delivered?.data[0]?.count);
-        }
+        await GetCounts();
+        // let all = await GET_APIS("get_orders_count", token);
+        // let delivered = await GET_APIS("delivered", token);
+        // let pending = await GET_APIS("pending", token);
+        // if (all.code == 200) {
+        //   setAllCount(all?.data[0]?.count);
+        //   setPendingCount(pending?.data[0]?.count);
+        //   setDeliveredCount(delivered?.data[0]?.count);
+        // }
       }
     })();
   }, [token]);
 
-  useEffect(() => {
-    if (user?.userData?.isIntialLogin == "Y") {
-      setPhcoLoginFirstTime(true);
-    } else {
-      setPhcoLoginFirstTime(false);
-    }
-  }, [user?.userData?.isIntialLogin]);
+  // useEffect(() => {
+  //   if (user?.userData?.isIntialLogin == "Y") {
+  //     setPhcoLoginFirstTime(true);
+  //   } else {
+  //     setPhcoLoginFirstTime(false);
+  //   }
+  // }, [user?.userData?.isIntialLogin]);
 
   useEffect(() => {
     SwitchLoginData(user?.userData?.type);
@@ -131,25 +199,25 @@ export const DashBoardHierarchy: React.FC = (props) => {
     navigate(path, { state: role });
   };
 
-  const handleCancel = () => {
-    setPhcoLoginFirstTime(false);
-  };
+  // const handleCancel = () => {
+  //   setPhcoLoginFirstTime(false);
+  // };
 
-  const handleSuccess = () => {
-    dispatch(getMe(""));
-    // setPhcoLoginFirstTime(false);
-  };
+  // const handleSuccess = () => {
+  //   dispatch(getMe(""));
+  //   // setPhcoLoginFirstTime(false);
+  // };
 
   const length: number = loginUser?.length == 2 ? 3 : 4;
   return (
     <>
-      {isPhcoLoginFirstTime && (
+      {/* {isPhcoLoginFirstTime && (
         <PhocLoginFirstTIme
           open={isPhcoLoginFirstTime}
           setOpen={handleCancel}
           onSave={handleSuccess}
         />
-      )}
+      )} */}
       <TitleBarComponent title={t("DASHBOARD")} image={true} />
       <div
         className={classNames(
@@ -254,7 +322,15 @@ export const DashBoardHierarchy: React.FC = (props) => {
                     preview={false}
                     src={obj.image}
                   />
-                  <p className={styles.title}>{t("TABLE_DISTRICT")}</p>
+                  <p className={styles.title}>
+                    {obj.role == "District"
+                      ? t("TABLE_DISTRICT")
+                      : obj.role == "Taluka"
+                      ? t("TABLE_TALUKA")
+                      : obj.role == "PHCO"
+                      ? t("PHCO_CARD")
+                      : t("REFRACTIONIST_TABLE")}{" "}
+                  </p>
                 </div>
               </a>
             </Col>
@@ -286,31 +362,31 @@ export const DashBoardHierarchy: React.FC = (props) => {
                   preview={false}
                   src={BenificiaryImage}
                 />
-                <p className={styles.title}>{"Secondary Screening Reports"}</p>
+                <p className={styles.title}>{t("SECONDARY_SCREENING_LIST")}</p>
               </div>
             </a>
           </Col>
-          {user?.userData?.type == "phco" &&
-          user?.userData?.isIntialLogin !== "Y" ? (
-            <Col sm={7} xs={24}>
-              <a onClick={(e) => navigate("/primary-screening-list")}>
-                <div
-                  style={{ backgroundColor: "#7c4a4a" }}
-                  className={styles.menuItems}
-                >
-                  <Image
-                    width={60}
-                    height={50}
-                    preview={false}
-                    src={BenificiaryImage}
-                  />
-                  <p className={styles.title}>{"Primary Screening Reports"}</p>
-                </div>
-              </a>
-            </Col>
-          ) : (
+          {/* {user?.userData?.type == "phco" && */}
+          {/* user?.userData?.isIntialLogin !== "Y" ? ( */}
+          <Col sm={7} xs={24}>
+            <a onClick={(e) => navigate("/primary-screening-list")}>
+              <div
+                style={{ backgroundColor: "#7c4a4a" }}
+                className={styles.menuItems}
+              >
+                <Image
+                  width={60}
+                  height={50}
+                  preview={false}
+                  src={BenificiaryImage}
+                />
+                <p className={styles.title}>{t("PRIMARY_SCREENING_LIST")}</p>
+              </div>
+            </a>
+          </Col>
+          {/* ) : (
             ""
-          )}
+          )} */}
         </Row>
       </div>
     </>

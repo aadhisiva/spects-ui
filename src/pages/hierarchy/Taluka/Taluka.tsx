@@ -30,6 +30,7 @@ interface DataType {
   rural_urban: string;
 }
 
+
 export const TalukaTable: React.FC = () => {
   // translation
   const { t } = useTranslation();
@@ -120,16 +121,6 @@ export const TalukaTable: React.FC = () => {
       title: t("TABLE_NAME"),
       dataIndex: "name",
       key: "name",
-      filteredValue: [queryString],
-      onFilter: (value: any, record) => {
-        return (
-          String(record.name).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.mobile_number)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.district).toLowerCase().includes(value.toLowerCase())
-        );
-      },
       sorter: (a, b) => a.name?.length - b.name?.length,
       sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
       ellipsis: true,
@@ -193,6 +184,20 @@ export const TalukaTable: React.FC = () => {
     },
   ];
 
+  let renderItems = copyOfOriginalTableData.filter(obj => {
+    if(queryString === "") {
+      return obj;
+    } else {
+      return (
+        String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.mobile_number).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.district).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.rural_urban).toLowerCase().includes(queryString.toLowerCase())
+      )
+    }
+  });
+
   useEffect(() => {
     let filterData = originalTableData;
     // filter rural/urban
@@ -227,6 +232,7 @@ export const TalukaTable: React.FC = () => {
       taluka: values?.taluka,
     };
     let body: any = { ...{ code: editId }, ...newValues };
+    console.log("vody", body)
     let result = await POSTAPIS_WITH_AUTH("update_taluka_data", body, token);
     if (result.code == 200) {
       await GetTablData();
@@ -239,6 +245,7 @@ export const TalukaTable: React.FC = () => {
 
   const handleModifyForm = (row: any) => {
     setVisisble(true);
+    console.log("row, row", row)
     setEditId(row.taluka_code);
     setFormData(row);
     setEditMode("Edit");
@@ -392,14 +399,14 @@ export const TalukaTable: React.FC = () => {
           <Table
             style={{ tableLayout: "auto" }}
             columns={columns}
-            dataSource={copyOfOriginalTableData}
+            dataSource={renderItems}
             pagination={{
               showTotal: (total, range) => {
                 return `${range[0]}-${range[1]} of ${total} items`;
               },
               current: currentPage,
               pageSize: rowsPerPage,
-              total: copyOfOriginalTableData.length,
+              total: renderItems.length || 0,
             }}
             onChange={handleChange}
           />

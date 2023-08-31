@@ -90,16 +90,6 @@ export const DistrictOfficerTable: React.FC = () => {
       title: t("TABLE_NAME"),
       dataIndex: "name",
       key: "name",
-      filteredValue: [queryString],
-      // onFilter: (value: any, record) => {
-      //   return (
-      //     String(record.name).toLowerCase().includes(value.toLowerCase()) ||
-      //     String(record.mobile_number)
-      //       .toLowerCase()
-      //       .includes(value.toLowerCase()) ||
-      //     String(record.district).toLowerCase().includes(value.toLowerCase())
-      //   );
-      // },
       sorter: (a, b) => a.name?.length - b.name?.length,
       sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
       ellipsis: true,
@@ -232,6 +222,19 @@ export const DistrictOfficerTable: React.FC = () => {
     }
   };
 
+  let renderItems = copyOfOriginalTableData.filter(obj => {
+    if(queryString === "") {
+      return obj;
+    } else {
+      return (
+        String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.mobile_number).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.rural_urban).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.district).toLowerCase().includes(queryString.toLowerCase())
+      )
+    }
+  });
+
   const rednerDistrictsData = () => (
     <>
       {visible ? FormOpen() : ""}
@@ -314,14 +317,14 @@ export const DistrictOfficerTable: React.FC = () => {
           <Table
             columns={columns}
             bordered
-            dataSource={copyOfOriginalTableData}
+            dataSource={renderItems}
             rowKey={(record) => `${record.district}_${record.rural_urban}`}
             pagination={{
               showTotal: (total, range) =>
                 `${range[0]}-${range[1]} of ${total} items`,
               current: currentPage,
               pageSize: rowsPerPage,
-              total: copyOfOriginalTableData?.length || 0,
+              total: renderItems?.length || 0,
             }}
             onChange={handleChange}
           />

@@ -128,6 +128,7 @@ export const ReportsTable: React.FC = () => {
     codes: userData?.userData?.codes,
     type: userData?.userData?.type,
   };
+
   /* first rendering only  */
   useEffect(() => {
     (async () => {
@@ -339,39 +340,16 @@ export const ReportsTable: React.FC = () => {
     phcoOption,
   ]);
 
+
+
   const columns: ColumnsType<DataType> = [
     {
       title: t("TABLE_REFRACTIONIST_NAME"),
       dataIndex: "refractionist_name",
       key: "refractionist_name",
-      filteredValue: [queryString],
-      onFilter: (value: any, record) => {
-        return (
-          String(record.type).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.refractionist_name)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.name).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.phone_number)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.district).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.details).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.status).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.taluka).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.health_facility)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.sub_centre)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.village).toLowerCase().includes(value.toLowerCase())
-        );
-      },
       sorter: (a, b) =>
         a.refractionist_name.length - b.refractionist_name.length,
-      sortOrder:
-        sortedInfo.columnKey === "refractionist_name" ? sortedInfo.order : null,
+      sortOrder: sortedInfo.columnKey === "refractionist_name" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
@@ -501,6 +479,34 @@ export const ReportsTable: React.FC = () => {
       setStatusSelect(reset);
     }
   };
+
+  let renderItems = copyOfOriginalTableData.filter(obj => {
+    if(queryString === "") {
+      return obj;
+    } else {
+      return (
+        String(obj.type).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.refractionist_name)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.phone_number)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.district).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.details).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.status).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.health_facility)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.sub_centre)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.village).toLowerCase().includes(queryString.toLowerCase())
+      )
+    }
+  });
 
   const handleClickClearFilters = () => {
     setRefraTypes("");
@@ -863,14 +869,14 @@ export const ReportsTable: React.FC = () => {
             </Row>
             <Table
               columns={columns}
-              dataSource={copyOfOriginalTableData}
+              dataSource={renderItems}
               bordered
               pagination={{
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} of ${total} items`,
                 current: currentPage,
                 pageSize: rowsPerPage,
-                total: copyOfOriginalTableData?.length || 0,
+                total: renderItems?.length || 0,
               }}
               onChange={handleChange}
             />

@@ -4,21 +4,11 @@
         font-weight: 600;
         font-size: 13px;
     }
-
-    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-thead>tr {
-        // border: 1px solid;
-        // border-radius: 10px;
-    }
-
     .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-thead>tr>th {
         // border: 1px solid #000000;
         background-color: #ABD2F6;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     }
-    // .css-dev-only-do-not-override-txh9fw.ant-table-wrapper.ant-table.ant-table-container.ant-table-content table{
-    //         table-layout: auto;
-    //         // width: 100%;
-    //     }
 
     .css-dev-only-do-not-override-txh9fw.ant-table-wrapper table {
         border-collapse: collapse;
@@ -57,8 +47,8 @@
     .css-dev-only-do-not-override-txh9fw.ant-pagination .ant-pagination-options {
         display: none;
     }
-    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-pagination-right  {
+    .css-dev-only-do-not-override-txh9fw.ant-table-wrapper .ant-table-pagination-right {
         // display: inline-table;
-        justify-content: center;
+        justify-content: flex-start;
     }
 }

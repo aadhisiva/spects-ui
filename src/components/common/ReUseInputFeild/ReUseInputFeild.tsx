@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input } from "antd";
+import { Form, Image, Input } from "antd";
 
 type InputFeildI = {
     type?: string,
@@ -13,6 +13,8 @@ type InputFeildI = {
     readOnly?: boolean,
     regex?: boolean
     expression?: any
+    image?: boolean
+    imageValue?: string,
 };
 
 export const ReUseInputFeild: React.FC<InputFeildI> = ({
@@ -26,6 +28,8 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
     required,
     regex,
     expression,
+    image,
+    imageValue,
     readOnly= false
 }) => {
 
@@ -64,6 +68,7 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
                 name={name}
                 rules={rulesFunction()}
             >
+                {!image &&
                 <Input
                     readOnly={readOnly}
                     type={type? type : "text"}
@@ -73,6 +78,8 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
                     value={value}
                     disabled={disabled}
                 />
+                }
+                {image && <Image preview={false} src={imageValue} height={300} width={300} />}
             </Form.Item>
         </div>
     )

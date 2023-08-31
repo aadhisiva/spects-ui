@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Form, Modal, Row } from "antd";
+import { Col, Form, Modal, Row, Image } from "antd";
 import { ReUseInputFeild } from "../ReUseInputFeild";
 import { useLocation } from "react-router";
 
@@ -17,7 +17,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
   onCancel,
 }) => {
   const [form] = Form.useForm();
-console.log(state)
+
   form.setFieldsValue({
     order_number: state.order_number,
     refractionist_name: state.refractionist_name,
@@ -31,6 +31,9 @@ console.log(state)
     status: state.status,
     details: state.details,
     type: state.type,
+    image: state.image,
+    frame_size: state.frame_size,
+    frame_type: state.frame_type,
     left_eye_sph: state.left_eye_sph_plus
       ? "+" + state.left_eye_sph_plus
       : "-" + state.left_eye_sph_minus,
@@ -52,6 +55,7 @@ console.log(state)
     near_eye_axis: state.near_vision_axis,
     near_eye_va: state.near_vision_va,
   });
+
   return (
     <div>
       <Modal
@@ -229,6 +233,32 @@ console.log(state)
                 name={"near_eye_va"}
                 label={"Near Vision Va"}
                 readOnly={true}
+              />
+            </Col>
+            <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"frame_size"}
+                label={"Frame Size"}
+                readOnly={true}
+              />
+            </Col>
+            <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"frame_type"}
+                label={"Frame Type"}
+                readOnly={true}
+              />
+            </Col>
+            <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"image"}
+                label={"Image"}
+                readOnly={true}
+                imageValue={state?.image}
+                image={true}
               />
             </Col>
           </Row>

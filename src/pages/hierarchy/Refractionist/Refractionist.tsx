@@ -165,22 +165,6 @@ export const RefractionistTable: React.FC = () => {
         a.refractionist_name?.length - b.refractionist_name?.length,
       sortOrder:
         sortedInfo.columnKey === "refractionist_name" ? sortedInfo.order : null,
-      filteredValue: [queryString],
-      onFilter: (value: any, record) => {
-        return (
-          String(record.refractionist_name)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.refractionist_mobile)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.district).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.sub_centre)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.taluka).toLowerCase().includes(value.toLowerCase())
-        );
-      },
       ellipsis: true,
       render: (_, record) => {
         return !_ ? "N/A" : _;
@@ -379,6 +363,22 @@ export const RefractionistTable: React.FC = () => {
     setFormData(row);
     setEditMode(false);
   };
+
+  let renderItems = copyOfOriginalTableData.filter(obj => {
+    if(queryString === "") {
+      return obj;
+    } else {
+      return (
+        String(obj.refractionist_name).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.refractionist_mobile).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.district).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.rural_urban).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.sub_centre).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.health_facility).toLowerCase().includes(queryString.toLowerCase()) 
+      )
+    }
+  });
 
   const FormOpen = () => {
     return (
@@ -623,13 +623,13 @@ export const RefractionistTable: React.FC = () => {
             style={{ tableLayout: "auto" }}
             bordered
             columns={columns}
-            dataSource={copyOfOriginalTableData}
+            dataSource={renderItems}
             pagination={{
               showTotal: (total, range) =>
                 `${range[0]}-${range[1]} of ${total} items`,
               current: currentPage,
               pageSize: rowsPerPage,
-              total: copyOfOriginalTableData.length,
+              total: renderItems.length || 0,
             }}
             onChange={handleChange}
           />

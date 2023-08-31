@@ -35,7 +35,7 @@ const AuthLayout: React.FC = () => {
       {!condition && <ShowInfoPageForOnline />}
       <LayoutComponent>
         <SessionTimeout isAuthenticated={userStore?.isSuccess} logOut={handleLogOut} />
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path='/' element={<Navigate to={"/signin"} replace={true} />} />
             <Route path='/signin' element={<SignInComponent />} />
@@ -43,9 +43,9 @@ const AuthLayout: React.FC = () => {
             <Route path='/assignment-list' element={<AssignmentTable />} />
             <Route path='/reports-list' element={<ReportsTable />} />
             <Route path='/primary-screening-list' element={<PrimaryScreeningReports />} />
-            <Route path='*' element={<PageNotFound />} />
+            {/* <Route path='*' element={<PageNotFound />} /> */}
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </LayoutComponent>
     </div>
   )

@@ -49,11 +49,11 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
             <span className={styles.image}></span>
           )}
         </Col>
-        <Col sm={3} xs={0} className={styles.titleContainer}>
+        <Col sm={4} xs={0} className={styles.titleContainer}>
           <span className={styles.title}>{props.title ? props.title : ""}</span>
         </Col>
         {user?.userData ? (
-          <Col sm={18} xs={19} className={styles.loginUserContainer}>
+          <Col sm={17} xs={19} className={styles.loginUserContainer}>
             <div className={styles.loginUserTitle}>
               <span>
                 {t("WELCOME")}{" "}
