@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import classnames from "classnames";
 import styles from "./ModalModify.module.scss";
 import "./ModalModify.custom.scss";
@@ -25,6 +25,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
     setRuralOrUrban
 }
 ) => {
+    const [ngo, setNgo]= useState("");
     const [form] = Form.useForm();
     const location = useLocation();
 
@@ -56,6 +57,7 @@ const renderForm = () => (
                 .then((values) => {
                     form.resetFields();
                     values.health_block = state.health_block;
+                    values.ngo_gov = ngo;
                     onSave(values);
                 })
                 .catch(info => {
@@ -84,6 +86,20 @@ const renderForm = () => (
                         required={true}
                         regex={true}
                     />
+                    <Form.Item
+                    name={"ngo_gov"}
+                    label="Government/NGO"
+                >
+                    <Select
+                        placeholder="Government/NGO"
+                        onChange={(value: any) => setNgo(value)}
+                        defaultValue={""}
+                    >
+                        <Option value="">--select--</Option>
+                        <Option value="Government">Government</Option>
+                        <Option value="NGO">NGO</Option>
+                    </Select>
+            </Form.Item>
                 </>
             ) : (
                 <>

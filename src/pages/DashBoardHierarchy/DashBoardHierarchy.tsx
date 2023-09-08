@@ -4,6 +4,7 @@ import styles from "./DashBoardHierarchy.module.scss";
 import "./DashBoardHierarchy.custom.scss";
 import RefractionistImage from "../../assets/Images/DashBoard/refractionist.png";
 import BenificiaryImage from "../../assets/Images/DashBoard/benificary.png";
+import SchoolImage from "../../assets/Images/DashBoard/school.png";
 import { TitleBarComponent } from "../../components/common/titleBar";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
@@ -56,8 +57,8 @@ type LoginUserI = {
 
 export const DashBoardHierarchy: React.FC = (props) => {
   // phco login is first time or not
-  // const [isPhcoLoginFirstTime, setPhcoLoginFirstTime] =
-  //   useState<boolean>(false);
+  const [isPhcoLoginFirstTime, setPhcoLoginFirstTime] =
+    useState<boolean>(false);
 
   const [loginUser, setLoginUser] = useState<LoginUserI[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
@@ -101,7 +102,6 @@ export const DashBoardHierarchy: React.FC = (props) => {
     }
   };
   const type = user?.userData?.type;
-
   const bodyData: any = {
     codes: user?.userData?.codes,
     type: user?.userData?.type,
@@ -171,25 +171,17 @@ export const DashBoardHierarchy: React.FC = (props) => {
     (async () => {
       if (token !== undefined) {
         await GetCounts();
-        // let all = await GET_APIS("get_orders_count", token);
-        // let delivered = await GET_APIS("delivered", token);
-        // let pending = await GET_APIS("pending", token);
-        // if (all.code == 200) {
-        //   setAllCount(all?.data[0]?.count);
-        //   setPendingCount(pending?.data[0]?.count);
-        //   setDeliveredCount(delivered?.data[0]?.count);
-        // }
       }
     })();
   }, [token]);
 
-  // useEffect(() => {
-  //   if (user?.userData?.isIntialLogin == "Y") {
-  //     setPhcoLoginFirstTime(true);
-  //   } else {
-  //     setPhcoLoginFirstTime(false);
-  //   }
-  // }, [user?.userData?.isIntialLogin]);
+  useEffect(() => {
+    if (user?.userData?.isIntialLogin == "Y") {
+      setPhcoLoginFirstTime(true);
+    } else {
+      setPhcoLoginFirstTime(false);
+    }
+  }, [user?.userData?.isIntialLogin]);
 
   useEffect(() => {
     SwitchLoginData(user?.userData?.type);
@@ -199,25 +191,25 @@ export const DashBoardHierarchy: React.FC = (props) => {
     navigate(path, { state: role });
   };
 
-  // const handleCancel = () => {
-  //   setPhcoLoginFirstTime(false);
-  // };
+  const handleCancel = () => {
+    setPhcoLoginFirstTime(false);
+  };
 
-  // const handleSuccess = () => {
-  //   dispatch(getMe(""));
-  //   // setPhcoLoginFirstTime(false);
-  // };
+  const handleSuccess = () => {
+    dispatch(getMe(""));
+    // setPhcoLoginFirstTime(false);
+  };
 
   const length: number = loginUser?.length == 2 ? 3 : 4;
   return (
     <>
-      {/* {isPhcoLoginFirstTime && (
+      {isPhcoLoginFirstTime && (
         <PhocLoginFirstTIme
           open={isPhcoLoginFirstTime}
           setOpen={handleCancel}
           onSave={handleSuccess}
         />
-      )} */}
+      )}
       <TitleBarComponent title={t("DASHBOARD")} image={true} />
       <div
         className={classNames(
@@ -350,7 +342,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
           align={"middle"}
           className={styles.menuItemsContainer}
         >
-          <Col sm={7} xs={24}>
+          <Col md={7} xs={24}>
             <a onClick={(e) => navigate("/reports-list")}>
               <div
                 style={{ backgroundColor: "#62A76C" }}
@@ -362,13 +354,30 @@ export const DashBoardHierarchy: React.FC = (props) => {
                   preview={false}
                   src={BenificiaryImage}
                 />
-                <p className={styles.title}>{t("SECONDARY_SCREENING_LIST")}</p>
+                {/* <p className={styles.title}>{t("SECONDARY_SCREENING_LIST")}</p> */}
+                <p className={styles.title}>{"OtherBeneficiary Secondary Screening Reports "}</p>
               </div>
             </a>
           </Col>
+          {/* <Col sm={7} xs={24}>
+            <a onClick={(e) => navigate("/school-primary-screening-list")}>
+              <div
+                style={{ backgroundColor: "#ce7e7e" }}
+                className={styles.menuItems}
+              >
+                <Image
+                  width={60}
+                  height={50}
+                  preview={false}
+                  src={SchoolImage}
+                />
+                <p className={styles.title}>{"School Secondary Screening Reports"}</p>
+              </div>
+            </a>
+          </Col> */}
           {/* {user?.userData?.type == "phco" && */}
           {/* user?.userData?.isIntialLogin !== "Y" ? ( */}
-          <Col sm={7} xs={24}>
+          <Col md={7} xs={24}>
             <a onClick={(e) => navigate("/primary-screening-list")}>
               <div
                 style={{ backgroundColor: "#7c4a4a" }}

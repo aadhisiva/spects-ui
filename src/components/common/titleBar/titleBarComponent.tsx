@@ -60,9 +60,9 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                 {user?.userData?.type == "state_admin"
                   ? t("STATE_ADMIN")
                   : user?.userData?.type == "district_officer"
-                  ? "DHO"
+                  ? "DLO"
                   : user?.userData?.type == "taluka"
-                  ? "THO"
+                  ? "TLO"
                   : user?.userData?.type == "phco"
                   ? "PHCO"
                   : "VENDOR"}{" "}

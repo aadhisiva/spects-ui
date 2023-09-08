@@ -245,11 +245,11 @@ export const RefractionistTable: React.FC = () => {
             <Button onClick={() => handleModifyForm(record)} type="primary">
             {t("MODIFY")}
             </Button>
-            <Tooltip title={"add multiple refractionists with same village"}>
+            {/* <Tooltip title={"add multiple refractionists with same village"}>
               <Button onClick={() => handleAddForm(record)} type="primary">
               {t("ADD")}
               </Button>
-            </Tooltip>
+            </Tooltip> */}
           </div>
         );
       },

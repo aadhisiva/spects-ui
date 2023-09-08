@@ -34,25 +34,16 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
     image: state.image,
     frame_size: state.frame_size,
     frame_type: state.frame_type,
-    left_eye_sph: state.left_eye_sph_plus
-      ? "+" + state.left_eye_sph_plus
-      : "-" + state.left_eye_sph_minus,
-    left_eye_cyl: state.left_eye_cyl_plus
-      ? "+" + state.left_eye_cyl_plus
-      : "-" + state.left_eye_cyl_minus,
+    ngo_gov: state.ngo_gov,
+    left_eye_sph : state.left_eye_sph,
+    left_eye_cyl : state.left_eye_cyl,
+    right_eye_sph : state.right_eye_sph,
+    right_eye_cyl : state.right_eye_cyl,
     left_eye_axis: state.left_eye_axis,
     left_eye_va: state.left_eye_va,
-    right_eye_sph: state.right_eye_sph_plus
-      ? "+" + state.right_eye_sph_plus
-      : "-" + state.right_eye_sph_minus,
-    right_eye_cyl: state.right_eye_cyl_plus
-      ? "+" + state.right_eye_cyl_plus
-      : "-" + state.right_eye_cyl_minus,
     right_eye_axis: state.right_eye_axis,
     right_eye_va: state.right_eye_va,
     near_eye_sph: state.near_vision_sph,
-    near_eye_cyl: state.near_vision_cyl,
-    near_eye_axis: state.near_vision_axis,
     near_eye_va: state.near_vision_va,
   });
 
@@ -69,6 +60,13 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
       >
         <Form form={form} layout="vertical" name="form_in_modal">
           <Row justify={"space-evenly"}>
+            <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                name={"ngo_gov"}
+                label={"Government/NGO"}
+                readOnly={true}
+              />
+            </Col>
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 name={"refractionist_name"}
@@ -139,6 +137,14 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
+            {/* <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"plus_minus_lefy_eye_sph"}
+                label={"Plus/Minus Left Eye Sph"}
+                readOnly={true}
+              />
+            </Col> */}
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
@@ -147,11 +153,19 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
+            {/* <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"plus_minus_left_eye_cyl"}
+                label={"Plus/Minus Left Eye Cyl"}
+                readOnly={true}
+              />
+            </Col> */}
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
                 name={"left_eye_cyl"}
-                label={"Left Eye Sph Cyl"}
+                label={"Left Eye Cyl"}
                 readOnly={true}
               />
             </Col>
@@ -171,6 +185,15 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
+            {/* right eye powers */}
+            {/* <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"plus_minus__right_eye_sph"}
+                label={"Plus/Minus Right Eye Sph"}
+                readOnly={true}
+              />
+            </Col> */}
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
@@ -179,6 +202,14 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
+            {/* <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"plus_minus_right_eye_cyl"}
+                label={"Plus/Minus Right Eye Cyl"}
+                readOnly={true}
+              />
+            </Col> */}
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
@@ -203,6 +234,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
+            {/* near vision */}
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
@@ -211,7 +243,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
-            <Col sm={7} xs={24}>
+            {/* <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
                 name={"near_eye_cyl"}
@@ -226,7 +258,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 label={"Near Vision Axis"}
                 readOnly={true}
               />
-            </Col>
+            </Col> */}
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}

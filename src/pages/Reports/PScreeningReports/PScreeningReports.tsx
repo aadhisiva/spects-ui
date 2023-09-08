@@ -251,14 +251,14 @@ export const PrimaryScreeningReports: React.FC = () => {
         sortedInfo.columnKey === "sub_centre" ? sortedInfo.order : null,
       ellipsis: true,
     },
-    {
-      title: t("TABLE_VILLAGE_WARD"),
-      dataIndex: "village",
-      key: "village",
-      sorter: (a, b) => a.village.length - b.village.length,
-      sortOrder: sortedInfo.columnKey === "village" ? sortedInfo.order : null,
-      ellipsis: true,
-    },
+    // {
+    //   title: t("TABLE_VILLAGE_WARD"),
+    //   dataIndex: "village",
+    //   key: "village",
+    //   sorter: (a, b) => a.village.length - b.village.length,
+    //   sortOrder: sortedInfo.columnKey === "village" ? sortedInfo.order : null,
+    //   ellipsis: true,
+    // },
     {
       title: t("total secondary screening required"),
       dataIndex: "total_secondary_screening_required",

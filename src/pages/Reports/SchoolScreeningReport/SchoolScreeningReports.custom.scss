@@ -1,17 +1,19 @@
-.refractionist-page-list {
+.school-primary-report-page-list {
     .css-txh9fw.ant-table-wrapper .ant-table-thead {
         color: #000000;
         font-weight: 600;
         font-size: 13px;
     }
-
     .css-txh9fw.ant-table-wrapper .ant-table-thead>tr>th {
+        // border: 1px solid #000000;
         background-color: #ABD2F6;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     .css-txh9fw.ant-table-wrapper table {
-        @media only screen and (min-width: 780px) {
+        border-collapse: collapse;
+        width: auto;
+        @media only screen and (min-width: 1000px) {
             width: 100%;
         }
     }
@@ -33,38 +35,20 @@
         border-radius: 10px;
         font-size: 12px;
         font-weight: 400;
-        overflow: scroll;
         font-style: normal;
     }
 
-    .css-txh9fw.ant-form-item {
+    .css-txh9fw.ant-form-item  {
         margin-bottom: 3px;
     }
-
-    .css-txh9fw.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-        border: 0.5px solid #5b5454;
-    }
-
     .css-txh9fw.ant-table-wrapper {
         overflow-y: auto;
     }
-
     .css-txh9fw.ant-pagination .ant-pagination-options {
         display: none;
     }
-
     .css-txh9fw.ant-table-wrapper .ant-table-pagination-right {
         // display: inline-table;
-        justify-content: center;
-    }
-
-    .css-txh9fw.ant-table-wrapper .ant-table-thead>tr>th,
-    .css-txh9fw.ant-table-wrapper .ant-table-tbody>tr>th,
-    .css-txh9fw.ant-table-wrapper .ant-table-tbody>tr>td,
-    .css-txh9fw.ant-table-wrapper tfoot>tr>th,
-    .css-txh9fw.ant-table-wrapper tfoot>tr>td {
-        position: relative;
-        padding: 10px 5px;
-        overflow-wrap: break-word
+        justify-content: flex-start;
     }
 }

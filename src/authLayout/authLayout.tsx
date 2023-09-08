@@ -12,6 +12,7 @@ import { LogOut, getMe, reset } from '../redux/features/authSlice'
 import { IStateValues } from '../type'
 import { ShowInfoPageForOnline } from '../components/common/OnlineOroffline'
 import { PrimaryScreeningReports } from '../pages/Reports/PScreeningReports'
+import { SchoolScreeningReports } from '../pages/Reports/SchoolScreeningReport'
 
 var condition = navigator.onLine;
 
@@ -43,6 +44,7 @@ const AuthLayout: React.FC = () => {
             <Route path='/assignment-list' element={<AssignmentTable />} />
             <Route path='/reports-list' element={<ReportsTable />} />
             <Route path='/primary-screening-list' element={<PrimaryScreeningReports />} />
+            <Route path='/school-primary-screening-list' element={<SchoolScreeningReports />} />
             {/* <Route path='*' element={<PageNotFound />} /> */}
           </Routes>
         </HashRouter>

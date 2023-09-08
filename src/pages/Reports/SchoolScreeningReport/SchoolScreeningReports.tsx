@@ -11,9 +11,9 @@ import {
   Table,
 } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
-import styles from "./ReportsTable.module.scss";
+import styles from "./SchoolScreeningReports.module.scss";
 import classNames from "classnames";
-import "./ReportsTable.custom.scss";
+import "./SchoolScreeningReports.module.scss";
 import { useNavigate } from "react-router";
 import { TitleBarComponent } from "../../../components/common/titleBar";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
@@ -62,7 +62,7 @@ interface publicObjType {
   created_at: string;
 }
 
-export const ReportsTable: React.FC = () => {
+export const SchoolScreeningReports: React.FC = () => {
   const [filteredInfo, setFilteredInfo] = useState<
     Record<string, FilterValue | null>
   >({});
@@ -101,7 +101,7 @@ export const ReportsTable: React.FC = () => {
   const [statusOption, setStatusOption] = useState("");
   const [phcoOption, setPhcoOption] = useState("");
 
-  const [rowsPerPage, setRowsPerPage] = useState(100);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [queryString, setQueryString] = useState<string>("");
 
   /* naviagte */
@@ -123,57 +123,52 @@ export const ReportsTable: React.FC = () => {
   const [userData] = useFetchUserData();
   const token = userData?.userData?.token;
   const type = userData?.userData?.type;
-  const codes = userData?.userData?.codes;
 
   const bodyData: any = {
     codes: userData?.userData?.codes,
-    type: userData?.userData?.type
+    type: userData?.userData?.type,
   };
 
   /* first rendering only  */
   useEffect(() => {
     (async () => {
-      // if (type == "district_officer") {
-      //   let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
-      //   if (result.code) {
-      //     setLoading(false);
-      //     setOriginalTableData(result?.data);
-      //     setCopyOfOriginalTableData(result?.data);
-      //   } else {
-      //     NotificationError(result.message);
-      //   }
-      // } else if (type == "taluka") {
-      //   let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
-      //   if (result.code) {
-      //     setLoading(false);
-      //     setOriginalTableData(result?.data);
-      //     setCopyOfOriginalTableData(result?.data);
-      //   } else {
-      //     NotificationError(result.message);
-      //   }
-      // } else if (type == "phco") {
-      //   let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
-      //   if (result.code) {
-      //     setLoading(false);
-      //     setOriginalTableData(result?.data);
-      //     setCopyOfOriginalTableData(result?.data);
-      //   } else {
-      //     NotificationError(result?.message);
-      //   }
-      // } else {
-        // let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
-        let data = await GET_APIS("uniqueDistricts", token);
-        // console.log("result", result)
-        if (data?.code) {
+      if (type == "district_officer") {
+        let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
+        if (result.code) {
           setLoading(false);
-          setDistrictSelect(data?.data);
-          // setTotalCount(result?.data?.total)
-          // setOriginalTableData(result?.data.result);
-          // setCopyOfOriginalTableData(result?.data.result);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
         } else {
-          NotificationError(data.message);
+          NotificationError(result.message);
         }
-      // }
+      } else if (type == "taluka") {
+        let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
+        if (result.code) {
+          setLoading(false);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
+        } else {
+          NotificationError(result.message);
+        }
+      } else if (type == "phco") {
+        let result = await POSTAPIS_WITH_AUTH("reports_data", bodyData, token);
+        if (result.code) {
+          setLoading(false);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
+        } else {
+          NotificationError(result?.message);
+        }
+      } else {
+        let result = await GET_APIS("reports_data", token);
+        if (result.code) {
+          setLoading(false);
+          setOriginalTableData(result?.data);
+          setCopyOfOriginalTableData(result?.data);
+        } else {
+          NotificationError(result.message);
+        }
+      }
     })();
   }, []);
 
@@ -239,21 +234,20 @@ export const ReportsTable: React.FC = () => {
       districtOption &&
       talukaOption &&
       phcoOption &&
-      subCentreOption
+      subCentreOption 
       // &&
       // villageOption
     ) {
-      filteredData = filteredData?.filter(
-        (obj) =>
-          refraType !== "all"
-            ? obj.type === refraType
-            : obj &&
-              obj.district === districtOption &&
-              obj.taluka === talukaOption &&
-              obj.health_facility === phcoOption &&
-              obj.sub_centre === subCentreOption
-        // &&
-        // obj.village === villageOption
+      filteredData = filteredData?.filter((obj) =>
+        refraType !== "all"
+          ? obj.type === refraType
+          : obj &&
+            obj.district === districtOption &&
+            obj.taluka === talukaOption &&
+            obj.health_facility === phcoOption &&
+            obj.sub_centre === subCentreOption 
+            // &&
+            // obj.village === villageOption
       );
     }
     // filter types and district and taluka and phco(health_facility) and sub centre and village and dates
@@ -262,9 +256,10 @@ export const ReportsTable: React.FC = () => {
       districtOption &&
       talukaOption &&
       phcoOption &&
-      subCentreOption &&
+      subCentreOption
       //  &&
       // villageOption
+       &&
       selectedDates
     ) {
       filteredData = filteredData?.filter((obj) =>
@@ -274,9 +269,10 @@ export const ReportsTable: React.FC = () => {
             obj.district === districtOption &&
             obj.taluka === talukaOption &&
             obj.health_facility === phcoOption &&
-            obj.sub_centre === subCentreOption &&
+            obj.sub_centre === subCentreOption 
             // &&
-            // obj.village === villageOption
+            // obj.village === villageOption 
+            &&
             obj.created_at.split("T")[0] >= selectedDates[0] &&
             obj.created_at.split("T")[0] <= selectedDates[1]
       );
@@ -350,6 +346,8 @@ export const ReportsTable: React.FC = () => {
     phcoOption,
   ]);
 
+
+
   const columns: ColumnsType<DataType> = [
     {
       title: t("TABLE_REFRACTIONIST_NAME"),
@@ -357,8 +355,7 @@ export const ReportsTable: React.FC = () => {
       key: "refractionist_name",
       sorter: (a, b) =>
         a.refractionist_name.length - b.refractionist_name.length,
-      sortOrder:
-        sortedInfo.columnKey === "refractionist_name" ? sortedInfo.order : null,
+      sortOrder: sortedInfo.columnKey === "refractionist_name" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
@@ -479,56 +476,43 @@ export const ReportsTable: React.FC = () => {
 
   const onChangeDate = (va: any, da: any) => {
     if (da !== selectedDates) {
-      setStatusOption("");
       setSelectedDates(da);
+      let reset = villageSelect.filter(
+        (obj) =>
+          obj.created_at.split("T")[0] > da[0] &&
+          obj.created_at.split("T")[0] < da[1]
+      );
+      setStatusSelect(reset);
     }
   };
 
-  let renderItems = copyOfOriginalTableData.filter((obj) => {
-    if (queryString === "") {
+  let renderItems = copyOfOriginalTableData.filter(obj => {
+    if(queryString === "") {
       return obj;
     } else {
       return (
         String(obj.type).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.refractionist_name)
-          .toLowerCase()
-          .includes(queryString.toLowerCase()) ||
-        String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.phone_number)
-          .toLowerCase()
-          .includes(queryString.toLowerCase()) ||
-        String(obj.district)
-          .toLowerCase()
-          .includes(queryString.toLowerCase()) ||
-        String(obj.details).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.status).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.health_facility)
-          .toLowerCase()
-          .includes(queryString.toLowerCase()) ||
-        String(obj.sub_centre)
-          .toLowerCase()
-          .includes(queryString.toLowerCase())
-      );
+          String(obj.refractionist_name)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.phone_number)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.district).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.details).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.status).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
+          String(obj.health_facility)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.sub_centre)
+            .toLowerCase()
+            .includes(queryString.toLowerCase()) ||
+          String(obj.village).toLowerCase().includes(queryString.toLowerCase())
+      )
     }
   });
-
-  const handleSlickSearchQuery = async () => {
-    let body: any = {
-      district: districtOption,
-      taluka: talukaOption,
-      phco: phcoOption,
-      sub_centre: subCentreOption,
-      date: selectedDates,
-      status: statusOption,
-      type: refraType
-    };
-    let result = await POSTAPIS_WITH_AUTH("searchData", body, token);
-    if(result.code == 200){
-      setOriginalTableData(result.data);
-      setCopyOfOriginalTableData(result.data);
-    }
-  };
 
   const handleClickClearFilters = () => {
     setRefraTypes("");
@@ -544,13 +528,20 @@ export const ReportsTable: React.FC = () => {
 
   const handleRefraTypes = (value: string) => {
     if (value !== refraType) {
+      setRefraTypes(value);
       setDistrictOption("");
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
+      setVillageOption("");
       setSelectedDates("");
       setStatusOption("");
-      setRefraTypes(value);
+      setRefraDetails("");
+      let reset = originalTableData.filter((obj) =>
+        value !== "all" ? obj.type == value : obj
+      );
+      console
+      setDistrictSelect(reset);
     }
   };
 
@@ -560,57 +551,74 @@ export const ReportsTable: React.FC = () => {
     }
   };
 
-  const handleDistrictOption = async (value: string) => {
+  const handleDistrictOption = (value: string) => {
     if (value !== districtOption) {
       setDistrictOption(value);
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
+      setVillageOption("");
       setSelectedDates("");
       setStatusOption("");
-      let bodyData: any = { district: value };
-      let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
-      setTalukaSelect(data?.data);
+      setRefraDetails("");
+      let reset = districtSelect.filter((obj) => obj.district == value);
+      setTalukaSelect(reset);
     }
   };
 
-  const handleTalukaOption = async (value: string) => {
+  const handleTalukaOption = (value: string) => {
     if (value !== talukaOption) {
       setTalukaOption(value);
       setPhcoOption("");
       setSubCentreOption("");
+      setVillageOption("");
       setSelectedDates("");
       setStatusOption("");
-      let bodyData: any = { taluka: value };
-      let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
-      setPhcoSelected(data?.data);
+      setRefraDetails("");
+      let reset = talukaSelect.filter((obj) => obj.taluka == value);
+      setPhcoSelected(reset);
     }
   };
 
-  const handleSelectedPhco = async (value: string) => {
+  const handleSelectedPhco = (value: string) => {
     if (value !== phcoOption) {
       setPhcoOption(value);
       setSubCentreOption("");
+      setVillageOption("");
       setSelectedDates("");
       setStatusOption("");
-      let bodyData: any = { phc: value };
-      let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
-      console.log("data", data);
-      setSubCentreSelect(data?.data);
+      setRefraDetails("");
+      let reset = phcoSelected.filter((obj) => obj.health_facility === value);
+      setSubCentreSelect(reset);
     }
   };
 
   const handleSubCentreOption = (value: string) => {
     if (value !== subCentreOption) {
       setSubCentreOption(value);
-      setSelectedDates("");
+      setVillageOption("");
+      setSelectedDates('');
       setStatusOption("");
+      setRefraDetails("");
+      let reset = subCentreSelect.filter((obj) => obj.sub_centre == value);
+      setVillageSelect(reset);
     }
   };
+
+  // const handleVillageOption = (value: string) => {
+  //   if (value !== villageOption) {
+  //     setVillageOption(value);
+  //   }
+  // };
 
   const handleStatusOption = (value: string) => {
     if (value !== statusOption) {
       setStatusOption(value);
+      setRefraDetails("");
+      let reset = villageSelect.filter((obj) =>
+        value !== "all" ? obj.status == value : obj
+      );
+      setRefraDetailsSelect(reset);
     }
   };
   const handleClickDownloadToXlsx = () => {
@@ -626,7 +634,7 @@ export const ReportsTable: React.FC = () => {
       <>
         {visible ? FormOpen() : ""}
         <TitleBarComponent title={t("REPORTS_LIST")} image={true} />
-        <div className={classNames(styles.reportsTable, "report-page-list")}>
+        <div className={classNames(styles.SchoolScreeningReports, "school-primary-report-page-list")}>
           <div className={styles.table}>
             <Row>
               <Col sm={3} xs={24} className={styles.statisticsContainer}>
@@ -636,7 +644,7 @@ export const ReportsTable: React.FC = () => {
               </Col>
             </Row>
             <Row className={styles.selectItemsContainer}>
-            <Col sm={6} xs={24}>
+              <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
                   <Form.Item>
                     <Select
@@ -646,106 +654,30 @@ export const ReportsTable: React.FC = () => {
                       value={refraType}
                     >
                       <Option value="">Select Types</Option>
+                      <Option value="all">All</Option>
                       <Option value="school">School</Option>
-                      <Option value="other">Benificiary</Option>
+                      <Option value="otherBenificiary">Benificiary</Option>
                     </Select>
                   </Form.Item>
                 </div>
               </Col>
-              {(type == 'taluka' || type == 'phco')? (""): (
               <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
                   <Form.Item>
                     <Select
+                      disabled={refraType ? false : true}
                       placeholder="Select District"
                       onChange={handleDistrictOption}
                       defaultValue={""}
                       value={districtOption}
                     >
                       <Option value="">Select District</Option>
-                      { (type == 'district_officer')? 
-                      (codes || []).map((obj: any, i: any) => (
-                        <Option key={String(i)} value={obj.unique_name}>
-                          {obj.unique_name}
-                        </Option>
-                      )) :
-                      (districtSelect).map((obj, i) => (
-                        <Option key={String(i)} value={obj.district}>
-                          {obj.district}
-                        </Option>
-                      ))
-                      }
-                    </Select>
-                  </Form.Item>
-                </div>
-              </Col>
-              )}
-              {(type == 'phco')? (""): (
-              <Col sm={6} xs={24}>
-                <div className={styles.selecttypes}>
-                  <Form.Item>
-                    <Select
-                      placeholder="Select taluka"
-                      onChange={handleTalukaOption}
-                      defaultValue={""}
-                      value={talukaOption}
-                    >
-                      <Option value="">Select taluka</Option>
-                      { (type == 'taluka')? 
-                      (codes || []).map((obj: any, i: any) => (
-                        <Option key={String(i)} value={obj.unique_name}>
-                          {obj.unique_name}
-                        </Option>
-                      )) :
-                      (talukaSelect).map((obj, i) => (
-                        <Option key={String(i)} value={obj.taluka}>
-                          {obj.taluka}
-                        </Option>
-                      ))
-                      }
-                    </Select>
-                  </Form.Item>
-                </div>
-              </Col>
-              )}
-              <Col sm={6} xs={24}>
-                <div className={styles.selecttypes}>
-                  <Select
-                    style={{ width: "100%" }}
-                    placeholder="Select PHC"
-                    onChange={handleSelectedPhco}
-                    defaultValue={""}
-                    value={phcoOption}
-                  >
-                    <Option value="">Select PHC</Option>
-
-                    { (type == 'phco')? 
-                      (codes || []).map((obj: any, i: any) => (
-                        <Option key={String(i)} value={obj.unique_name}>
-                          {obj.unique_name}
-                        </Option>
-                      )) :
-                      (talukaSelect).map((obj, i) => (
-                        <Option key={String(i)} value={obj.health_facility}>
-                          {obj.health_facility}
-                        </Option>
-                      ))
-                      }
-                  </Select>
-                </div>
-              </Col>
-              <Col sm={6} xs={24}>
-                <div className={styles.selecttypes}>
-                  <Form.Item>
-                    <Select
-                      placeholder="Select Sub Centre"
-                      onChange={handleSubCentreOption}
-                      defaultValue={""}
-                      value={subCentreOption}
-                    >
-                      <Option value="">Select Sub Centre</Option>
                       {(
-                        subCentreSelect.map((item: any) => item.sub_centre)|| []
+                        Array.from(
+                          new Set(
+                            districtSelect.map((item: any) => item.district)
+                          )
+                        ) || []
                       ).map((obj, i) => (
                         <Option key={String(i)} value={obj}>
                           {obj}
@@ -757,11 +689,111 @@ export const ReportsTable: React.FC = () => {
               </Col>
               <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
+                  <Form.Item>
+                    <Select
+                      disabled={districtOption ? false : true}
+                      placeholder="Select taluka"
+                      onChange={handleTalukaOption}
+                      defaultValue={""}
+                      value={talukaOption}
+                    >
+                      <Option value="">Select taluka</Option>
+                      {(
+                        Array.from(
+                          new Set(talukaSelect.map((item: any) => item.taluka))
+                        ) || []
+                      ).map((obj, i) => (
+                        <Option key={String(i)} value={obj}>
+                          {obj}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </div>
+              </Col>
+              <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Select PHC"
+                    disabled={talukaOption ? false : true}
+                    onChange={handleSelectedPhco}
+                    defaultValue={""}
+                    value={phcoOption}
+                  >
+                    <Option value="">Select PHC</Option>
+                    {(
+                      Array.from(
+                        new Set(phcoSelected.map((obj) => obj.health_facility))
+                      ) || []
+                    )?.map((obj: any, i) => (
+                      <Select.Option key={String(i)} value={`${obj}`}>
+                        {obj}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </Col>
+              <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
+                  <Form.Item>
+                    <Select
+                      disabled={phcoOption ? false : true}
+                      placeholder="Select Sub Centre"
+                      onChange={handleSubCentreOption}
+                      defaultValue={""}
+                      value={subCentreOption}
+                    >
+                      <Option value="">Select Sub Centre</Option>
+                      {(
+                        Array.from(
+                          new Set(
+                            subCentreSelect.map((item: any) => item.sub_centre)
+                          )
+                        ) || []
+                      ).map((obj, i) => (
+                        <Option key={String(i)} value={obj}>
+                          {obj}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </div>
+              </Col>
+              {/* <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
+                  <Form.Item>
+                    <Select
+                      disabled={subCentreOption ? false : true}
+                      placeholder="Select village/Ward"
+                      onChange={handleVillageOption}
+                      defaultValue={""}
+                      value={villageOption}
+                    >
+                      <Option value="">Select village/Ward</Option>
+                      {(
+                        Array.from(
+                          new Set(
+                            villageSelect.map((item: any) => item.village)
+                          )
+                        ) || []
+                      ).map((obj, i) => (
+                        <Option key={String(i)} value={obj}>
+                          {obj}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </div>
+              </Col> */}
+              <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
                   <Form.Item
                     name={"From and To Date"}
                     rules={[{ required: true }]}
                   >
                     <RangePicker
+                      disabled={subCentreOption ? false : true}
                       format="YYYY-MM-DD"
                       placeholder={["From Date", "To Date"]}
                       onChange={onChangeDate}
@@ -774,6 +806,7 @@ export const ReportsTable: React.FC = () => {
                   <Form.Item>
                     <Select
                       placeholder="Select status"
+                      disabled={selectedDates ? false : true}
                       onChange={handleStatusOption}
                       defaultValue={""}
                       value={statusOption}
@@ -787,67 +820,73 @@ export const ReportsTable: React.FC = () => {
                   </Form.Item>
                 </div>
               </Col>
-              <Col sm={3} xs={24}>
+              <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
-                  <Button type="primary" onClick={handleSlickSearchQuery}>
-                    {"Search Query"}
-                  </Button>
+                  <Form.Item>
+                    <Select
+                      disabled={statusOption ? false : true}
+                      placeholder="Select Details"
+                      onChange={handleRefraDetails}
+                      defaultValue={""}
+                      value={refraDeatils}
+                    >
+                      <Option value="">Select Details</Option>
+                      {(
+                        Array.from(
+                          new Set(
+                            refraDeatilsSelect.map((item: any) => item.details)
+                          )
+                        ) || []
+                      ).map((obj, i) => (
+                        <Option key={String(i)} value={obj}>
+                          {obj}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
                 </div>
               </Col>
-              <Col sm={3} xs={24}>
+              <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
                   <Button type="primary" onClick={handleClickClearFilters}>
                     {t("CLEAR_FILTERS")}
                   </Button>
                 </div>
               </Col>
-              <Col sm={3} xs={24}>
-                <div className={styles.selecttypes}>
-                  <Button type="primary" onClick={handleClickDownloadToXlsx}>
-                    {t("DOWNLOAD")}
-                  </Button>
-                </div>
-              </Col>
-              <Col sm={3} xs={24}>
-                <div className={styles.selecttypes}>
-                  <span>Total Orders :</span>{originalTableData.length}
-                </div>
-              </Col>
             </Row>
 
             {/* search and select rows */}
-            {copyOfOriginalTableData.length == 0 ? (
-              ""
-            ) : (
-              <React.Fragment>
-                <Row>
-                  <Col sm={17} xs={12} className={styles.slectRows}>
-                    <SelectRowsPerPage isFixed={true} />
-                  </Col>
-                  <Col sm={7} xs={12} className={styles.searchContainer}>
-                    <Search
-                      allowClear
-                      placeholder="input search"
-                      enterButton
-                      onSearch={(e) => setQueryString(e)}
-                    />
-                  </Col>
-                </Row>
-                <Table
-                  columns={columns}
-                  dataSource={renderItems}
-                  bordered
-                  pagination={{
-                    showTotal: (total, range) =>
-                      `${range[0]}-${range[1]} of ${total} items`,
-                    current: currentPage,
-                    pageSize: rowsPerPage,
-                    total: renderItems.length || 0,
-                  }}
-                  onChange={handleChange}
+            <Row>
+              <Col sm={12} xs={12} className={styles.slectRows}>
+                <SelectRowsPerPage handleCh={handleCh} />
+              </Col>
+              <Col sm={6} xs={12} className={styles.searchContainer}>
+                <Button type="primary" onClick={handleClickDownloadToXlsx}>
+                  {t("DOWNLOAD")}
+                </Button>
+              </Col>
+              <Col sm={6} xs={12} className={styles.searchContainer}>
+                <Search
+                  allowClear
+                  placeholder="input search"
+                  enterButton
+                  onSearch={(e) => setQueryString(e)}
                 />
-              </React.Fragment>
-            )}
+              </Col>
+            </Row>
+            <Table
+              columns={columns}
+              dataSource={renderItems}
+              bordered
+              pagination={{
+                showTotal: (total, range) =>
+                  `${range[0]}-${range[1]} of ${total} items`,
+                current: currentPage,
+                pageSize: rowsPerPage,
+                total: renderItems?.length || 0,
+              }}
+              onChange={handleChange}
+            />
           </div>
         </div>
       </>

@@ -13,7 +13,7 @@ import {
   Typography,
   message,
 } from "antd";
-import { POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
+import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
 import { useFetchUserData } from "../../../utilities/userDataHook";
 
 message.config({
@@ -35,6 +35,7 @@ interface Item {
   health_facility: string;
   sub_centre: number;
   village: string;
+  sub_centre_code: string;
   total_primary_screening_completed: string;
   total_secondary_screening_required: string;
 }
@@ -95,13 +96,13 @@ export const PhocLoginFirstTIme: React.FC<IPhocLoginFirstTImeProps> = ({
   const [userData] = useFetchUserData();
   const token = userData?.userData?.token;
 
-  const isEditing = (record: Item) => record.user_unique_id === editingKey;
+  const isEditing = (record: Item) => record.sub_centre_code === editingKey;
 
-  const edit = (record: Partial<Item> & { user_unique_id: React.Key }) => {
+  const edit = (record: Partial<Item> & { sub_centre_code: React.Key }) => {
     form.setFieldsValue({ ...record });
-    setEditingKey(record.user_unique_id);
+    setEditingKey(record.sub_centre_code);
   };
-let bodyData: any = {codes: userData?.userData?.codes}
+let bodyData: any = {codes: userData?.userData?.codes, type: userData?.userData?.type}
   useEffect(() => {
     (async function () {
       if (userData?.userData?.isIntialLogin == "Y") {
@@ -120,9 +121,11 @@ let bodyData: any = {codes: userData?.userData?.codes}
   const save = async (key: React.Key) => {
     try {
       const row = (await form.validateFields()) as Item;
-
+      let body: any = {code: key, row };
+      if(Number(row.total_primary_screening_completed) < Number(row.total_secondary_screening_required))
+      return message.info("Total Primary Screening Completed Should Be Less Than Total Secondary Screening Required.")
       const newData = [...data];
-      const index = newData.findIndex((item) => key === item.user_unique_id);
+      const index = newData.findIndex((item) => key === item.sub_centre_code);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
@@ -130,6 +133,7 @@ let bodyData: any = {codes: userData?.userData?.codes}
           ...row,
         });
         setData(newData);
+        let result = await POSTAPIS_WITH_AUTH('update_phco_screenings', body, token);
         setEditingKey("");
       } else {
         newData.push(row);
@@ -153,11 +157,6 @@ let bodyData: any = {codes: userData?.userData?.codes}
       width: "20%",
     },
     {
-      title: "Village",
-      dataIndex: "village",
-      width: "20%",
-    },
-    {
       title: "Total Primary Screening Completed",
       dataIndex: "total_primary_screening_completed",
       width: "20%",
@@ -177,7 +176,7 @@ let bodyData: any = {codes: userData?.userData?.codes}
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.user_unique_id)}
+              onClick={() => save(record.sub_centre_code)}
               style={{ marginRight: 8 }}
             >
               Save
@@ -210,6 +209,14 @@ let bodyData: any = {codes: userData?.userData?.codes}
     };
   });
 
+  const handleSkip = async () => {
+    console.log("SDFsd")
+    let res = await GET_APIS('skip', token);
+    console.log("RE",res)
+    setOpen();
+    onSave();
+  }
+
 
   return (
     <div>
@@ -220,6 +227,10 @@ let bodyData: any = {codes: userData?.userData?.codes}
         open={open}
         width={1000}
         footer={
+          <>
+          <Button onClick={handleSkip} type="primary">
+            Skip
+          </Button>
           <Button
             onClick={ async () => {
               let checkDataFilledOrNot = data.filter((obj: Item) => 
@@ -228,16 +239,17 @@ let bodyData: any = {codes: userData?.userData?.codes}
                 );
                 let newBody: any = { screenings: data, ...bodyData}
                 if(checkDataFilledOrNot?.length !== 0) return message.warning("Please Fill All Fields");
-                let result = await POSTAPIS_WITH_AUTH('update_phco_screenings', newBody, token);
-                if(result?.code == 200){
-                  setOpen();
-                  onSave();
-                }
+                // let result = await POSTAPIS_WITH_AUTH('update_phco_screenings', newBody, token);
+                // if(result?.code == 200){
+                //   setOpen();
+                //   onSave();
+                // }
             }}
             type="primary"
           >
             Submit
           </Button>
+          </>
         }
       >
         <Form form={form} component={false}>
