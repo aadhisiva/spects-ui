@@ -25,7 +25,6 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
     setRuralOrUrban
 }
 ) => {
-    const [ngo, setNgo]= useState("");
     const [form] = Form.useForm();
     const location = useLocation();
 
@@ -37,6 +36,7 @@ export const ModalModify: React.FC<mofdifyModalI> = ({
         district: state.district,
         rural_urban: state.rural_urban,
         taluka: state.taluka,
+        ngo_gov: editMode ? state.ngo_gov : "",
         sub_centre: state.sub_centre,
         village: state.village,
         health_facility: state.health_facility,
@@ -57,7 +57,6 @@ const renderForm = () => (
                 .then((values) => {
                     form.resetFields();
                     values.health_block = state.health_block;
-                    values.ngo_gov = ngo;
                     onSave(values);
                 })
                 .catch(info => {
@@ -86,20 +85,25 @@ const renderForm = () => (
                         required={true}
                         regex={true}
                     />
+                    <div>
                     <Form.Item
                     name={"ngo_gov"}
                     label="Government/NGO"
-                >
+                    rules={[
+                        {
+                        required: true,
+                        message: `Government/NGO is required`,
+                    }]}
+                    >
                     <Select
                         placeholder="Government/NGO"
-                        onChange={(value: any) => setNgo(value)}
-                        defaultValue={""}
                     >
                         <Option value="">--select--</Option>
                         <Option value="Government">Government</Option>
                         <Option value="NGO">NGO</Option>
                     </Select>
             </Form.Item>
+            </div>
                 </>
             ) : (
                 <>
@@ -173,12 +177,12 @@ const renderForm = () => (
                                         label={"Sub Centre"}
                                         disabled={true}
                                     />
-                                    <ReUseInputFeild
+                                    {/* <ReUseInputFeild
                                         tabIndex={6}
                                         name={"village"}
                                         label={"Village/Ward"}
                                         disabled={true}
-                                    />
+                                    /> */}
                                     </>
                                 ): ("")}
                         </>

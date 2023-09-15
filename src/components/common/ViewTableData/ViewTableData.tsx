@@ -32,6 +32,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
     details: state.details,
     type: state.type,
     image: state.image,
+    initial_image: state.initial_image,
     frame_size: state.frame_size,
     frame_type: state.frame_type,
     ngo_gov: state.ngo_gov,
@@ -46,7 +47,6 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
     near_eye_sph: state.near_vision_sph,
     near_eye_va: state.near_vision_va,
   });
-
   return (
     <div>
       <Modal
@@ -283,6 +283,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 readOnly={true}
               />
             </Col>
+            {state.type == 'school'? (
             <Col sm={7} xs={24}>
               <ReUseInputFeild
                 tabIndex={1}
@@ -293,6 +294,18 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
                 image={true}
               />
             </Col>
+            ): (
+            <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                tabIndex={1}
+                name={"initial_image"}
+                label={"Image"}
+                readOnly={true}
+                imageValue={state?.initial_image}
+                image={true}
+              />
+            </Col>
+            )}
           </Row>
         </Form>
       </Modal>

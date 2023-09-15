@@ -9,6 +9,7 @@ import {
   Select,
   Spin,
   Table,
+  message,
 } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import styles from "./ReportsTable.module.scss";
@@ -458,9 +459,15 @@ export const ReportsTable: React.FC = () => {
     },
   ];
   /* viewFormData */
-  const handleModifyForm = (row: object) => {
+  const handleModifyForm = async (row: any) => {
     setVisible(true);
-    setFormData(row);
+    let body: any = { type: row.type, id: row.id}
+    let result = await POSTAPIS_WITH_AUTH('eachDataIdWise', body, token);
+    if(result?.code == 200){
+      setFormData(result?.data[0])
+    } else {
+      message.warning("Something Went Wrong. Please Try Again");
+    }
   };
   /* form Open */
   const FormOpen = () => {
@@ -725,7 +732,7 @@ export const ReportsTable: React.FC = () => {
                           {obj.unique_name}
                         </Option>
                       )) :
-                      (talukaSelect).map((obj, i) => (
+                      (phcoSelected).map((obj, i) => (
                         <Option key={String(i)} value={obj.health_facility}>
                           {obj.health_facility}
                         </Option>

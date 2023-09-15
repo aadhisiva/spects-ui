@@ -156,48 +156,42 @@ export const PrimaryScreeningReports: React.FC = () => {
 
   useEffect(() => {
     let filterData = originalTableData;
-    // filter rural/urban
-    if (rural_urban) {
-      filterData = filterData.filter((obj) => obj.rural_urban === rural_urban);
-    }
-    // filter rural/urban and district
-    if (rural_urban && districtOption) {
+
+    // filter district
+    if (districtOption) {
       filterData = filterData.filter(
         (obj) =>
-          obj.rural_urban === rural_urban && obj.district === districtOption
+         obj.district === districtOption
       );
     }
-    // filter rural/urban and district and taluka
-    if (rural_urban && districtOption && talukaOption) {
+    // district and taluka
+    if (districtOption && talukaOption) {
       filterData = filterData.filter(
         (obj) =>
-          obj.rural_urban === rural_urban &&
           obj.district === districtOption &&
           obj.taluka === talukaOption
       );
     }
-    // filter rural/urban and district and taluka and phco(health facility)
-    if (rural_urban && districtOption && talukaOption && phcoOption) {
+    // filter district and taluka and phco(health facility)
+    if (districtOption && talukaOption && phcoOption) {
       filterData = filterData.filter(
         (obj) =>
-          obj.rural_urban === rural_urban &&
           obj.district === districtOption &&
           obj.taluka === talukaOption &&
           obj.health_facility === phcoOption
       );
     }
-    // filter rural/urban and district and taluka and sub centre
-    if (rural_urban && districtOption && talukaOption && subCentreOption) {
+    // filter district and taluka and sub centre
+    if (districtOption && talukaOption && subCentreOption) {
       filterData = filterData.filter(
         (obj) =>
-          obj.rural_urban === rural_urban &&
           obj.district === districtOption &&
           obj.taluka === talukaOption &&
           obj.sub_centre === subCentreOption
       );
     }
     setCopyOfOriginalTableData(filterData);
-  }, [rural_urban, districtOption, talukaOption, subCentreOption, phcoOption]);
+  }, [districtOption, talukaOption, subCentreOption, phcoOption]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -260,16 +254,16 @@ export const PrimaryScreeningReports: React.FC = () => {
     //   ellipsis: true,
     // },
     {
-      title: t("total secondary screening required"),
-      dataIndex: "total_secondary_screening_required",
+      title: t("total primary screening completed"),
+      dataIndex: "total_primary_screening_completed",
       key: "village",
       sorter: (a, b) => a.village.length - b.village.length,
       sortOrder: sortedInfo.columnKey === "village" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
-      title: t("total primary screening completed"),
-      dataIndex: "total_primary_screening_completed",
+      title: t("total secondary screening required"),
+      dataIndex: "total_secondary_screening_required",
       key: "village",
       sorter: (a, b) => a.village.length - b.village.length,
       sortOrder: sortedInfo.columnKey === "village" ? sortedInfo.order : null,
@@ -290,17 +284,6 @@ export const PrimaryScreeningReports: React.FC = () => {
     setSubCentreOption("");
   };
 
-  const handleRuralOrUrban = (value: string) => {
-    if (value !== rural_urban) {
-      setRuralOrUrban(value);
-      setDistrict("");
-      setTalukaOption("");
-      setPhcoOption("");
-      setSubCentreOption("");
-      let reset = originalTableData.filter((obj) => obj.rural_urban === value);
-      setDistrictSelect(reset);
-    }
-  };
 
   const handleSelectedDistrict = (value: string) => {
     if (value !== districtOption) {
@@ -308,7 +291,7 @@ export const PrimaryScreeningReports: React.FC = () => {
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
-      let reset = districtSelect.filter((obj) => obj.district === value);
+      let reset = originalTableData.filter((obj) => obj.district === value);
       setTalukaSelect(reset);
     }
   };
@@ -357,7 +340,7 @@ export const PrimaryScreeningReports: React.FC = () => {
             </Col>
           </Row>
           <Row className={styles.selectItemsContainer}>
-            <Col sm={6} xs={24}>
+            {/* <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
                   style={{ width: "100%" }}
@@ -374,13 +357,12 @@ export const PrimaryScreeningReports: React.FC = () => {
                   ))}
                 </Select>
               </div>
-            </Col>
+            </Col> */}
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
                   style={{ width: "100%" }}
                   placeholder="Select District"
-                  disabled={rural_urban ? false : true}
                   onChange={handleSelectedDistrict}
                   defaultValue={""}
                   value={districtOption}
@@ -388,7 +370,7 @@ export const PrimaryScreeningReports: React.FC = () => {
                   <Option value={""}>Select District</Option>
                   {(
                     Array.from(
-                      new Set(districtSelect.map((obj) => obj.district))
+                      new Set(originalTableData.map((obj) => obj.district))
                     ) || []
                   )?.map((obj: any, i) => (
                     <Option key={String(i)} value={`${obj}`}>

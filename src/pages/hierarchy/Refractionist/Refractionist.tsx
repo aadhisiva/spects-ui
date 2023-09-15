@@ -28,6 +28,7 @@ interface DataType {
   village: string;
   rural_urban: string;
   health_facility: string;
+  ngo_gov: string;
 }
 
 export const RefractionistTable: React.FC = () => {
@@ -189,6 +190,15 @@ export const RefractionistTable: React.FC = () => {
       ellipsis: true,
     },
     {
+      title: t("NGO_GOV"),
+      dataIndex: "ngo_gov",
+      key: "ngo_gov",
+      sorter: (a, b) => a.ngo_gov?.length - b.ngo_gov?.length,
+      sortOrder:
+        sortedInfo.columnKey === "ngo_gov" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
       title: t("TABLE_DISTRICT"),
       dataIndex: "district",
       key: "district",
@@ -206,9 +216,9 @@ export const RefractionistTable: React.FC = () => {
       sorter: (a, b) => a.taluka.length - b.taluka.length,
       sortOrder: sortedInfo.columnKey === "taluka" ? sortedInfo.order : null,
       ellipsis: true,
-      render: (_, record) => {
-        return _?.replace(/\W/g, "").replace(/\d/g, "");
-      },
+      // render: (_, record) => {
+      //   return _?.replace(/\W/g, "").replace(/\d/g, "");
+      // },
     },
     {
       title: t("PHCO"),
@@ -245,11 +255,11 @@ export const RefractionistTable: React.FC = () => {
             <Button onClick={() => handleModifyForm(record)} type="primary">
             {t("MODIFY")}
             </Button>
-            {/* <Tooltip title={"add multiple refractionists with same village"}>
+            <Tooltip title={"add multiple refractionists with same village"}>
               <Button onClick={() => handleAddForm(record)} type="primary">
               {t("ADD")}
               </Button>
-            </Tooltip> */}
+            </Tooltip>
           </div>
         );
       },

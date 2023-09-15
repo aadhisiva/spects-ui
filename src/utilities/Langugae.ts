@@ -64,6 +64,7 @@ i18n.use(initReactI18next).init({
          ADD: "Add",
          PRIMARY_SCREENING_LIST: "Primary Screening Reports",
          SECONDARY_SCREENING_LIST: "Secondary Screening Reports",
+         NGO_GOV: "Ngo/Gov"
       }
     },
     ka: {
@@ -88,6 +89,7 @@ i18n.use(initReactI18next).init({
         TOTAL: "ಒಟ್ಟು",
         ORDERS: "ಆದೇಶಗಳು",
         PENDING: "ಬಾಕಿಯಿದೆ",
+        NGO_GOV: "ಸರ್ಕಾರೇತರ ಸಂಸ್ಥೆ/ಸರ್ಕಾರ",
         DELIVERED: "ವಿತರಿಸಲಾಗಿದೆ",
         DISTRICT_TABLE: "ಜಿಲ್ಲಾ ಅಧಿಕಾರಿ",
         TALUKA_TABLE: "ತಾಲೂಕಾ ಅಧಿಕಾರಿ",

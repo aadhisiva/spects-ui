@@ -354,8 +354,8 @@ export const DashBoardHierarchy: React.FC = (props) => {
                   preview={false}
                   src={BenificiaryImage}
                 />
-                {/* <p className={styles.title}>{t("SECONDARY_SCREENING_LIST")}</p> */}
-                <p className={styles.title}>{"OtherBeneficiary Secondary Screening Reports "}</p>
+                <p className={styles.title}>{t("SECONDARY_SCREENING_LIST")}</p>
+                {/* <p className={styles.title}>{"Secondary Screening Reports "}</p> */}
               </div>
             </a>
           </Col>

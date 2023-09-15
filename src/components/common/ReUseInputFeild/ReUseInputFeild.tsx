@@ -79,7 +79,7 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
                     disabled={disabled}
                 />
                 }
-                {image && <Image preview={false} src={imageValue} height={300} width={300} />}
+                {image && <Image preview={false} src={`data:image/png;base64,${imageValue}`} alt='Applicant Image' height={300} width={300} />}
             </Form.Item>
         </div>
     )
