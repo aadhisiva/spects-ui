@@ -17,6 +17,7 @@ import _ from "lodash";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
 import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
+import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
 const { Option } = Select;
 interface DataType {
@@ -53,6 +54,8 @@ export const DistrictOfficerTable: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [queryString, setQueryString] = useState<string>("");
   const [editId, setEditId] = useState([]);
+
+  const [mapped, setMapped] = useState("all");
 
   // auth user
   const [userData] = useFetchUserData();
@@ -170,8 +173,10 @@ export const DistrictOfficerTable: React.FC = () => {
     setLoading(true);
     let result = await POSTAPIS_WITH_AUTH("update_districts_Data", body, token);
     if (result.code == 200) {
-      await GetTablData();
-      setLoading(false);
+      setTimeout(async () => {
+        await GetTablData();        
+        setLoading(false);
+      }, 2000);
     } else {
       NotificationError("Update Failed");
     }
@@ -222,16 +227,33 @@ export const DistrictOfficerTable: React.FC = () => {
     }
   };
 
-  let renderItems = copyOfOriginalTableData.filter(obj => {
-    if(queryString === "") {
+  const handleChangeMapOrUnMap = (value: string) => {
+    setMapped(value);
+    if (value == "all") {
+      setCopyOfOriginalTableData(originalTableData);
+    } else if (value == "mapped") {
+      let data = originalTableData.filter((obj) => obj.mobile_number);
+      setCopyOfOriginalTableData(data);
+    } else {
+      let data = originalTableData.filter((obj) => !obj.mobile_number);
+      setCopyOfOriginalTableData(data);
+    }
+  };
+
+  let renderItems = copyOfOriginalTableData.filter((obj) => {
+    if (queryString === "") {
       return obj;
     } else {
       return (
         String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.mobile_number).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.rural_urban).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.mobile_number)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
+        String(obj.rural_urban)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
         String(obj.district).toLowerCase().includes(queryString.toLowerCase())
-      )
+      );
     }
   });
 
@@ -255,9 +277,9 @@ export const DistrictOfficerTable: React.FC = () => {
                     placeholder="Rural/Urban"
                     onChange={handleRuralOrUrban}
                     value={rural_urban}
-                    defaultValue={''}
+                    defaultValue={""}
                   >
-                    <Option value={''}>Select Rural/Urban</Option>
+                    <Option value={""}>Select Rural/Urban</Option>
                     {(RURAL_OR_URBAN_FILTER_OPTIONS || []).map((name) => (
                       <Option key={name} value={name}>
                         {name}
@@ -276,7 +298,7 @@ export const DistrictOfficerTable: React.FC = () => {
                     onChange={handleSelectedDistrict}
                     value={districtOption}
                   >
-                    <Option value={''}>Select District</Option>
+                    <Option value={""}>Select District</Option>
                     {(districtSelect || [])?.map((obj: any, i) => (
                       <Option
                         key={`${obj.district}_${obj.rural_urban}`}
@@ -299,10 +321,17 @@ export const DistrictOfficerTable: React.FC = () => {
           </Row>
           {/* search and select rows */}
           <Row>
-            <Col sm={4} xs={12} className={styles.slectRows}>
+            <Col sm={3} xs={12} className={styles.slectRows}>
               <SelectRowsPerPage handleCh={handleCh} />
             </Col>
-            <Col sm={12} xs={12} className={styles.headerRow}>
+            <Col sm={4} xs={12} className={styles.slectRows}>
+              <MapUnmappedSelect
+                handleChange={handleChangeMapOrUnMap}
+                value={mapped}
+                count={copyOfOriginalTableData.length}
+              />
+            </Col>
+            <Col sm={9} xs={12} className={styles.headerRow}>
               <span>{t("DISTRICT_HEALTH_OFFICER")}</span>
             </Col>
             <Col sm={8} xs={12} className={styles.searchContainer}>

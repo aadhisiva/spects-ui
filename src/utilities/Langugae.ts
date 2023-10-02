@@ -64,7 +64,16 @@ i18n.use(initReactI18next).init({
          ADD: "Add",
          PRIMARY_SCREENING_LIST: "Primary Screening Reports",
          SECONDARY_SCREENING_LIST: "Secondary Screening Reports",
-         NGO_GOV: "Ngo/Gov"
+         NGO_GOV: "Ngo/Gov",
+         SUMMARY: "Summary",
+         SEARCH_QUERY: "Search Query",
+         TOTAL_SUBMIT: "Total Submit",
+         DATE_TIME: "Date & Time",
+         DETAILED_REPORT: 'Detailed Reports',
+         INFORMATION: "Information",
+         DISTRICT_TALUKA_WISE: "District & Taluka Wise Data",
+         STATE_DISTRICT_WISE:"State Or District Wise Data",
+         REFRACTIONIST_REPORTS: "Refractionist Login Reports"
       }
     },
     ka: {
@@ -128,6 +137,15 @@ i18n.use(initReactI18next).init({
          ADD: 'ಸೇರಿಸಿ',
          PRIMARY_SCREENING_LIST: "ಪ್ರಾಥಮಿಕ ಸ್ಕ್ರೀನಿಂಗ್ ವರದಿಗಳು",
          SECONDARY_SCREENING_LIST: "ಸೆಕೆಂಡರಿ ಸ್ಕ್ರೀನಿಂಗ್ ವರದಿಗಳು",
+         SUMMARY: "ಸಾರಾಂಶ",
+         SEARCH_QUERY: "ವಿಚಾರಿಸು",
+         TOTAL_SUBMIT: "ಒಟ್ಟು ಸಲ್ಲಿಸಿ",
+         DATE_TIME: "ದಿನಾಂಕ ಮತ್ತು ಸಮಯ",
+         DETAILED_REPORT: 'ವಿವರಗಳ ವರದಿಗಳು',
+         INFORMATION: "ಮಾಹಿತಿ",
+         DISTRICT_TALUKA_WISE: "ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲೂಕಾವಾರು ಡೇಟಾ",
+         STATE_DISTRICT_WISE:"ರಾಜ್ಯ ಅಥವಾ ಜಿಲ್ಲಾವಾರು ಡೇಟಾ",
+         REFRACTIONIST_REPORTS: "ವಕ್ರೀಭವನದ ಲಾಗಿನ್ ವರದಿಗಳು"
       }
     },
   },

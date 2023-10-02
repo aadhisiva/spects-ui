@@ -1,6 +1,6 @@
-import React, { Dispatch } from "react";
+import React, { Dispatch, useState } from "react";
 import styles from "./titleBarComponent.module.scss";
-import { Col, Image, Row } from "antd";
+import { Button, Col, Image, Modal, Row } from "antd";
 import HomeImage from "../../../assets/Images/TitleBar/home.png";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,8 @@ type titlePageI = {
 };
 
 export const TitleBarComponent: React.FC<titlePageI> = (props) => {
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   // translation
   const { t } = useTranslation();
   // session user data
@@ -32,8 +34,56 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
     navigate("/");
   };
 
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      dispatch(LogOut());
+      dispatch(reset("logout"));
+      setLoading(false);
+      navigate("/");
+      setOpen(false);
+    }, 1000);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const LogoutModal = () => {
+    return (
+      <React.Fragment>
+          <Modal
+            open={open}
+            title="Log Out"
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={[
+              <Button type="primary" onClick={handleCancel}>
+                Cancel
+              </Button>,
+              <Button
+                key="submit"
+                style={{backgroundColor: '#b23b3b', color: '#FFFFFF'}}
+                loading={loading}
+                onClick={handleOk}
+              >
+                LogOut
+              </Button>
+            ]}
+          >
+            <p>Are You Sure You want To Logout.</p>
+          </Modal>
+      </React.Fragment>
+    );
+  };
+
   return (
     <div className={styles.titleBarPage}>
+      {open && LogoutModal()}
       <Row className={styles.titleBarContainer}>
         <Col sm={2} xs={5}>
           {props.image ? (
@@ -68,7 +118,7 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                   : "VENDOR"}{" "}
                 |{" "}
               </span>
-              <span style={{ cursor: "pointer" }} onClick={handleLogout}>
+              <span style={{ cursor: "pointer" }} onClick={showModal}>
                 {t("LOG_OUT")}
               </span>
             </div>

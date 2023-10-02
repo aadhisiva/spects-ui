@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
 import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
 import { Option } from "antd/es/mentions";
+import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
 interface DataType {
   key: string;
@@ -62,6 +63,8 @@ export const TalukaTable: React.FC = () => {
   const [districtSelect, setDistrictSelect] = useState<DataType[]>([]);
   const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
 
+  const [mapped, setMapped] = useState("all");
+
   // auth user
   const [userData] = useFetchUserData();
   const token = userData?.userData?.token;
@@ -75,11 +78,6 @@ export const TalukaTable: React.FC = () => {
 
   const GetTablData = async () => {
     if (checkUserLogin) {
-      // let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, unique_id, token);
-      // let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district)));
-      // let bodyData: any = {
-      //     districts: uniqueBody
-      // };
       let result = await POSTAPIS_WITH_AUTH(`talukas_data`, bodyData, token);
       if (result.code == 200) {
         setLoading(false);
@@ -232,11 +230,12 @@ export const TalukaTable: React.FC = () => {
       taluka: values?.taluka,
     };
     let body: any = { ...{ code: editId }, ...newValues };
-    console.log("vody", body)
     let result = await POSTAPIS_WITH_AUTH("update_taluka_data", body, token);
     if (result.code == 200) {
-      await GetTablData();
-      setLoading(false);
+      setTimeout(async () => {
+        await GetTablData();        
+        setLoading(false);
+      }, 2000);
     } else {
       NotificationError("Update Failed");
     }
@@ -295,6 +294,19 @@ export const TalukaTable: React.FC = () => {
   const handleSelectedTaluka = (value: string) => {
     if (value !== talukaOption) {
       setTalukaOption(value);
+    }
+  };
+
+  const handleChangeMapOrUnMap = (value: string) => {
+    setMapped(value);
+    if (value == "all") {
+      setCopyOfOriginalTableData(originalTableData);
+    } else if (value == "mapped") {
+      let data = originalTableData.filter((obj) => obj.mobile_number);
+      setCopyOfOriginalTableData(data);
+    } else {
+      let data = originalTableData.filter((obj) => !obj.mobile_number);
+      setCopyOfOriginalTableData(data);
     }
   };
   const renderTalukaData = () => (
@@ -384,7 +396,14 @@ export const TalukaTable: React.FC = () => {
             <Col sm={4} xs={12} className={styles.slectRows}>
               <SelectRowsPerPage handleCh={handleCh} />
             </Col>
-            <Col sm={12} xs={12} className={styles.headerRow}>
+            <Col sm={4} xs={12} className={styles.slectRows}>
+              <MapUnmappedSelect
+                handleChange={handleChangeMapOrUnMap}
+                value={mapped}
+                count={copyOfOriginalTableData.length}
+              />
+            </Col>
+            <Col sm={8} xs={12} className={styles.headerRow}>
               <span>{t("TALUKA_HEALTH_OFFICER")}</span>
             </Col>
             <Col sm={8} xs={12} className={styles.searchContainer}>

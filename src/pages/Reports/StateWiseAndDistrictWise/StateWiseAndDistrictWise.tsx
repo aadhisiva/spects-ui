@@ -13,9 +13,9 @@ import {
   message,
 } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
-import styles from "./ReportsTable.module.scss";
+import styles from "./StateWiseAndDistrictWise.module.scss";
 import classNames from "classnames";
-import "./ReportsTable.custom.scss";
+import "./StateWiseAndDistrictWise.custom.scss";
 import { useNavigate } from "react-router";
 import { TitleBarComponent } from "../../../components/common/titleBar";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
@@ -56,6 +56,10 @@ interface DataType {
   order_number: string;
   health_facility: string;
   created_at: string;
+  totalDelivered: string;
+  totalPending: string;
+  target: string;
+  totalOrders: string;
 }
 
 interface publicObjType {
@@ -74,7 +78,7 @@ interface publicObjType {
   created_at: string;
 }
 
-export const ReportsTable: React.FC = () => {
+export const StateWiseAndDistrictWise: React.FC = () => {
   const [filteredInfo, setFilteredInfo] = useState<
     Record<string, FilterValue | null>
   >({});
@@ -155,179 +159,6 @@ export const ReportsTable: React.FC = () => {
       // }
     })();
   }, []);
-
-  // // filter operation
-  // useEffect(() => {
-  //   // filter logic
-  //   let filteredData = originalTableData;
-  //   if (refraType) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all" ? obj.type === refraType : obj
-  //     );
-  //   }
-  //   // filter types and district
-  //   if (refraType && districtOption) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj && obj.district === districtOption
-  //     );
-  //   }
-  //   // filter types and district and taluka
-  //   if (refraType && districtOption && talukaOption) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj &&
-  //           obj.district === districtOption &&
-  //           obj.taluka === talukaOption
-  //     );
-  //   }
-  //   // filter types and district and taluka and phco(health_facility)
-  //   if (refraType && districtOption && talukaOption && phcoOption) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj &&
-  //           obj.district === districtOption &&
-  //           obj.taluka === talukaOption &&
-  //           obj.health_facility === phcoOption
-  //     );
-  //   }
-  //   // filter types and district and taluka and phco(health_facility) and sub centre
-  //   if (
-  //     refraType &&
-  //     districtOption &&
-  //     talukaOption &&
-  //     phcoOption &&
-  //     subCentreOption
-  //   ) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj &&
-  //           obj.district == districtOption &&
-  //           obj.taluka === talukaOption &&
-  //           obj.health_facility === phcoOption &&
-  //           obj.sub_centre === subCentreOption
-  //     );
-  //   }
-  //   // filter types and district and taluka and phco(health_facility) and sub centre and village
-  //   if (
-  //     refraType &&
-  //     districtOption &&
-  //     talukaOption &&
-  //     phcoOption &&
-  //     subCentreOption
-  //     // &&
-  //     // villageOption
-  //   ) {
-  //     filteredData = filteredData?.filter(
-  //       (obj) =>
-  //         refraType !== "all"
-  //           ? obj.type === refraType
-  //           : obj &&
-  //             obj.district === districtOption &&
-  //             obj.taluka === talukaOption &&
-  //             obj.health_facility === phcoOption &&
-  //             obj.sub_centre === subCentreOption
-  //       // &&
-  //       // obj.village === villageOption
-  //     );
-  //   }
-  //   // filter types and district and taluka and phco(health_facility) and sub centre and village and dates
-  //   if (
-  //     refraType &&
-  //     districtOption &&
-  //     talukaOption &&
-  //     phcoOption &&
-  //     subCentreOption &&
-  //     //  &&
-  //     // villageOption
-  //     selectedDates
-  //   ) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj &&
-  //           obj.district === districtOption &&
-  //           obj.taluka === talukaOption &&
-  //           obj.health_facility === phcoOption &&
-  //           obj.sub_centre === subCentreOption &&
-  //           // &&
-  //           // obj.village === villageOption
-  //           obj.created_at.split("T")[0] >= selectedDates[0] &&
-  //           obj.created_at.split("T")[0] <= selectedDates[1]
-  //     );
-  //   }
-  //   // filter types and district and taluka and phco(health_facility) and sub centre and village and status
-  //   if (
-  //     refraType &&
-  //     districtOption &&
-  //     talukaOption &&
-  //     phcoOption &&
-  //     subCentreOption &&
-  //     // villageOption &&
-  //     selectedDates &&
-  //     statusOption
-  //   ) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj &&
-  //           obj.district === districtOption &&
-  //           obj.taluka === talukaOption &&
-  //           obj.health_facility === phcoOption &&
-  //           obj.sub_centre === subCentreOption &&
-  //           // obj.village === villageOption &&
-  //           obj.created_at.split("T")[0] >= selectedDates[0] &&
-  //           obj.created_at.split("T")[0] <= selectedDates[1] &&
-  //           statusOption !== "all"
-  //         ? obj.status === statusOption
-  //         : obj
-  //     );
-  //   }
-  //   // filter types and details and district and taluka and phco(health_facility) and sub centre and village and status
-  //   if (
-  //     refraType &&
-  //     districtOption &&
-  //     talukaOption &&
-  //     phcoOption &&
-  //     subCentreOption &&
-  //     // villageOption &&
-  //     selectedDates &&
-  //     statusOption &&
-  //     refraDeatils
-  //   ) {
-  //     filteredData = filteredData?.filter((obj) =>
-  //       refraType !== "all"
-  //         ? obj.type === refraType
-  //         : obj &&
-  //           obj.district === districtOption &&
-  //           obj.taluka === talukaOption &&
-  //           obj.health_facility === phcoOption &&
-  //           obj.sub_centre === subCentreOption &&
-  //           // obj.village === villageOption &&
-  //           obj.created_at.split("T")[0] >= selectedDates[0] &&
-  //           obj.created_at.split("T")[0] <= selectedDates[1] &&
-  //           statusOption !== "all"
-  //         ? obj.status === statusOption
-  //         : obj && obj.details == refraDeatils
-  //     );
-  //   }
-
-  //   setCopyOfOriginalTableData(filteredData);
-  // }, [
-  //   talukaOption,
-  //   refraType,
-  //   refraDeatils,
-  //   districtOption,
-  //   // villageOption,
-  //   subCentreOption,
-  //   statusOption,
-  //   selectedDates,
-  //   phcoOption,
-  // ]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -436,6 +267,7 @@ export const ReportsTable: React.FC = () => {
       },
     },
   ];
+  
   /* viewFormData */
   const handleModifyForm = async (row: any) => {
     setVisible(true);
@@ -489,9 +321,42 @@ export const ReportsTable: React.FC = () => {
     }
   });
 
-  const handleSlickSearchQuery = async (data: any) => {
+  const handleRefraTypes = (value: string) => {
+    if (value !== refraType) {
+      setDistrictOption("");
+      setTalukaOption("");
+      setRefraTypes(value);
+    }
+  };
+
+  const handleDistrictOption = async (value: string) => {
+    if (value !== districtOption) {
+      setDistrictOption(value);
+      setTalukaOption("");
+      let bodyData: any = { district: value };
+      let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
+      setTalukaSelect(data?.data);
+    }
+  };
+
+  const handleClickSearchQuery = async () => {
+    let body: any = {
+      loginType: type,
+      type: refraType,
+      district: districtOption,
+      taluka: talukaOption,
+    }; 
+    if (!districtOption || !refraType)
+    return message.error("Please Select Fields.");
+
+      if(type == DISTRICT_LOGIN && !talukaOption) return message.error("Please Select Fields.");
+    
     setLoading(true);
-    let result = await POSTAPIS_WITH_AUTH("searchData", data, token);
+    let result = await POSTAPIS_WITH_AUTH(
+      "searchDataStateAndDistrictWise",
+      body,
+      token
+    );
     if (result.code == 200) {
       setOriginalTableData(result.data);
       setCopyOfOriginalTableData(result.data);
@@ -507,97 +372,189 @@ export const ReportsTable: React.FC = () => {
     XLSX.writeFile(workbook, `spectacles_${newDate}.xlsx`);
   };
 
+  const handleClickClearFilters = () => {
+    setRefraTypes("");
+    setDistrictOption("");
+  };
+
+  const handleTalukaOption = async (value: string) => {
+    if (value !== talukaOption) {
+      setTalukaOption(value);
+      let bodyData: any = { taluka: value };
+      let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
+      setPhcoSelected(data?.data);
+    }
+  };
+
   const renderReports = () => {
     return (
       <>
         {visible ? FormOpen() : ""}
         <TitleBarComponent title={t("REPORTS_LIST")} image={true} />
-        <div className={classNames(styles.reportsTable, "report-page-list")}>
-          <div className={styles.informationContainer}>
-            <Col sm={4} xs={24} className={styles.infoContainer}>
-              <div className={styles.statistics}>
-                <span className={styles.title}>{t("INFORMATION")}</span>
-              </div>
-            </Col>
-            <div className={styles.buttonContainer}>
-              <Row>
-                {type == STATE_ADMIN_LOGIN ? (
-                  <Col sm={12} xs={24}>
-                    <Button 
-                      style={{ backgroundColor: "#AC8FF2" }} 
-                      className={styles.infoButtons}
-                      onClick={() => navigate("/stateWiseAndDistrictWise")}>{t("STATE_DISTRICT_WISE")}</Button>
-                  </Col>
-                ) : type == DISTRICT_LOGIN ? (
-                  <Col sm={12} xs={24} className={styles.infoButtons}>
-                    <Button 
-                      style={{ backgroundColor: "#AC8FF2"}}
-                      className={styles.infoButtons}
-                      onClick={() => navigate("/stateWiseAndDistrictWise")}>{t("DISTRICT_TALUKA_WISE")}</Button>
-                  </Col>
-                ) : (
-                  ""
-                )}
-                <Col sm={12} xs={24} className={styles.infoButtons}>
-                  <Button 
-                    style={{ backgroundColor: "#62A76C" }}
-                    className={styles.infoButtons}
-                    onClick={() => navigate("/refractionistLoginReports")}>{t("REFRACTIONIST_REPORTS")}</Button>
-                </Col>
-              </Row>
-            </div>
-          </div>
+        <div
+          className={classNames(
+            styles.stateAndDistrictTable,
+            "stateAndDistrict-list"
+          )}
+        >
           <div className={styles.table}>
             <Row>
-              <Col sm={5} xs={24} className={styles.statisticsContainer}>
+              <Col sm={3} xs={24} className={styles.statisticsContainer}>
                 <div className={styles.statistics}>
-                  <span className={styles.title}>{t("DETAILED_REPORT")}</span>
+                  <span className={styles.title}>{t("SUMMARY")}</span>
                 </div>
               </Col>
             </Row>
-            {type == STATE_ADMIN_LOGIN ? (
-              <StateSelectItems
-                styles={styles}
-                handleSlickSearchQuery={handleSlickSearchQuery}
-                handleClickDownloadToXlsx={handleClickDownloadToXlsx}
-                originalTableData={originalTableData}
-              />
-            ) : (
-              " "
-            )}
-            {type == DISTRICT_LOGIN ? (
-              <DistrictSelectItems
-                styles={styles}
-                handleSlickSearchQuery={handleSlickSearchQuery}
-                handleClickDownloadToXlsx={handleClickDownloadToXlsx}
-                originalTableData={originalTableData}
-              />
-            ) : (
-              " "
-            )}
-            {type == TALUKA_LOGIN ? (
-              <TalukaSelectItems
-                styles={styles}
-                handleSlickSearchQuery={handleSlickSearchQuery}
-                handleClickDownloadToXlsx={handleClickDownloadToXlsx}
-                originalTableData={originalTableData}
-              />
-            ) : (
-              " "
-            )}
-            {type == PHCO_LOGIN ? (
-              <PhcoSelectItems
-                styles={styles}
-                handleSlickSearchQuery={handleSlickSearchQuery}
-                handleClickDownloadToXlsx={handleClickDownloadToXlsx}
-                originalTableData={originalTableData}
-              />
-            ) : (
-              " "
-            )}
+            <Form>
+              <Row className={styles.selectItemsContainer}>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <Form.Item
+                      name={"Select Type"}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        placeholder="Select Types"
+                        onChange={(value) => handleRefraTypes(value)}
+                        defaultValue={""}
+                        value={refraType}
+                        showSearch
+                        allowClear
+                      >
+                        <Option value="">Select Types</Option>
+                        <Option value="school">School</Option>
+                        <Option value="other">Beneficiary</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <Form.Item
+                      name={"Select District"}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        showSearch
+                        allowClear
+                        optionFilterProp="children"
+                        placeholder="Select District"
+                        onChange={handleDistrictOption}
+                        defaultValue={""}
+                        value={districtOption}
+                      >
+                        <Option value="">Select District</Option>
+                        {type == DISTRICT_LOGIN ? (
+                          <>
+                            {(codes || []).map((obj: any, i: any) => (
+                              <Option key={String(i)} value={obj.unique_name}>
+                                {obj.unique_name}
+                              </Option>
+                            ))}
+                          </>
+                        ) : (
+                          <>
+                            <Option value="all">Select All</Option>
+                            {districtSelect.map((obj, i) => (
+                              <Option key={String(i)} value={obj.district}>
+                                {obj.district}
+                              </Option>
+                            ))}
+                          </>
+                        )}
+                      </Select>
+                    </Form.Item>
+                  </div>
+                </Col>
+                {type == DISTRICT_LOGIN ? (
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <Form.Item>
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Select taluka"
+                        onChange={handleTalukaOption}
+                        defaultValue={""}
+                        value={talukaOption}
+                      >
+                        <Option value="">Select taluka</Option>
+                        <Option value="all">Select all</Option>
+                        {talukaSelect.map((obj, i) => (
+                          <Option key={String(i)} value={obj.taluka}>
+                            {obj.taluka}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </div>
+                </Col>
+                ): ("")}
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <Button
+                      htmlType="submit"
+                      type="primary"
+                      onClick={handleClickSearchQuery}
+                    >
+                      {t("SEARCH_QUERY")}
+                    </Button>
+                  </div>
+                </Col>
+                <Col sm={3} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <Button type="primary" onClick={handleClickClearFilters}>
+                      {t("CLEAR_FILTERS")}
+                    </Button>
+                  </div>
+                </Col>
+                {!originalTableData[0]?.name || districtOption == "all" ? (
+                  ""
+                ) : (
+                  <Col sm={6} xs={24}>
+                    <div className={styles.selecttypes}>
+                      <Button
+                        type="primary"
+                        onClick={handleClickDownloadToXlsx}
+                      >
+                        {t("DOWNLOAD")}
+                      </Button>
+                    </div>
+                  </Col>
+                )}
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                      Total Spectacles Applied : {originalTableData[0]?.totalOrders || 0}{" "}
+                    </span>
+                  </div>
+                </Col>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                    Spectacles Delivered : {originalTableData[0]?.totalDelivered || 0}
+                    </span>
+                  </div>
+                </Col>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                    Spectacles Pending: {originalTableData[0]?.totalPending || 0}
+                    </span>
+                  </div>
+                </Col>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                    Target : {originalTableData[0]?.target || 0}
+                    </span>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
 
             {/* search and select rows */}
-            {copyOfOriginalTableData.length == 0 ? (
+            {!copyOfOriginalTableData[0]?.name ? (
               <Empty />
             ) : (
               <React.Fragment>

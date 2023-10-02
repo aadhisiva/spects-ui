@@ -5,7 +5,6 @@ import { SignInComponent } from './signIn/signInComponent'
 import { DashBoardHierarchy } from '../pages/DashBoardHierarchy'
 import { AssignmentTable } from '../pages/AssignmentTable'
 import { ReportsTable } from '../pages/Reports/ReportsTable'
-import { PageNotFound } from '../components/common/ErrorBoundaries/PageNotFound'
 import { SessionTimeout } from '../components/common/Sessions/SessionTimeout'
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut, getMe, reset } from '../redux/features/authSlice'
@@ -13,6 +12,8 @@ import { IStateValues } from '../type'
 import { ShowInfoPageForOnline } from '../components/common/OnlineOroffline'
 import { PrimaryScreeningReports } from '../pages/Reports/PScreeningReports'
 import { SchoolScreeningReports } from '../pages/Reports/SchoolScreeningReport'
+import { StateWiseAndDistrictWise } from '../pages/Reports/StateWiseAndDistrictWise'
+import { RefractionistReports } from '../pages/Reports/refractionistReports'
 
 var condition = navigator.onLine;
 
@@ -21,6 +22,13 @@ const AuthLayout: React.FC = () => {
   const dispatch: Dispatch<any> = useDispatch();
 
   const userStore: any = useSelector((state: IStateValues) => state?.auth);
+
+  if(userStore?.user?.success == true){
+    history.pushState(null, location.href);
+     window.onpopstate = function(event) {
+    history.go(0);
+  }
+}
 
   useEffect(() => {
     dispatch(getMe(''));
@@ -44,6 +52,8 @@ const AuthLayout: React.FC = () => {
             <Route path='/assignment-list' element={<AssignmentTable />} />
             <Route path='/reports-list' element={<ReportsTable />} />
             <Route path='/primary-screening-list' element={<PrimaryScreeningReports />} />
+            <Route path='/stateWiseAndDistrictWise' element={<StateWiseAndDistrictWise />} />
+            <Route path='/refractionistLoginReports' element={<RefractionistReports />} />
             <Route path='/school-primary-screening-list' element={<SchoolScreeningReports />} />
             {/* <Route path='*' element={<PageNotFound />} /> */}
           </Routes>

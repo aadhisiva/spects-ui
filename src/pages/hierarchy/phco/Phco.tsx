@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
 import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
 import { Option } from "antd/es/mentions";
+import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
 interface DataType {
   key: string;
@@ -64,6 +65,7 @@ export const PhcoTable: React.FC = () => {
   const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
   const [phcoSelected, setPhcoSelected] = useState<DataType[]>([]);
 
+  const [mapped, setMapped] = useState("all");
   // auth user
   const [userData] = useFetchUserData();
   const token = userData?.userData?.token;
@@ -78,13 +80,7 @@ export const PhcoTable: React.FC = () => {
 
   const GetTablData = async () => {
     if (checkUserLogin) {
-      // let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, unique_id, token);
-      // let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.district)));
-      // let bodyData: any = {
-      //     districts: uniqueBody
-      // };
       let result = await POSTAPIS_WITH_AUTH(`phco_data`, bodyData, token);
-      // let uniqueData: any = _.uniqBy(result?.data, 'health_facility');
       if (result.code == 200) {
         setLoading(false);
         setOriginalTableData(result?.data);
@@ -93,13 +89,7 @@ export const PhcoTable: React.FC = () => {
         NotificationError(result.message);
       }
     } else if (talukaLogin) {
-      // let { data } = await POSTAPIS_WITH_AUTH(`getUser_data`, bodyData, token);
-      // let uniqueBody: any = Array.from(new Set(data?.map((obj: any) => obj.taluka)));
-      // let bodyData: any = {
-      //     districts: uniqueBody
-      // };
       let result = await POSTAPIS_WITH_AUTH(`phco_data`, bodyData, token);
-      // let uniqueData: any = _.uniqBy(result?.data, 'health_facility');
       if (result.code == 200) {
         setLoading(false);
         setOriginalTableData(result?.data);
@@ -252,7 +242,7 @@ export const PhcoTable: React.FC = () => {
           obj.rural_urban === rural_urban &&
           obj.district === districtOption &&
           obj.taluka === talukaOption &&
-          obj.health_facility === phcoOption 
+          obj.health_facility === phcoOption
       );
     }
     setCopyOfOriginalTableData(filterData);
@@ -269,8 +259,10 @@ export const PhcoTable: React.FC = () => {
     let body: any = { ...{ code: editId }, ...newValues };
     let result = await POSTAPIS_WITH_AUTH("update_phco_data", body, token);
     if (result.code == 200) {
-      await GetTablData();
-      setLoading(false);
+      setTimeout(async () => {
+        await GetTablData();        
+        setLoading(false);
+      }, 2000);
     } else {
       NotificationError("Update Failed");
     }
@@ -314,9 +306,7 @@ export const PhcoTable: React.FC = () => {
       setDistrict("");
       setTalukaOption("");
       setPhcoOption("");
-      let reset = originalTableData.filter(
-        (obj) => obj.rural_urban === value
-      );
+      let reset = originalTableData.filter((obj) => obj.rural_urban === value);
       setDistrictSelect(reset);
     }
   };
@@ -333,8 +323,8 @@ export const PhcoTable: React.FC = () => {
 
   const handleSelectedTaluka = (value: string) => {
     if (value !== talukaOption) {
-        setTalukaOption(value);
-        setPhcoOption("");
+      setTalukaOption(value);
+      setPhcoOption("");
       let reset = talukaSelect.filter((obj) => obj.taluka === value);
       setPhcoSelected(reset);
     }
@@ -342,6 +332,19 @@ export const PhcoTable: React.FC = () => {
   const handlePhcoSelectMethod = (value: string) => {
     if (value !== phcoOption) {
       setPhcoOption(value);
+    }
+  };
+
+  const handleChangeMapOrUnMap = (value: string) => {
+    setMapped(value);
+    if (value == "all") {
+      setCopyOfOriginalTableData(originalTableData);
+    } else if (value == "mapped") {
+      let data = originalTableData.filter((obj) => obj.mobile_number);
+      setCopyOfOriginalTableData(data);
+    } else {
+      let data = originalTableData.filter((obj) => !obj.mobile_number);
+      setCopyOfOriginalTableData(data);
     }
   };
 
@@ -435,10 +438,7 @@ export const PhcoTable: React.FC = () => {
                 >
                   <Option value={""}>Select PHC</Option>
                   {(phcoSelected || [])?.map((obj: any, i) => (
-                    <Option
-                      key={String(i)}
-                      value={`${obj.health_facility}`}
-                    >
+                    <Option key={String(i)} value={`${obj.health_facility}`}>
                       {obj.health_facility}
                     </Option>
                   ))}
@@ -458,7 +458,14 @@ export const PhcoTable: React.FC = () => {
             <Col sm={4} xs={12} className={styles.slectRows}>
               <SelectRowsPerPage handleCh={handleCh} />
             </Col>
-            <Col sm={12} xs={12} className={styles.headerRow}>
+            <Col sm={4} xs={12} className={styles.slectRows}>
+              <MapUnmappedSelect
+                handleChange={handleChangeMapOrUnMap}
+                value={mapped}
+                count={copyOfOriginalTableData.length}
+              />
+            </Col>
+            <Col sm={8} xs={12} className={styles.headerRow}>
               <span>{t("PHCO_HEALTH_OFFICER")}</span>
             </Col>
             <Col sm={8} xs={12} className={styles.searchContainer}>

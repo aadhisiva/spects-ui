@@ -1,7 +1,9 @@
 import axios from "axios";
+import { dispatchStore } from "../redux/store";
+import { LogOut } from "../redux/features/authSlice";
 
-export const baseUrl = "https://spectacles.karnataka.gov.in/";
-// export const baseUrl = "http://localhost:8889/";
+// export const baseUrl = "https://spectacles.karnataka.gov.in/";
+export const baseUrl = "http://localhost:8889/";
 
 const axiosRequest = axios.create({
     baseURL: baseUrl

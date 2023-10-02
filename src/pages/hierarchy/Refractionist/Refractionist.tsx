@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
 import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
 import { Option } from "antd/es/mentions";
+import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
 interface DataType {
   key: string;
@@ -65,6 +66,8 @@ export const RefractionistTable: React.FC = () => {
   const [talukaSelect, setTalukaSelect] = useState<DataType[]>([]);
   const [subCentreSelect, setSubCentreSelect] = useState<DataType[]>([]);
   const [phcoSelected, setPhcoSelected] = useState<DataType[]>([]);
+
+  const [mapped, setMapped] = useState("all");
 
   // auth user
   const [userData] = useFetchUserData();
@@ -335,8 +338,10 @@ export const RefractionistTable: React.FC = () => {
     let body: any = { ...values, ...{code: editId} };
     let result = await POSTAPIS_WITH_AUTH("update_data", body, token);
     if (result.code == 200) {
-      await GetTablData();
-      setLoading(false);
+      setTimeout(async () => {
+        await GetTablData();        
+        setLoading(false);
+      }, 2000);
     } else {
       NotificationError("Update Failed");
     }
@@ -467,6 +472,19 @@ export const RefractionistTable: React.FC = () => {
       setSubCentreOption("");
       let reset = phcoSelected.filter((obj) => obj.health_facility === value);
       setSubCentreSelect(reset);
+    }
+  };
+
+  const handleChangeMapOrUnMap = (value: string) => {
+    setMapped(value);
+    if (value == "all") {
+      setCopyOfOriginalTableData(originalTableData);
+    } else if (value == "mapped") {
+      let data = originalTableData.filter((obj) => obj.refractionist_mobile);
+      setCopyOfOriginalTableData(data);
+    } else {
+      let data = originalTableData.filter((obj) => !obj.refractionist_mobile);
+      setCopyOfOriginalTableData(data);
     }
   };
 
@@ -617,7 +635,14 @@ export const RefractionistTable: React.FC = () => {
             <Col sm={4} xs={12} className={styles.slectRows}>
               <SelectRowsPerPage handleCh={handleCh} />
             </Col>
-            <Col sm={12} xs={12} className={styles.headerRow}>
+            <Col sm={4} xs={12} className={styles.slectRows}>
+              <MapUnmappedSelect
+                handleChange={handleChangeMapOrUnMap}
+                value={mapped}
+                count={copyOfOriginalTableData.length}
+              />
+            </Col>
+            <Col sm={8} xs={12} className={styles.headerRow}>
               <span>{t("REFRACTIONIST")}</span>
             </Col>
             <Col sm={8} xs={12} className={styles.searchContainer}>

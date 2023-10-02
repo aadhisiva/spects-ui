@@ -1,0 +1,94 @@
+.stateAndDistrictTable {
+
+    .infoContentContainer {
+        width: auto;
+        margin: 10px 50px 10px 50px;
+        // border-radius: 50px;
+        // border: 1px solid;
+        .infoContent {
+            display: flex;
+            flex-direction: column;
+            // justify-content: flex-start;
+            align-items: flex-start;
+            p {
+                font-size: 17px;
+                font-weight: bold;
+            }
+            span {
+                font-size: 13px;
+                font-weight: 500;
+            }
+        }
+    }
+    .table {
+        @media only screen and (min-width: 600px) {
+            margin: 40px 40px;
+        }
+        @media only screen and (max-width: 600px) {
+            margin: 10px;
+        }
+    }
+
+    .table {
+
+        .statisticsContainer {
+            .statistics {
+                text-align: center;
+                padding: 7px;
+                background-color: #124f8c;
+                border: 1px solid #000000;
+                border-radius: 10px 10px 0px 0px;
+
+                .title {
+                    color: white;
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 18px;
+                    line-height: 130%;
+                }
+            }
+        }
+
+        .selectItemsContainer {
+            border: 1px solid;
+            border-radius: 0px 20px 20px 20px;
+            margin: 0 0 20px 0;
+
+            // padding: 10px;
+            @media only screen and (max-width: 600px) {
+                border-radius: 0px 0 20px 20px;
+            }
+
+            // align-items: center;
+            // margin: 0 0 20px 0;
+
+            .selecttypes {
+                margin: 15px;
+
+                .title {
+                    font-weight: 700;
+                    font-size: 18px;
+                    line-height: 130%;
+                }
+                .orderData{
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .slectRows {
+            text-align: left;
+
+            .rowsSelect {
+                @media only screen and (min-width: 600px) {
+                    max-width: 100px;
+                }
+            }
+        }
+
+        .searchContainer {
+            text-align: right;
+        }
+    }
+}
