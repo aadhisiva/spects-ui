@@ -28,7 +28,10 @@ import { useFetchUserData } from "../../../utilities/userDataHook";
 import * as XLSX from "xlsx";
 import DistrictSelectItems from "../hierarchyFilters/district";
 import {
+  ALL_DISTRICTS,
   DISTRICT_LOGIN,
+  EVENING_TIME,
+  MORNING_TIME,
   PHCO_LOGIN,
   STATE_ADMIN_LOGIN,
   TALUKA_LOGIN,
@@ -60,6 +63,7 @@ interface DataType {
   totalPending: string;
   target: string;
   totalOrders: string;
+  totalreadyToDeliver: string;
 }
 
 interface publicObjType {
@@ -84,21 +88,14 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   >({});
   const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState({});
+  
   // select items
-  const [selectedDates, setSelectedDates] = useState("");
-  const [refraDeatilsSelect, setRefraDetailsSelect] = useState<publicObjType[]>(
-    []
-  );
-  const [statusSelect, setStatusSelect] = useState<publicObjType[]>([]);
   const [talukaSelect, setTalukaSelect] = useState<publicObjType[]>([]);
-  const [villageSelect, setVillageSelect] = useState<publicObjType[]>([]);
-  const [subCentreSelect, setSubCentreSelect] = useState<publicObjType[]>([]);
-  const [districtSelect, setDistrictSelect] = useState<publicObjType[]>([]);
   const [phcoSelected, setPhcoSelected] = useState<publicObjType[]>([]);
 
   /** data */
@@ -110,18 +107,13 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   /** Fitler actions */
   const [talukaOption, setTalukaOption] = useState("");
   const [refraType, setRefraTypes] = useState("");
-  const [refraDeatils, setRefraDetails] = useState("");
   const [districtOption, setDistrictOption] = useState("");
-  const [villageOption, setVillageOption] = useState("");
-  const [subCentreOption, setSubCentreOption] = useState("");
-  const [statusOption, setStatusOption] = useState("");
-  const [phcoOption, setPhcoOption] = useState("");
 
   const [rowsPerPage, setRowsPerPage] = useState(100);
   const [queryString, setQueryString] = useState<string>("");
 
-  /* naviagte */
-  const navigate = useNavigate();
+  const locale = 'en';
+  const [today, setDate] = React.useState(new Date()); // Save the current date to be able to trigger an update
 
   /* custom pagination */
   const handleChange: TableProps<DataType>["onChange"] = (
@@ -141,24 +133,23 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   const type = userData?.userData?.type;
   const codes = userData?.userData?.codes;
 
-  // const bodyData: any = {
-  //   codes: userData?.userData?.codes,
-  //   type: userData?.userData?.type,
-  // };
-
-  /* first rendering only  */
   useEffect(() => {
-    (async () => {
-      let data = await GET_APIS("uniqueDistricts", token);
-      if (data?.code) {
-        setLoading(false);
-        setDistrictSelect(data?.data);
-      } else {
-        NotificationError(data.message);
-      }
-      // }
-    })();
+      const timer = setInterval(() => { // Creates an interval which will update the current data every minute
+      // This will trigger a rerender every component that uses the useDate hook.
+      setDate(new Date());
+    }, 60 * 1000);
+    return () => {
+      clearInterval(timer); // Return a funtion to clear the timer so that it will stop being called on unmount
+    }
   }, []);
+
+  const day = today.toLocaleDateString(locale, { weekday: 'long' });
+  const date = `${day}, ${today.getDate()} ${today.toLocaleDateString(locale, { month: 'long' })}\n\n`;
+
+  const hour = today.getHours();
+  const wish = `Good ${(hour < 12 && 'Morning') || (hour < 17 && 'Afternoon') || 'Evening'}, `;
+
+  const time = today.toLocaleTimeString(locale, { hour: 'numeric', hour12: true, minute: 'numeric' });
 
   const columns: ColumnsType<DataType> = [
     {
@@ -290,10 +281,6 @@ export const StateWiseAndDistrictWise: React.FC = () => {
     );
   };
 
-  const handleCh = (value: string) => {
-    setRowsPerPage(Number(value));
-  };
-
   let renderItems = copyOfOriginalTableData.filter((obj) => {
     if (queryString === "") {
       return obj;
@@ -321,11 +308,13 @@ export const StateWiseAndDistrictWise: React.FC = () => {
     }
   });
 
-  const handleRefraTypes = (value: string) => {
+  const handleRefraTypes = async(value: string) => {
     if (value !== refraType) {
+      setRefraTypes(value);
       setDistrictOption("");
       setTalukaOption("");
-      setRefraTypes(value);
+      // let data = await GET_APIS("uniqueDistricts", token);
+      // setDistrictSelect(data?.data)
     }
   };
 
@@ -346,10 +335,9 @@ export const StateWiseAndDistrictWise: React.FC = () => {
       district: districtOption,
       taluka: talukaOption,
     }; 
-    if (!districtOption || !refraType)
-    return message.error("Please Select Fields.");
+    if (!districtOption || !refraType) return message.error("Please Select Fields.");
 
-      if(type == DISTRICT_LOGIN && !talukaOption) return message.error("Please Select Fields.");
+    if(type == DISTRICT_LOGIN && !talukaOption) return message.error("Please Select Fields.");
     
     setLoading(true);
     let result = await POSTAPIS_WITH_AUTH(
@@ -398,6 +386,10 @@ export const StateWiseAndDistrictWise: React.FC = () => {
           )}
         >
           <div className={styles.table}>
+            <div className={styles.infoTitleContainer}>
+            <p className={styles.infoTitle}>{date+", "+time}</p>
+            <p className={styles.infoTitle}>Download Option will be available only after 6 pm to 10 am.</p>
+            </div>
             <Row>
               <Col sm={3} xs={24} className={styles.statisticsContainer}>
                 <div className={styles.statistics}>
@@ -414,12 +406,12 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                       rules={[{ required: true }]}
                     >
                       <Select
+                        showSearch
+                        allowClear
                         placeholder="Select Types"
                         onChange={(value) => handleRefraTypes(value)}
                         defaultValue={""}
                         value={refraType}
-                        showSearch
-                        allowClear
                       >
                         <Option value="">Select Types</Option>
                         <Option value="school">School</Option>
@@ -437,13 +429,11 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                       <Select
                         showSearch
                         allowClear
-                        optionFilterProp="children"
                         placeholder="Select District"
                         onChange={handleDistrictOption}
                         defaultValue={""}
                         value={districtOption}
                       >
-                        <Option value="">Select District</Option>
                         {type == DISTRICT_LOGIN ? (
                           <>
                             {(codes || []).map((obj: any, i: any) => (
@@ -455,11 +445,12 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                         ) : (
                           <>
                             <Option value="all">Select All</Option>
-                            {districtSelect.map((obj, i) => (
-                              <Option key={String(i)} value={obj.district}>
-                                {obj.district}
+                            {ALL_DISTRICTS.map((obj, i) => (
+                              <Option key={String(i)} value={obj}>
+                                {obj}
                               </Option>
                             ))}
+                            <Option value="">Select District</Option>
                           </>
                         )}
                       </Select>
@@ -508,9 +499,6 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                     </Button>
                   </div>
                 </Col>
-                {!originalTableData[0]?.name || districtOption == "all" ? (
-                  ""
-                ) : (
                   <Col sm={6} xs={24}>
                     <div className={styles.selecttypes}>
                       <Button
@@ -521,7 +509,6 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                       </Button>
                     </div>
                   </Col>
-                )}
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
@@ -540,6 +527,13 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
                     Spectacles Pending: {originalTableData[0]?.totalPending || 0}
+                    </span>
+                  </div>
+                </Col>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                    Spectacles Ready To Deliver: {originalTableData[0]?.totalreadyToDeliver || 0}
                     </span>
                   </div>
                 </Col>

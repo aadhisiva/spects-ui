@@ -354,13 +354,13 @@ const DistrictSelectItems = ({
                 </Button>
               </div>
             </Col>
-              <Col sm={6} xs={24}>
-                <div className={styles.selecttypes}>
-                  <Button type="primary" onClick={handleClickDownloadToXlsx}>
-                    {t("DOWNLOAD")}
-                  </Button>
-                </div>
-              </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Button type="primary" onClick={handleClickDownloadToXlsx}>
+                  {t("DOWNLOAD")}
+                </Button>
+              </div>
+            </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <span className={styles.orderData}>
@@ -381,6 +381,14 @@ const DistrictSelectItems = ({
               <div className={styles.selecttypes}>
                 <span className={styles.orderData}>
                   Spectacles Pending: {originalTableData[0]?.totalPending || 0}
+                </span>
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <span className={styles.orderData}>
+                  Spectacles Ready To Deliver:{" "}
+                  {originalTableData[0]?.totalreadyToDeliver || 0}
                 </span>
               </div>
             </Col>

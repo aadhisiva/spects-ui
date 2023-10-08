@@ -1,25 +1,25 @@
 .signin-page {
-    .css-dev-only-do-not-override-txh9fw.ant-form-item .ant-form-item-label>label::after {
+    .css-txh9fw.ant-form-item .ant-form-item-label>label::after {
         content: none;
     }
 
-    .css-dev-only-do-not-override-txh9fw.ant-form-item .ant-form-item-label>label {
+    .css-txh9fw.ant-form-item .ant-form-item-label>label {
         font-size: 17px;
         font-weight: 600;
         margin-right: 70px;
     }
 
-    .css-dev-only-do-not-override-txh9fw.ant-form-item .ant-form-item-control-input-content {
+    .css-txh9fw.ant-form-item .ant-form-item-control-input-content {
         display: flex;
         justify-content: flex-end;
     }
-    .css-dev-only-do-not-override-txh9fw.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    .css-txh9fw.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
         border: 0.5px solid #5b5454;
     }
-    .css-dev-only-do-not-override-txh9fw.ant-input {
+    .css-txh9fw.ant-input {
         border: 0.5px solid #5b5454;
     }
-    .css-dev-only-do-not-override-txh9fw.ant-card .ant-card-body{
+    .css-txh9fw.ant-card .ant-card-body{
         padding: 0;
     }      
 };

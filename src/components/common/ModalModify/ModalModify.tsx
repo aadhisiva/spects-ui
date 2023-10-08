@@ -99,6 +99,7 @@ const renderForm = () => (
                         placeholder="Government/NGO"
                     >
                         <Option value="">--select--</Option>
+                        <Option value="Null">Null</Option>
                         <Option value="Government">Government</Option>
                         <Option value="NGO">NGO</Option>
                     </Select>

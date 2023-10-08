@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Dispatch } from "react";
-import { Row, Col, Image } from "antd";
+import { Row, Col, Image, Button, Modal, message } from "antd";
 import styles from "./DashBoardHierarchy.module.scss";
 import "./DashBoardHierarchy.custom.scss";
 import RefractionistImage from "../../assets/Images/DashBoard/refractionist.png";
@@ -15,6 +15,12 @@ import { getMe } from "../../redux/features/authSlice";
 import { IStateValues } from "../../type";
 import { PhocLoginFirstTIme } from "../../components/common/phcoLoginFirstTime/phocLoginFirstTIme";
 import { NotificationError } from "../../components/common/Notifications/Notifications";
+import {
+  DISTRICT_LOGIN,
+  PHCO_LOGIN,
+  REFRACTIONIST_LOGIN,
+  TALUKA_LOGIN,
+} from "../../utilities";
 
 const loginArrayData = [
   {
@@ -71,6 +77,9 @@ export const DashBoardHierarchy: React.FC = (props) => {
   // const [userData] = useFetchUserData();
   const token = user?.userData?.token;
 
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const dispatch: Dispatch<any> = useDispatch();
   // translation
   const { t } = useTranslation();
@@ -108,62 +117,80 @@ export const DashBoardHierarchy: React.FC = (props) => {
   };
 
   const GetCounts = async () => {
-    if (type == "district_officer") {
-      let result = await POSTAPIS_WITH_AUTH(
-        `get_orders_count`,
-        bodyData,
-        token
-      );
-      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
-      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
-      if (result.code == 200) {
-        setAllCount(result?.data[0]?.count);
-        setPendingCount(pending?.data[0]?.count);
-        setDeliveredCount(delivered?.data[0]?.count);
+    try {
+      if (type == "district_officer") {
+        let result = await POSTAPIS_WITH_AUTH(
+          `get_orders_count`,
+          bodyData,
+          token
+        );
+        let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+        let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+        if (result.code == 200) {
+          setAllCount(result?.data[0]?.count);
+          setPendingCount(pending?.data[0]?.count);
+          setDeliveredCount(delivered?.data[0]?.count);
+        } else {
+          NotificationError(result.message);
+        }
+      } else if (type == "taluka") {
+        let result = await POSTAPIS_WITH_AUTH(
+          `get_orders_count`,
+          bodyData,
+          token
+        );
+        let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+        let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+        if (result.code == 200) {
+          setAllCount(result?.data[0]?.count);
+          setPendingCount(pending?.data[0]?.count);
+          setDeliveredCount(delivered?.data[0]?.count);
+        } else {
+          NotificationError(result.message);
+        }
+      } else if (type == "phco") {
+        let result = await POSTAPIS_WITH_AUTH(
+          `get_orders_count`,
+          bodyData,
+          token
+        );
+        let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+        let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+        if (result.code == 200) {
+          setAllCount(result?.data[0]?.count);
+          setPendingCount(pending?.data[0]?.count);
+          setDeliveredCount(delivered?.data[0]?.count);
+        } else {
+          message.error(result.message);
+        }
+      } else if (type == REFRACTIONIST_LOGIN) {
+        let result = await POSTAPIS_WITH_AUTH(
+          `get_orders_count`,
+          bodyData,
+          token
+        );
+        if (result.code == 200) {
+          setAllCount(result?.data[0].totalCount);
+          setPendingCount(result?.data[0]?.totalPending);
+          setDeliveredCount(result?.data[0]?.totalDelivered);
+        } else {
+          message.error(result.message);
+        }
       } else {
-        NotificationError(result.message);
+        let result = await GET_APIS(`get_orders_count`, token);
+        let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
+        let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
+        if (result.code == 200) {
+          setAllCount(result?.data[0]?.count);
+          setPendingCount(pending?.data[0]?.count);
+          setDeliveredCount(delivered?.data[0]?.count);
+        } else {
+          message.error(result.message);
+        }
       }
-    } else if (type == "taluka") {
-      let result = await POSTAPIS_WITH_AUTH(
-        `get_orders_count`,
-        bodyData,
-        token
-      );
-      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
-      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
-      if (result.code == 200) {
-        setAllCount(result?.data[0]?.count);
-        setPendingCount(pending?.data[0]?.count);
-        setDeliveredCount(delivered?.data[0]?.count);
-      } else {
-        NotificationError(result.message);
-      }
-    } else if (type == "phco") {
-      let result = await POSTAPIS_WITH_AUTH(
-        `get_orders_count`,
-        bodyData,
-        token
-      );
-      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
-      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
-      if (result.code == 200) {
-        setAllCount(result?.data[0]?.count);
-        setPendingCount(pending?.data[0]?.count);
-        setDeliveredCount(delivered?.data[0]?.count);
-      } else {
-        NotificationError(result.message);
-      }
-    } else {
-      let result = await GET_APIS(`get_orders_count`, token);
-      let delivered = await POSTAPIS_WITH_AUTH("delivered", bodyData, token);
-      let pending = await POSTAPIS_WITH_AUTH("pending", bodyData, token);
-      if (result.code == 200) {
-        setAllCount(result?.data[0]?.count);
-        setPendingCount(pending?.data[0]?.count);
-        setDeliveredCount(delivered?.data[0]?.count);
-      } else {
-        NotificationError(result.message);
-      }
+    } catch (error: any) {
+      message.error(error.message);
+      return error;
     }
   };
 
@@ -200,9 +227,44 @@ export const DashBoardHierarchy: React.FC = (props) => {
     // setPhcoLoginFirstTime(false);
   };
 
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleCancelModal = () => {
+    setOpen(false);
+  };
+
+  const showAssignedValues = () => {
+    return (
+      <React.Fragment>
+        <Modal
+          open={open}
+          title="Assigned Values"
+          onCancel={handleCancelModal}
+          footer={[
+            <Button type="primary" onClick={handleCancelModal}>
+              Cancel
+            </Button>,
+          ]}
+        >
+          {user?.userData?.codes?.map((obj: any, i: string) => (
+            <p
+              key={i}
+              style={{ color: "black", fontSize: "18px", fontWeight: "bold" }}
+            >
+              {obj.unique_name}
+            </p>
+          ))}
+        </Modal>
+      </React.Fragment>
+    );
+  };
+
   const length: number = loginUser?.length == 2 ? 3 : 4;
   return (
     <>
+      {open && showAssignedValues()}
       {isPhcoLoginFirstTime && (
         <PhocLoginFirstTIme
           open={isPhcoLoginFirstTime}
@@ -219,13 +281,18 @@ export const DashBoardHierarchy: React.FC = (props) => {
       >
         {/* statistics container */}
         <Row>
-          {user?.userData?.type !== "state_admin" ? (
+          {type !== "state_admin" ? (
             <Col sm={12} md={12} xs={24} className={styles.statisticsLoginUser}>
-              <div className={styles.statistics}>
-                <span className={styles.title}>
-                  {user?.userData?.loginName}
-                </span>
-              </div>
+              <Button type="primary" onClick={showModal}>
+                Assigned{" "}
+                {type == DISTRICT_LOGIN
+                  ? t("TABLE_DISTRICT")
+                  : type == TALUKA_LOGIN
+                  ? t("TABLE_TALUKA")
+                  : type == PHCO_LOGIN
+                  ? t("PHCO_CARD")
+                  : ""}{" "}
+              </Button>
             </Col>
           ) : (
             ""
@@ -235,13 +302,19 @@ export const DashBoardHierarchy: React.FC = (props) => {
               <span className={styles.title}>{t("STATISTICS")}</span>
             </div>
           </Col>
-          {user?.userData?.type !== "state_admin" ? (
-            <Col md={10} xs={24} className={styles.userName}>
-              <div className={styles.statistics}>
-                <span className={styles.title}>
-                  {user?.userData?.loginName}
-                </span>
-              </div>
+          {type !== "state_admin" ? (
+            <Col md={12} xs={24} className={styles.userName}>
+              <Button type="primary" onClick={showModal}>
+                Assigned{" "}
+                {type == DISTRICT_LOGIN
+                  ? t("TABLE_DISTRICT")
+                  : type == TALUKA_LOGIN
+                  ? t("TABLE_TALUKA")
+                  : type == PHCO_LOGIN
+                  ? t("PHCO_CARD")
+                  : t("REFRACTIONIST")}
+                {""}
+              </Button>
             </Col>
           ) : (
             ""
@@ -284,50 +357,55 @@ export const DashBoardHierarchy: React.FC = (props) => {
         </Row>
 
         {/* Assignemnet  */}
-
-        <Row justify={"start"}>
-          <Col sm={4} xs={24} className={styles.statisticsContainer}>
-            <div className={styles.statistics}>
-              <span className={styles.title}>{t("ASSIGNMENT")}</span>
-            </div>
-          </Col>
-        </Row>
-        <Row
-          justify="space-around"
-          align={"middle"}
-          className={styles.menuItemsContainer}
-        >
-          {loginUser.map((obj, i) => (
-            <Col key={i} xl={24 / length} xs={24}>
-              <a
-                onClick={(e) =>
-                  handleClickToNextPage(obj.name, "/assignment-list")
-                }
-              >
-                <div
-                  style={{ backgroundColor: `${obj.color}` }}
-                  className={styles.menuItems}
-                >
-                  <Image
-                    width={60}
-                    height={50}
-                    preview={false}
-                    src={obj.image}
-                  />
-                  <p className={styles.title}>
-                    {obj.role == "District"
-                      ? t("TABLE_DISTRICT")
-                      : obj.role == "Taluka"
-                      ? t("TABLE_TALUKA")
-                      : obj.role == "PHCO"
-                      ? t("PHCO_CARD")
-                      : t("REFRACTIONIST_TABLE")}{" "}
-                  </p>
+        {type !== REFRACTIONIST_LOGIN ? (
+          <>
+            <Row justify={"start"}>
+              <Col sm={4} xs={24} className={styles.statisticsContainer}>
+                <div className={styles.statistics}>
+                  <span className={styles.title}>{t("ASSIGNMENT")}</span>
                 </div>
-              </a>
-            </Col>
-          ))}
-        </Row>
+              </Col>
+            </Row>
+            <Row
+              justify="space-around"
+              align={"middle"}
+              className={styles.menuItemsContainer}
+            >
+              {loginUser.map((obj, i) => (
+                <Col key={i} xl={24 / length} xs={24}>
+                  <a
+                    onClick={(e) =>
+                      handleClickToNextPage(obj.name, "/assignment-list")
+                    }
+                  >
+                    <div
+                      style={{ backgroundColor: `${obj.color}` }}
+                      className={styles.menuItems}
+                    >
+                      <Image
+                        width={60}
+                        height={50}
+                        preview={false}
+                        src={obj.image}
+                      />
+                      <p className={styles.title}>
+                        {obj.role == "District"
+                          ? t("TABLE_DISTRICT")
+                          : obj.role == "Taluka"
+                          ? t("TABLE_TALUKA")
+                          : obj.role == "PHCO"
+                          ? t("PHCO_CARD")
+                          : t("REFRACTIONIST_TABLE")}{" "}
+                      </p>
+                    </div>
+                  </a>
+                </Col>
+              ))}
+            </Row>
+          </>
+        ) : (
+          ""
+        )}
 
         {/* Reports */}
         <Row justify={"start"}>
@@ -342,7 +420,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
           align={"middle"}
           className={styles.menuItemsContainer}
         >
-          <Col md={7} xs={24}>
+          <Col md={24 / 3} xs={24}>
             <a onClick={(e) => navigate("/reports-list")}>
               <div
                 style={{ backgroundColor: "#62A76C" }}
@@ -355,47 +433,29 @@ export const DashBoardHierarchy: React.FC = (props) => {
                   src={BenificiaryImage}
                 />
                 <p className={styles.title}>{t("SECONDARY_SCREENING_LIST")}</p>
-                {/* <p className={styles.title}>{"Secondary Screening Reports "}</p> */}
               </div>
             </a>
           </Col>
-          {/* <Col sm={7} xs={24}>
-            <a onClick={(e) => navigate("/school-primary-screening-list")}>
-              <div
-                style={{ backgroundColor: "#ce7e7e" }}
-                className={styles.menuItems}
-              >
-                <Image
-                  width={60}
-                  height={50}
-                  preview={false}
-                  src={SchoolImage}
-                />
-                <p className={styles.title}>{"School Secondary Screening Reports"}</p>
-              </div>
-            </a>
-          </Col> */}
-          {/* {user?.userData?.type == "phco" && */}
-          {/* user?.userData?.isIntialLogin !== "Y" ? ( */}
-          <Col md={7} xs={24}>
-            <a onClick={(e) => navigate("/primary-screening-list")}>
-              <div
-                style={{ backgroundColor: "#7c4a4a" }}
-                className={styles.menuItems}
-              >
-                <Image
-                  width={60}
-                  height={50}
-                  preview={false}
-                  src={BenificiaryImage}
-                />
-                <p className={styles.title}>{t("PRIMARY_SCREENING_LIST")}</p>
-              </div>
-            </a>
-          </Col>
-          {/* ) : (
+          {type !== REFRACTIONIST_LOGIN ? (
+            <Col md={24 / 3} xs={24}>
+              <a onClick={(e) => navigate("/primary-screening-list")}>
+                <div
+                  style={{ backgroundColor: "#7c4a4a" }}
+                  className={styles.menuItems}
+                >
+                  <Image
+                    width={60}
+                    height={50}
+                    preview={false}
+                    src={BenificiaryImage}
+                  />
+                  <p className={styles.title}>{t("PRIMARY_SCREENING_LIST")}</p>
+                </div>
+              </a>
+            </Col>
+          ) : (
             ""
-          )} */}
+          )}
         </Row>
       </div>
     </>

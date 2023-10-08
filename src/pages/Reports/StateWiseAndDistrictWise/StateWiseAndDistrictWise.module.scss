@@ -20,6 +20,16 @@
             }
         }
     }
+    .infoTitleContainer{
+        border: 1px solid;
+        border-radius: 13px;
+        margin: 0 0 10px 0;
+        .infoTitle {
+            font-size: 15px;
+            color: rgb(2, 9, 3);
+            font-weight: bold;
+        }
+    }
     .table {
         @media only screen and (min-width: 600px) {
             margin: 40px 40px;

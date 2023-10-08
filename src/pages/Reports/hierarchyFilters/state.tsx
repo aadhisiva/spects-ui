@@ -60,7 +60,7 @@ const StateSelectItems = ({
   // change langugae
   const { t } = useTranslation();
   // loader
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // auth user
   const [userData] = useFetchUserData();
@@ -73,7 +73,6 @@ const StateSelectItems = ({
     (async () => {
       let data = await GET_APIS("uniqueDistricts", token);
       if (data?.code) {
-        setLoading(false);
         setDistrictSelect(data?.data);
       } else {
         message.info(data.message);
@@ -226,7 +225,10 @@ const StateSelectItems = ({
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
+                <Form.Item
+                name={"Select Taluka"}
+                rules={[{ required: true }]}
+                >
                   <Select
                     showSearch
                     placeholder="Select taluka"
@@ -246,6 +248,10 @@ const StateSelectItems = ({
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
+              <Form.Item
+                name={"Select PHC"}
+                rules={[{ required: true }]}
+                >
                 <Select
                   showSearch
                   style={{ width: "100%" }}
@@ -262,11 +268,15 @@ const StateSelectItems = ({
                     </Option>
                   ))}
                 </Select>
+                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
+              <Form.Item
+                name={"Select Sub Centre"}
+                rules={[{ required: true }]}
+                >
                   <Select
                     showSearch
                     placeholder="Select Sub Centre"
@@ -290,7 +300,7 @@ const StateSelectItems = ({
               <div className={styles.selecttypes}>
                 <Form.Item
                   name={"From and To Date"}
-                  rules={[{ required: false }]}
+                  rules={[{ required: true }]}
                 >
                   <RangePicker
                     format="YYYY-MM-DD"
@@ -302,7 +312,9 @@ const StateSelectItems = ({
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
+                <Form.Item
+                name={"Select Status"}
+                 rules={[{ required: true }]}>
                   <Select
                     showSearch
                     placeholder="Select status"
@@ -365,6 +377,13 @@ const StateSelectItems = ({
                   Spectacles Pending: {originalTableData[0]?.totalPending || 0}
                 </span>
               </div>
+            </Col>
+            <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                    Spectacles Ready To Deliver: {originalTableData[0]?.totalreadyToDeliver || 0}
+                    </span>
+                  </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>

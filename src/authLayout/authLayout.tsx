@@ -23,13 +23,6 @@ const AuthLayout: React.FC = () => {
 
   const userStore: any = useSelector((state: IStateValues) => state?.auth);
 
-  if(userStore?.user?.success == true){
-    history.pushState(null, location.href);
-     window.onpopstate = function(event) {
-    history.go(0);
-  }
-}
-
   useEffect(() => {
     dispatch(getMe(''));
   }, [dispatch]);
@@ -49,6 +42,7 @@ const AuthLayout: React.FC = () => {
             <Route path='/' element={<Navigate to={"/signin"} replace={true} />} />
             <Route path='/signin' element={<SignInComponent />} />
             <Route path='/dashboard' element={<DashBoardHierarchy />} />
+            {/* <Route path='/dashboard/items/items/item' element={<DashBoardHierarchy />} /> */}
             <Route path='/assignment-list' element={<AssignmentTable />} />
             <Route path='/reports-list' element={<ReportsTable />} />
             <Route path='/primary-screening-list' element={<PrimaryScreeningReports />} />

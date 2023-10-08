@@ -115,7 +115,7 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                   ? "TLO"
                   : user?.userData?.type == "phco"
                   ? "PHCO"
-                  : "VENDOR"}{" "}
+                  : t("REFRACTIONIST")}{" "}
                 |{" "}
               </span>
               <span style={{ cursor: "pointer" }} onClick={showModal}>

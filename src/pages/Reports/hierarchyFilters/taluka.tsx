@@ -59,7 +59,7 @@ const TalukaSelectItems = ({
   // change langugae
   const { t } = useTranslation();
   // loader
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // auth user
   const [userData] = useFetchUserData();
@@ -72,28 +72,13 @@ const TalukaSelectItems = ({
     (async () => {
       let data = await GET_APIS("uniqueDistricts", token);
       if (data?.code) {
-        setLoading(false);
         setDistrictSelect(data?.data);
       } else {
         message.info(data.message);
       }
-      // }
     })();
   }, []);
 
-  const handleDistrictOption = async (value: string) => {
-    if (value !== districtOption) {
-      setDistrictOption(value);
-      setTalukaOption("");
-      setPhcoOption("");
-      setSubCentreOption("");
-      setSelectedDates("");
-      setStatusOption("");
-      let bodyData: any = { district: value };
-      let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
-      setTalukaSelect(data?.data);
-    }
-  };
 
   const handleTalukaOption = async (value: string) => {
     if (value !== talukaOption) {
@@ -179,17 +164,6 @@ const TalukaSelectItems = ({
     handleSlickSearchQuery(body);
   };
 
-  const TotalOrderAndPending = () => {
-    let orderPending = originalTableData.filter(
-      (obj: publicObjType) => obj.status == "order_pending"
-    ).length;
-    let delivered = originalTableData.filter(
-      (obj: publicObjType) => obj.status == "delivered"
-    ).length;
-    let totalOrders = originalTableData.length;
-    return { orderPending, totalOrders, delivered };
-  };
-
   const renderSelectItems = () => {
     return (
       <div>
@@ -213,33 +187,6 @@ const TalukaSelectItems = ({
                 </Form.Item>
               </div>
             </Col>
-            {/* <Col sm={6} xs={24}>
-              <div className={styles.selecttypes}>
-                <Form.Item
-                name={'Select District'}
-                rules={[{ required: true }]}>
-                  <Select
-                    placeholder="Select District"
-                    onChange={handleDistrictOption}
-                    defaultValue={""}
-                    value={districtOption}
-                  >
-                    <Option value="">Select District</Option>
-                    {type == "district_officer"
-                      ? (codes || []).map((obj: any, i: any) => (
-                          <Option key={String(i)} value={obj.unique_name}>
-                            {obj.unique_name}
-                          </Option>
-                        ))
-                      : districtSelect.map((obj, i) => (
-                          <Option key={String(i)} value={obj.district}>
-                            {obj.district}
-                          </Option>
-                        ))}
-                  </Select>
-                </Form.Item>
-              </div>
-            </Col> */}
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Form.Item>
@@ -387,6 +334,13 @@ const TalukaSelectItems = ({
                   Spectacles Pending: {originalTableData[0]?.totalPending || 0}
                 </span>
               </div>
+            </Col>
+            <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <span className={styles.orderData}>
+                    Spectacles Ready To Deliver: {originalTableData[0]?.totalreadyToDeliver || 0}
+                    </span>
+                  </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>

@@ -30,12 +30,14 @@ import DistrictSelectItems from "../hierarchyFilters/district";
 import {
   DISTRICT_LOGIN,
   PHCO_LOGIN,
+  REFRACTIONIST_LOGIN,
   STATE_ADMIN_LOGIN,
   TALUKA_LOGIN,
 } from "../../../utilities";
 import StateSelectItems from "../hierarchyFilters/state";
 import TalukaSelectItems from "../hierarchyFilters/taluka";
 import PhcoSelectItems from "../hierarchyFilters/phco";
+import RefractionistSelectItems from "../hierarchyFilters/refractionist";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -80,7 +82,7 @@ export const ReportsTable: React.FC = () => {
   >({});
   const [sortedInfo, setSortedInfo] = useState<SorterResult<DataType>>({});
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [visible, setVisible] = useState(false);
@@ -147,7 +149,7 @@ export const ReportsTable: React.FC = () => {
     (async () => {
       let data = await GET_APIS("uniqueDistricts", token);
       if (data?.code) {
-        setLoading(false);
+        // setLoading(false);
         setDistrictSelect(data?.data);
       } else {
         NotificationError(data.message);
@@ -513,40 +515,53 @@ export const ReportsTable: React.FC = () => {
         {visible ? FormOpen() : ""}
         <TitleBarComponent title={t("REPORTS_LIST")} image={true} />
         <div className={classNames(styles.reportsTable, "report-page-list")}>
-          <div className={styles.informationContainer}>
-            <Col sm={4} xs={24} className={styles.infoContainer}>
-              <div className={styles.statistics}>
-                <span className={styles.title}>{t("INFORMATION")}</span>
-              </div>
-            </Col>
-            <div className={styles.buttonContainer}>
-              <Row>
-                {type == STATE_ADMIN_LOGIN ? (
-                  <Col sm={12} xs={24}>
-                    <Button 
-                      style={{ backgroundColor: "#AC8FF2" }} 
-                      className={styles.infoButtons}
-                      onClick={() => navigate("/stateWiseAndDistrictWise")}>{t("STATE_DISTRICT_WISE")}</Button>
-                  </Col>
-                ) : type == DISTRICT_LOGIN ? (
+          {type !== REFRACTIONIST_LOGIN ? (
+            <div className={styles.informationContainer}>
+              <Col sm={4} xs={24} className={styles.infoContainer}>
+                <div className={styles.statistics}>
+                  <span className={styles.title}>{t("INFORMATION")}</span>
+                </div>
+              </Col>
+              <div className={styles.buttonContainer}>
+                <Row>
+                  {type == STATE_ADMIN_LOGIN ? (
+                    <Col sm={12} xs={24}>
+                      <Button
+                        style={{ backgroundColor: "#AC8FF2" }}
+                        className={styles.infoButtons}
+                        onClick={() => navigate("/stateWiseAndDistrictWise")}
+                      >
+                        {t("STATE_DISTRICT_WISE")}
+                      </Button>
+                    </Col>
+                  ) : type == DISTRICT_LOGIN ? (
+                    <Col sm={12} xs={24} className={styles.infoButtons}>
+                      <Button
+                        style={{ backgroundColor: "#AC8FF2" }}
+                        className={styles.infoButtons}
+                        onClick={() => navigate("/stateWiseAndDistrictWise")}
+                      >
+                        {t("DISTRICT_TALUKA_WISE")}
+                      </Button>
+                    </Col>
+                  ) : (
+                    ""
+                  )}
                   <Col sm={12} xs={24} className={styles.infoButtons}>
-                    <Button 
-                      style={{ backgroundColor: "#AC8FF2"}}
+                    <Button
+                      style={{ backgroundColor: "#62A76C" }}
                       className={styles.infoButtons}
-                      onClick={() => navigate("/stateWiseAndDistrictWise")}>{t("DISTRICT_TALUKA_WISE")}</Button>
+                      onClick={() => navigate("/refractionistLoginReports")}
+                    >
+                      {t("REFRACTIONIST_REPORTS")}
+                    </Button>
                   </Col>
-                ) : (
-                  ""
-                )}
-                <Col sm={12} xs={24} className={styles.infoButtons}>
-                  <Button 
-                    style={{ backgroundColor: "#62A76C" }}
-                    className={styles.infoButtons}
-                    onClick={() => navigate("/refractionistLoginReports")}>{t("REFRACTIONIST_REPORTS")}</Button>
-                </Col>
-              </Row>
+                </Row>
+              </div>
             </div>
-          </div>
+          ) : (
+            ""
+          )}
           <div className={styles.table}>
             <Row>
               <Col sm={5} xs={24} className={styles.statisticsContainer}>
@@ -555,6 +570,14 @@ export const ReportsTable: React.FC = () => {
                 </div>
               </Col>
             </Row>
+            {type == REFRACTIONIST_LOGIN ? (
+              <RefractionistSelectItems
+              styles={styles}
+              handleSlickSearchQuery={handleSlickSearchQuery}
+              handleClickDownloadToXlsx={handleClickDownloadToXlsx}
+              originalTableData={originalTableData}
+            />
+            ) : ""}
             {type == STATE_ADMIN_LOGIN ? (
               <StateSelectItems
                 styles={styles}
