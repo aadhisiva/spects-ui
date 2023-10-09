@@ -572,12 +572,14 @@ export const ReportsTable: React.FC = () => {
             </Row>
             {type == REFRACTIONIST_LOGIN ? (
               <RefractionistSelectItems
-              styles={styles}
-              handleSlickSearchQuery={handleSlickSearchQuery}
-              handleClickDownloadToXlsx={handleClickDownloadToXlsx}
-              originalTableData={originalTableData}
-            />
-            ) : ""}
+                styles={styles}
+                handleSlickSearchQuery={handleSlickSearchQuery}
+                handleClickDownloadToXlsx={handleClickDownloadToXlsx}
+                originalTableData={originalTableData}
+              />
+            ) : (
+              ""
+            )}
             {type == STATE_ADMIN_LOGIN ? (
               <StateSelectItems
                 styles={styles}

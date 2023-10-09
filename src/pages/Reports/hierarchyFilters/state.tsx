@@ -13,6 +13,7 @@ import {
 import { useFetchUserData } from "../../../utilities/userDataHook";
 import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
+import { ALL_DISTRICTS } from "../../../utilities";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -68,26 +69,12 @@ const StateSelectItems = ({
   const type = userData?.userData?.type;
   const codes = userData?.userData?.codes;
 
-  /* first rendering only  */
-  useEffect(() => {
-    (async () => {
-      let data = await GET_APIS("uniqueDistricts", token);
-      if (data?.code) {
-        setDistrictSelect(data?.data);
-      } else {
-        message.info(data.message);
-      }
-      // }
-    })();
-  }, []);
-
   const handleDistrictOption = async (value: string) => {
     if (value !== districtOption) {
       setDistrictOption(value);
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       let bodyData: any = { district: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
@@ -100,7 +87,6 @@ const StateSelectItems = ({
       setTalukaOption(value);
       setPhcoOption("");
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       let bodyData: any = { taluka: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
@@ -112,7 +98,6 @@ const StateSelectItems = ({
     if (value !== phcoOption) {
       setPhcoOption(value);
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       let bodyData: any = { phc: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
@@ -123,7 +108,6 @@ const StateSelectItems = ({
   const handleSubCentreOption = (value: string) => {
     if (value !== subCentreOption) {
       setSubCentreOption(value);
-      setSelectedDates("");
       setStatusOption("");
     }
   };
@@ -135,7 +119,6 @@ const StateSelectItems = ({
     setPhcoOption("");
     setSubCentreOption("");
     setVillageOption("");
-    setSelectedDates("");
     setStatusOption("");
     setRefraDetails("");
   };
@@ -146,7 +129,6 @@ const StateSelectItems = ({
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       setRefraTypes(value);
     }
@@ -166,6 +148,13 @@ const StateSelectItems = ({
   };
 
   const handleSearchQuery = () => {
+    if(!districtOption ||
+        !talukaOption ||
+        !phcoOption ||
+        !subCentreOption ||
+        !selectedDates ||
+        !statusOption ||
+        !refraType) return message.error("Please Select All Fields.")
     let body: any = {
       district: districtOption,
       taluka: talukaOption,
@@ -185,9 +174,10 @@ const StateSelectItems = ({
           <Row className={styles.selectItemsContainer}>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item name={"Select Type"} rules={[{ required: true }]}>
                   <Select
                     showSearch
+                    allowClear
+                    style={{ width: '100%'}}
                     placeholder="Select Types"
                     onChange={(value) => handleRefraTypes(value)}
                     defaultValue={""}
@@ -197,40 +187,34 @@ const StateSelectItems = ({
                     <Option value="school">School</Option>
                     <Option value="other">Beneficiary</Option>
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item
-                  name={"Select District"}
-                  rules={[{ required: true }]}
-                >
                   <Select
+                    style={{ width: '100%'}}
                     showSearch
+                    allowClear
                     placeholder="Select District"
                     onChange={handleDistrictOption}
                     defaultValue={""}
                     value={districtOption}
                   >
                     <Option value="">Select District</Option>
-                    {districtSelect.map((obj, i) => (
-                      <Option key={String(i)} value={obj.district}>
-                        {obj.district}
+                    {ALL_DISTRICTS.map((obj, i) => (
+                      <Option key={String(i)} value={obj}>
+                        {obj}
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item
-                name={"Select Taluka"}
-                rules={[{ required: true }]}
-                >
                   <Select
+                    style={{ width: '100%'}}
                     showSearch
+                    allowClear
                     placeholder="Select taluka"
                     onChange={handleTalukaOption}
                     defaultValue={""}
@@ -243,17 +227,13 @@ const StateSelectItems = ({
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-              <Form.Item
-                name={"Select PHC"}
-                rules={[{ required: true }]}
-                >
                 <Select
                   showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select PHC"
                   onChange={handleSelectedPhco}
@@ -268,17 +248,14 @@ const StateSelectItems = ({
                     </Option>
                   ))}
                 </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-              <Form.Item
-                name={"Select Sub Centre"}
-                rules={[{ required: true }]}
-                >
                   <Select
+                    style={{ width: '100%'}}
                     showSearch
+                    allowClear
                     placeholder="Select Sub Centre"
                     onChange={handleSubCentreOption}
                     defaultValue={""}
@@ -293,30 +270,23 @@ const StateSelectItems = ({
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item
-                  name={"From and To Date"}
-                  rules={[{ required: true }]}
-                >
                   <RangePicker
                     format="YYYY-MM-DD"
                     placeholder={["From Date", "To Date"]}
                     onChange={onChangeDate}
                   />
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item
-                name={"Select Status"}
-                 rules={[{ required: true }]}>
                   <Select
+                    style={{ width: '100%'}}
                     showSearch
+                    allowClear
                     placeholder="Select status"
                     onChange={handleStatusOption}
                     defaultValue={""}
@@ -327,7 +297,6 @@ const StateSelectItems = ({
                     <Option value="ready_to_deliver">Ready To Deliver</Option>
                     <Option value="delivered">Delivered</Option>
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>

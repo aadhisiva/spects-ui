@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Col,
@@ -10,7 +10,7 @@ import {
   message,
 } from "antd";
 import { useFetchUserData } from "../../../utilities/userDataHook";
-import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
+import { POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
@@ -40,20 +40,15 @@ const DistrictSelectItems = ({
   /** Fitler actions */
   const [talukaOption, setTalukaOption] = useState("");
   const [refraType, setRefraTypes] = useState("");
-  const [refraDeatils, setRefraDetails] = useState("");
   const [districtOption, setDistrictOption] = useState("");
-  const [villageOption, setVillageOption] = useState("");
   const [subCentreOption, setSubCentreOption] = useState("");
   const [statusOption, setStatusOption] = useState("");
   const [phcoOption, setPhcoOption] = useState("");
 
   // selected Values
   const [selectedDates, setSelectedDates] = useState("");
-  const [statusSelect, setStatusSelect] = useState<publicObjType[]>([]);
   const [talukaSelect, setTalukaSelect] = useState<publicObjType[]>([]);
-  const [villageSelect, setVillageSelect] = useState<publicObjType[]>([]);
   const [subCentreSelect, setSubCentreSelect] = useState<publicObjType[]>([]);
-  const [districtSelect, setDistrictSelect] = useState<publicObjType[]>([]);
   const [phcoSelected, setPhcoSelected] = useState<publicObjType[]>([]);
 
   // change langugae
@@ -67,27 +62,12 @@ const DistrictSelectItems = ({
   const type = userData?.userData?.type;
   const codes = userData?.userData?.codes;
 
-  /* first rendering only  */
-  useEffect(() => {
-    (async () => {
-      let data = await GET_APIS("uniqueDistricts", token);
-      if (data?.code) {
-        setLoading(false);
-        setDistrictSelect(data?.data);
-      } else {
-        message.info(data.message);
-      }
-      // }
-    })();
-  }, []);
-
   const handleDistrictOption = async (value: string) => {
     if (value !== districtOption) {
       setDistrictOption(value);
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       let bodyData: any = { district: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
@@ -100,7 +80,6 @@ const DistrictSelectItems = ({
       setTalukaOption(value);
       setPhcoOption("");
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       let bodyData: any = { taluka: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
@@ -112,7 +91,6 @@ const DistrictSelectItems = ({
     if (value !== phcoOption) {
       setPhcoOption(value);
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       let bodyData: any = { phc: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
@@ -123,7 +101,6 @@ const DistrictSelectItems = ({
   const handleSubCentreOption = (value: string) => {
     if (value !== subCentreOption) {
       setSubCentreOption(value);
-      setSelectedDates("");
       setStatusOption("");
     }
   };
@@ -134,10 +111,7 @@ const DistrictSelectItems = ({
     setTalukaOption("");
     setPhcoOption("");
     setSubCentreOption("");
-    setVillageOption("");
-    setSelectedDates("");
     setStatusOption("");
-    setRefraDetails("");
   };
 
   const handleRefraTypes = (value: string) => {
@@ -146,7 +120,6 @@ const DistrictSelectItems = ({
       setTalukaOption("");
       setPhcoOption("");
       setSubCentreOption("");
-      setSelectedDates("");
       setStatusOption("");
       setRefraTypes(value);
     }
@@ -166,6 +139,13 @@ const DistrictSelectItems = ({
   };
 
   const handleSearchQuery = () => {
+    if(!districtOption ||
+      !talukaOption ||
+      !phcoOption ||
+      !subCentreOption ||
+      !selectedDates ||
+      !statusOption ||
+      !refraType) return message.error("Please Select All Fields.")
     let body: any = {
       district: districtOption,
       taluka: talukaOption,
@@ -178,17 +158,6 @@ const DistrictSelectItems = ({
     handleSlickSearchQuery(body);
   };
 
-  const TotalOrderAndPending = () => {
-    let orderPending = originalTableData.filter(
-      (obj: publicObjType) => obj.status == "order_pending"
-    ).length;
-    let delivered = originalTableData.filter(
-      (obj: publicObjType) => obj.status == "delivered"
-    ).length;
-    let totalOrders = originalTableData.length;
-    return { orderPending, totalOrders, delivered };
-  };
-
   const renderSelectItems = () => {
     return (
       <div>
@@ -196,10 +165,10 @@ const DistrictSelectItems = ({
           <Row className={styles.selectItemsContainer}>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item name={"Select Type"} rules={[{ required: true }]}>
                   <Select
                     allowClear
                     showSearch
+                    style={{ width: '100%'}}
                     placeholder="Select Types"
                     onChange={(value) => handleRefraTypes(value)}
                     defaultValue={""}
@@ -209,16 +178,12 @@ const DistrictSelectItems = ({
                     <Option value="school">School</Option>
                     <Option value="other">Beneficiary</Option>
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item
-                  name={"Select District"}
-                  rules={[{ required: true }]}
-                >
                   <Select
+                  style={{ width: '100%'}}
                     allowClear
                     showSearch
                     placeholder="Select District"
@@ -235,13 +200,12 @@ const DistrictSelectItems = ({
                         ))
                       : ""}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
                   <Select
+                  style={{ width: '100%'}}
                     allowClear
                     showSearch
                     placeholder="Select taluka"
@@ -256,15 +220,14 @@ const DistrictSelectItems = ({
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                style={{ width: '100%'}}
                   allowClear
                   showSearch
-                  style={{ width: "100%" }}
                   placeholder="Select PHC"
                   onChange={handleSelectedPhco}
                   defaultValue={""}
@@ -282,8 +245,8 @@ const DistrictSelectItems = ({
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
                   <Select
+                  style={{ width: '100%'}}
                     allowClear
                     showSearch
                     placeholder="Select Sub Centre"
@@ -300,29 +263,23 @@ const DistrictSelectItems = ({
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item
-                  name={"From and To Date"}
-                  rules={[{ required: false }]}
-                >
                   <RangePicker
                     format="YYYY-MM-DD"
                     placeholder={["From Date", "To Date"]}
                     onChange={onChangeDate}
                   />
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
                   <Select
                     allowClear
                     showSearch
+                    style={{ width: "100%" }}
                     placeholder="Select status"
                     onChange={handleStatusOption}
                     defaultValue={""}
@@ -333,7 +290,6 @@ const DistrictSelectItems = ({
                     <Option value="ready_to_deliver">Ready To Deliver</Option>
                     <Option value="delivered">Delivered</Option>
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>

@@ -80,7 +80,6 @@ const PhcoSelectItems = ({
     })();
   }, []);
 
-
   const handleSelectedPhco = async (value: string) => {
     if (value !== phcoOption) {
       setPhcoOption(value);
@@ -139,6 +138,14 @@ const PhcoSelectItems = ({
   };
 
   const handleSearchQuery = () => {
+    if (
+      !phcoOption ||
+      !subCentreOption ||
+      !selectedDates ||
+      !statusOption ||
+      !refraType
+    )
+      return message.error("Please Select All Fields.");
     let body: any = {
       loginType: type,
       district: districtOption,
@@ -159,18 +166,19 @@ const PhcoSelectItems = ({
           <Row className={styles.selectItemsContainer}>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item name={"Select Type"} rules={[{ required: true }]}>
-                  <Select
-                    placeholder="Select Types"
-                    onChange={(value) => handleRefraTypes(value)}
-                    defaultValue={""}
-                    value={refraType}
-                  >
-                    <Option value="">Select Types</Option>
-                    <Option value="school">School</Option>
-                    <Option value="other">Beneficiary</Option>
-                  </Select>
-                </Form.Item>
+                <Select
+                  style={{ width: "100%" }}
+                  allowClear
+                  showSearch
+                  placeholder="Select Types"
+                  onChange={(value) => handleRefraTypes(value)}
+                  defaultValue={""}
+                  value={refraType}
+                >
+                  <Option value="">Select Types</Option>
+                  <Option value="school">School</Option>
+                  <Option value="other">Beneficiary</Option>
+                </Select>
               </div>
             </Col>
             <Col sm={6} xs={24}>
@@ -198,58 +206,51 @@ const PhcoSelectItems = ({
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Select Sub Centre"
-                    onChange={handleSubCentreOption}
-                    defaultValue={""}
-                    value={subCentreOption}
-                  >
-                    <Option value="">Select Sub Centre</Option>
-                    {(
-                      subCentreSelect.map((item: any) => item.sub_centre) || []
-                    ).map((obj, i) => (
-                      <Option key={String(i)} value={obj}>
-                        {obj}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </div>
-            </Col>
-            <Col sm={6} xs={24}>
-              <div className={styles.selecttypes}>
-                <Form.Item
-                  name={"From and To Date"}
-                  rules={[{ required: false }]}
+                <Select
+                  allowClear
+                  showSearch
+                  style={{ width: "100%" }}
+                  placeholder="Select Sub Centre"
+                  onChange={handleSubCentreOption}
+                  defaultValue={""}
+                  value={subCentreOption}
                 >
-                  <RangePicker
-                    format="YYYY-MM-DD"
-                    placeholder={["From Date", "To Date"]}
-                    onChange={onChangeDate}
-                  />
-                </Form.Item>
+                  <Option value="">Select Sub Centre</Option>
+                  {(
+                    subCentreSelect.map((item: any) => item.sub_centre) || []
+                  ).map((obj, i) => (
+                    <Option key={String(i)} value={obj}>
+                      {obj}
+                    </Option>
+                  ))}
+                </Select>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Select status"
-                    onChange={handleStatusOption}
-                    defaultValue={""}
-                    value={statusOption}
-                  >
-                    <Option value="">Select status</Option>
-                    <Option value="order_pending">Order Pending</Option>
-                    <Option value="ready_to_deliver">Ready To Deliver</Option>
-                    <Option value="delivered">Delivered</Option>
-                  </Select>
-                </Form.Item>
+                <RangePicker
+                  format="YYYY-MM-DD"
+                  placeholder={["From Date", "To Date"]}
+                  onChange={onChangeDate}
+                />
+              </div>
+            </Col>
+            <Col sm={6} xs={24}>
+              <div className={styles.selecttypes}>
+                <Select
+                  allowClear
+                  showSearch
+                  style={{ width: "100%" }}
+                  placeholder="Select status"
+                  onChange={handleStatusOption}
+                  defaultValue={""}
+                  value={statusOption}
+                >
+                  <Option value="">Select status</Option>
+                  <Option value="order_pending">Order Pending</Option>
+                  <Option value="ready_to_deliver">Ready To Deliver</Option>
+                  <Option value="delivered">Delivered</Option>
+                </Select>
               </div>
             </Col>
             <Col sm={6} xs={24}>

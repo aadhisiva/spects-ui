@@ -364,6 +364,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                showSearch
+                allowClear
                   style={{ width: "100%" }}
                   placeholder="Rural/Urban"
                   onChange={handleRuralOrUrban}
@@ -382,6 +384,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                showSearch
+                allowClear
                   style={{ width: "100%" }}
                   searchValue=""
                   placeholder="Select District"
@@ -406,6 +410,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                showSearch
+                allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Taluka"
                   disabled={districtOption ? false : true}
@@ -429,6 +435,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                showSearch
+                allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Phc"
                   disabled={talukaOption ? false : true}

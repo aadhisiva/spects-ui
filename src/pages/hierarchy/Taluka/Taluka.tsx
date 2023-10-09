@@ -31,7 +31,6 @@ interface DataType {
   rural_urban: string;
 }
 
-
 export const TalukaTable: React.FC = () => {
   // translation
   const { t } = useTranslation();
@@ -182,17 +181,23 @@ export const TalukaTable: React.FC = () => {
     },
   ];
 
-  let renderItems = copyOfOriginalTableData.filter(obj => {
-    if(queryString === "") {
+  let renderItems = copyOfOriginalTableData.filter((obj) => {
+    if (queryString === "") {
       return obj;
     } else {
       return (
         String(obj.name).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.mobile_number).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.district).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.mobile_number)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
+        String(obj.district)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
         String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.rural_urban).toLowerCase().includes(queryString.toLowerCase())
-      )
+        String(obj.rural_urban)
+          .toLowerCase()
+          .includes(queryString.toLowerCase())
+      );
     }
   });
 
@@ -233,7 +238,7 @@ export const TalukaTable: React.FC = () => {
     let result = await POSTAPIS_WITH_AUTH("update_taluka_data", body, token);
     if (result.code == 200) {
       setTimeout(async () => {
-        await GetTablData();        
+        await GetTablData();
         setLoading(false);
       }, 2000);
     } else {
@@ -244,7 +249,7 @@ export const TalukaTable: React.FC = () => {
 
   const handleModifyForm = (row: any) => {
     setVisisble(true);
-    console.log("row, row", row)
+    console.log("row, row", row);
     setEditId(row.taluka_code);
     setFormData(row);
     setEditMode("Edit");
@@ -325,6 +330,8 @@ export const TalukaTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Rural/Urban"
                   onChange={handleRuralOrUrban}
@@ -343,6 +350,8 @@ export const TalukaTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   searchValue=""
                   placeholder="Select District"
@@ -351,7 +360,7 @@ export const TalukaTable: React.FC = () => {
                   value={districtOption}
                   defaultValue={""}
                 >
-                     <Option value={""}>Select District</Option>
+                  <Option value={""}>Select District</Option>
                   {(
                     Array.from(
                       new Set(districtSelect.map((obj) => obj.district))
@@ -367,6 +376,8 @@ export const TalukaTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Taluka"
                   disabled={districtOption ? false : true}
@@ -374,7 +385,7 @@ export const TalukaTable: React.FC = () => {
                   value={talukaOption}
                   defaultValue={""}
                 >
-                    <Option value={""}>Select Taluka</Option>
+                  <Option value={""}>Select Taluka</Option>
                   {(talukaSelect || [])?.map((obj: any, i) => (
                     <Select.Option key={String(i)} value={`${obj.taluka}`}>
                       {obj.taluka.replace(/\W/g, "").replace(/\d/g, "")}

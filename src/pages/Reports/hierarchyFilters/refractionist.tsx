@@ -37,7 +37,6 @@ const RefractionistSelectItems = ({
   handleClickDownloadToXlsx,
   originalTableData,
 }: any) => {
-
   /** Fitler actions */
   const [subCentreOption, setSubCentreOption] = useState("");
   const [refraType, setRefraTypes] = useState("");
@@ -59,9 +58,9 @@ const RefractionistSelectItems = ({
 
   const handleRefraTypes = (value: string) => {
     if (value !== refraType) {
-        setRefraTypes(value);
-        setSubCentreOption("");
-        setStatusOption("");
+      setRefraTypes(value);
+      setSubCentreOption("");
+      setStatusOption("");
     }
   };
 
@@ -76,71 +75,68 @@ const RefractionistSelectItems = ({
     setSubCentreOption("");
   };
 
-
   const handleStatusOption = (value: string) => {
     if (value !== statusOption) {
       setStatusOption(value);
     }
   };
 
-
   const handleSearchQuery = () => {
+    if (!subCentreOption || !statusOption || !refraType)
+      return message.error("please Fill Fields.");
     let body: any = {
-        loginType: type,
-        district: "",
-        taluka: "",
-        phco: "",
-        sub_centre: subCentreOption,
-        date: "",
-        status: statusOption,
-        type: refraType,
+      loginType: type,
+      district: "",
+      taluka: "",
+      phco: "",
+      sub_centre: subCentreOption,
+      date: "",
+      status: statusOption,
+      type: refraType,
     };
     handleSlickSearchQuery(body);
   };
-
 
   const renderSelectItems = () => {
     return (
       <div>
         <Form>
           <Row className={styles.selectItemsContainer}>
-          <Col sm={6} xs={24}>
+            <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item name={"Select Type"} rules={[{ required: true }]}>
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Select Types"
-                    onChange={(value) => handleRefraTypes(value)}
-                    defaultValue={""}
-                    value={refraType}
-                  >
-                    <Option value="">Select Types</Option>
-                    <Option value="school">School</Option>
-                    <Option value="other">Beneficiary</Option>
-                  </Select>
-                </Form.Item>
+                <Select
+                  style={{ width: "100%" }}
+                  allowClear
+                  showSearch
+                  placeholder="Select Types"
+                  onChange={(value) => handleRefraTypes(value)}
+                  defaultValue={""}
+                  value={refraType}
+                >
+                  <Option value="">Select Types</Option>
+                  <Option value="school">School</Option>
+                  <Option value="other">Beneficiary</Option>
+                </Select>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Select Sub Centre"
-                    onChange={handleSubCentreOption}
-                    defaultValue={""}
-                    value={subCentreOption}
-                  >
-                    <Option value="">Select Sub Centre</Option>
-                    {(codes || []).map((obj: any, i: String) => (
-                      <Option key={String(i)} value={obj.unique_name}>
-                        {obj.unique_name}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                <Select
+                  style={{ width: "100%" }}
+                  allowClear
+                  showSearch
+                  placeholder="Select Sub Centre"
+                  onChange={handleSubCentreOption}
+                  defaultValue={""}
+                  value={subCentreOption}
+                >
+                  <Option value="">Select Sub Centre</Option>
+                  {(codes || []).map((obj: any, i: String) => (
+                    <Option key={String(i)} value={obj.unique_name}>
+                      {obj.unique_name}
+                    </Option>
+                  ))}
+                </Select>
               </div>
             </Col>
             <Col sm={6} xs={24}>

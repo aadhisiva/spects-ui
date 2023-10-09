@@ -308,13 +308,11 @@ export const StateWiseAndDistrictWise: React.FC = () => {
     }
   });
 
-  const handleRefraTypes = async(value: string) => {
+  const handleRefraTypes = (value: string) => {
     if (value !== refraType) {
-      setRefraTypes(value);
-      setDistrictOption("");
-      setTalukaOption("");
-      // let data = await GET_APIS("uniqueDistricts", token);
-      // setDistrictSelect(data?.data)
+        setRefraTypes(value);
+        setDistrictOption("");
+        setTalukaOption("");
     }
   };
 
@@ -401,10 +399,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
               <Row className={styles.selectItemsContainer}>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
-                    <Form.Item
-                      name={"Select Type"}
-                      rules={[{ required: true }]}
-                    >
+                    <Form.Item>
                       <Select
                         showSearch
                         allowClear
@@ -422,10 +417,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                 </Col>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
-                    <Form.Item
-                      name={"Select District"}
-                      rules={[{ required: true }]}
-                    >
+                    <Form.Item>
                       <Select
                         showSearch
                         allowClear
@@ -434,6 +426,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                         defaultValue={""}
                         value={districtOption}
                       >
+                        <Option value="">Select District</Option>
                         {type == DISTRICT_LOGIN ? (
                           <>
                             {(codes || []).map((obj: any, i: any) => (
@@ -450,7 +443,6 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                                 {obj}
                               </Option>
                             ))}
-                            <Option value="">Select District</Option>
                           </>
                         )}
                       </Select>

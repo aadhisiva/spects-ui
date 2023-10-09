@@ -272,8 +272,10 @@ export const DistrictOfficerTable: React.FC = () => {
           <Row className={styles.selectItemsContainer}>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
                   <Select
+                  style={{ width: '100%' }}
+                  showSearch
+                  allowClear
                     placeholder="Rural/Urban"
                     onChange={handleRuralOrUrban}
                     value={rural_urban}
@@ -286,13 +288,14 @@ export const DistrictOfficerTable: React.FC = () => {
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
-                <Form.Item>
                   <Select
+                  style={{ width: '100%' }}
+                  showSearch
+                  allowClear
                     placeholder="Select District"
                     disabled={rural_urban ? false : true}
                     onChange={handleSelectedDistrict}
@@ -308,7 +311,6 @@ export const DistrictOfficerTable: React.FC = () => {
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
               </div>
             </Col>
             <Col sm={6} xs={24}>

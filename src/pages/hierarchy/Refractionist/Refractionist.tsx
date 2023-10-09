@@ -197,8 +197,7 @@ export const RefractionistTable: React.FC = () => {
       dataIndex: "ngo_gov",
       key: "ngo_gov",
       sorter: (a, b) => a.ngo_gov?.length - b.ngo_gov?.length,
-      sortOrder:
-        sortedInfo.columnKey === "ngo_gov" ? sortedInfo.order : null,
+      sortOrder: sortedInfo.columnKey === "ngo_gov" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
@@ -256,11 +255,11 @@ export const RefractionistTable: React.FC = () => {
         return (
           <div className={styles.tableActions}>
             <Button onClick={() => handleModifyForm(record)} type="primary">
-            {t("MODIFY")}
+              {t("MODIFY")}
             </Button>
             <Tooltip title={"add multiple refractionists with same village"}>
               <Button onClick={() => handleAddForm(record)} type="primary">
-              {t("ADD")}
+                {t("ADD")}
               </Button>
             </Tooltip>
           </div>
@@ -335,11 +334,11 @@ export const RefractionistTable: React.FC = () => {
   const onEditSave = async (values: any) => {
     setLoading(true);
     setVisisble(false);
-    let body: any = { ...values, ...{code: editId} };
+    let body: any = { ...values, ...{ code: editId } };
     let result = await POSTAPIS_WITH_AUTH("update_data", body, token);
     if (result.code == 200) {
       setTimeout(async () => {
-        await GetTablData();        
+        await GetTablData();
         setLoading(false);
       }, 2000);
     } else {
@@ -351,7 +350,7 @@ export const RefractionistTable: React.FC = () => {
   const onAddSave = async (values: any) => {
     setLoading(true);
     setVisisble(false);
-    let body: any = { ...values, ...{code: editId} };
+    let body: any = { ...values, ...{ code: editId } };
     let result = await POSTAPIS_WITH_AUTH(
       "add_new_data_with_exist",
       body,
@@ -379,19 +378,31 @@ export const RefractionistTable: React.FC = () => {
     setEditMode(false);
   };
 
-  let renderItems = copyOfOriginalTableData.filter(obj => {
-    if(queryString === "") {
+  let renderItems = copyOfOriginalTableData.filter((obj) => {
+    if (queryString === "") {
       return obj;
     } else {
       return (
-        String(obj.refractionist_name).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.refractionist_mobile).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.district).toLowerCase().includes(queryString.toLowerCase()) ||
+        String(obj.refractionist_name)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
+        String(obj.refractionist_mobile)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
+        String(obj.district)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
         String(obj.taluka).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.rural_urban).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.sub_centre).toLowerCase().includes(queryString.toLowerCase()) ||
-        String(obj.health_facility).toLowerCase().includes(queryString.toLowerCase()) 
-      )
+        String(obj.rural_urban)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
+        String(obj.sub_centre)
+          .toLowerCase()
+          .includes(queryString.toLowerCase()) ||
+        String(obj.health_facility)
+          .toLowerCase()
+          .includes(queryString.toLowerCase())
+      );
     }
   });
 
@@ -515,6 +526,8 @@ export const RefractionistTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Rural/Urban"
                   onChange={handleRuralOrUrban}
@@ -533,6 +546,8 @@ export const RefractionistTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select District"
                   disabled={rural_urban ? false : true}
@@ -556,6 +571,8 @@ export const RefractionistTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Taluka"
                   disabled={districtOption ? false : true}
@@ -579,6 +596,8 @@ export const RefractionistTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Phc"
                   disabled={talukaOption ? false : true}
@@ -602,6 +621,8 @@ export const RefractionistTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Sub Centre"
                   disabled={phcoOption ? false : true}
