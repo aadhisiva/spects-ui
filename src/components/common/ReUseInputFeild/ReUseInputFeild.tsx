@@ -49,7 +49,7 @@ export const ReUseInputFeild: React.FC<InputFeildI> = ({
                 required: true,
                 message: `${label} is required`,
             },{
-                pattern: /^[0-9|null]{1,10}$/,
+                pattern: /^[0-9]{1,10}$/,
                 message: `Please enter a valid ${label}`,
             }]
         } else {

@@ -73,7 +73,8 @@ i18n.use(initReactI18next).init({
          INFORMATION: "Information",
          DISTRICT_TALUKA_WISE: "District & Taluka Wise Data",
          STATE_DISTRICT_WISE:"State Or District Wise Data",
-         REFRACTIONIST_REPORTS: "Refractionist Login Reports"
+         REFRACTIONIST_REPORTS: "Refractionist Login Reports",
+         REMOVE_USER: "Remove User"
       }
     },
     ka: {
@@ -145,7 +146,8 @@ i18n.use(initReactI18next).init({
          INFORMATION: "ಮಾಹಿತಿ",
          DISTRICT_TALUKA_WISE: "ಜಿಲ್ಲೆ ಮತ್ತು ತಾಲೂಕಾವಾರು ಡೇಟಾ",
          STATE_DISTRICT_WISE:"ರಾಜ್ಯ ಅಥವಾ ಜಿಲ್ಲಾವಾರು ಡೇಟಾ",
-         REFRACTIONIST_REPORTS: "ವಕ್ರೀಭವನದ ಲಾಗಿನ್ ವರದಿಗಳು"
+         REFRACTIONIST_REPORTS: "ವಕ್ರೀಭವನದ ಲಾಗಿನ್ ವರದಿಗಳು",
+         REMOVE_USER: "ಬಳಕೆದಾರರನ್ನು ತೆಗೆದುಹಾಕಿ"
       }
     },
   },

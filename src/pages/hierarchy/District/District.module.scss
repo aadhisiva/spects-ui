@@ -74,5 +74,14 @@
         .searchContainer {
             text-align: right;
         }
+        .tableActions {
+            margin: 0;
+            // display: flex;
+            // flex-direction: column;
+            Button {
+                margin: 0 2px;
+                height: 5vh;
+            }
+        }
     }
 }

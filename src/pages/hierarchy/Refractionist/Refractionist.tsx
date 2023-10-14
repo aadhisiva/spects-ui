@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Popover, Row, Select, Spin, Table, Tooltip } from "antd";
+import { Button, Col, Popover, Row, Select, Spin, Table, Tooltip, message } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import styles from "./Refractionist.module.scss";
 import classNames from "classnames";
@@ -15,7 +15,7 @@ import { ModalModify } from "../../../components/common/ModalModify";
 import Search from "antd/es/input/Search";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
-import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
+import { MAKE_NULL_TO_VALUES, NO, RURAL_OR_URBAN_FILTER_OPTIONS, YES } from "../../../utilities";
 import { Option } from "antd/es/mentions";
 import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
@@ -240,14 +240,6 @@ export const RefractionistTable: React.FC = () => {
         sortedInfo.columnKey === "sub_centre" ? sortedInfo.order : null,
       ellipsis: true,
     },
-    // {
-    //   title: t("TABLE_VILLAGE_WARD"),
-    //   key: "village",
-    //   dataIndex: "village",
-    //   sorter: (a, b) => a.village.length - b.village.length,
-    //   sortOrder: sortedInfo.columnKey === "village" ? sortedInfo.order : null,
-    //   ellipsis: true,
-    // },
     {
       title: t("TABLE_ACTION"),
       key: "action",
@@ -257,9 +249,14 @@ export const RefractionistTable: React.FC = () => {
             <Button onClick={() => handleModifyForm(record)} type="primary">
               {t("MODIFY")}
             </Button>
-            <Tooltip title={"add multiple refractionists with same village"}>
+            <Tooltip title={"add multiple refractionists with same Sub Centre"}>
               <Button onClick={() => handleAddForm(record)} type="primary">
                 {t("ADD")}
+              </Button>
+            </Tooltip>
+            <Tooltip title={"Remove Refractionist details"}>
+              <Button onClick={() => handleDeleteRecord(record)} type="primary">
+                {t("REMOVE_USER")}
               </Button>
             </Tooltip>
           </div>
@@ -267,6 +264,27 @@ export const RefractionistTable: React.FC = () => {
       },
     },
   ];
+
+  const handleDeleteRecord = async (row: any) => {
+    let bodyData: any = {
+      type,
+      district: NO,
+      taluka: NO,
+      phc: NO,
+      refractionist: YES,
+      code: row.sub_centre_code,
+    };
+    setLoading(true);
+    let result = await POSTAPIS_WITH_AUTH(MAKE_NULL_TO_VALUES, bodyData, token);
+    if (result.code == 200) {
+      setTimeout(async () => {
+        await GetTablData();
+        setLoading(false);
+      }, 2000);
+    } else {
+      return message.error("Update Failed");
+    }
+  };
 
   useEffect(() => {
     let filterData = originalTableData;
@@ -313,24 +331,6 @@ export const RefractionistTable: React.FC = () => {
     setCopyOfOriginalTableData(filterData);
   }, [rural_urban, districtOption, talukaOption, subCentreOption, phcoOption]);
 
-  // const onEditSave = async (values: any) => {
-  //   setLoading(true);
-  //   setVisisble(false);
-  //   delete values?.district;
-  //   delete values?.rural_urban;
-  //   delete values?.sub_centre;
-  //   delete values?.taluka;
-  //   delete values?.village;
-  //   let body: any = { ...values, ...{ user_unique_id: editId } };
-  //   let result = await POSTAPIS_WITH_AUTH("update_data", body, token);
-  //   if (result.code == 200) {
-  //     await GetTablData();
-  //     setLoading(false);
-  //   } else {
-  //     NotificationError("Update Failed");
-  //   }
-  //   setVisisble(false);
-  // };
   const onEditSave = async (values: any) => {
     setLoading(true);
     setVisisble(false);

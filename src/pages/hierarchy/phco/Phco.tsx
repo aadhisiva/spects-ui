@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Select, Spin, Table } from "antd";
+import { Button, Col, Row, Select, Spin, Table, Tooltip, message } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import styles from "./Phco.module.scss";
 import classNames from "classnames";
@@ -16,7 +16,12 @@ import Search from "antd/es/input/Search";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
-import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
+import {
+  MAKE_NULL_TO_VALUES,
+  NO,
+  RURAL_OR_URBAN_FILTER_OPTIONS,
+  YES,
+} from "../../../utilities";
 import { Option } from "antd/es/mentions";
 import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
@@ -205,13 +210,41 @@ export const PhcoTable: React.FC = () => {
       key: "action",
       render: (_, record) => {
         return (
-          <Button onClick={() => handleModifyForm(record)} type="primary">
-            {t("MODIFY")}
-          </Button>
+          <div className={styles.tableActions}>
+            <Button onClick={() => handleModifyForm(record)} type="primary">
+              {t("MODIFY")}
+            </Button>
+            <Tooltip title={"Remove Refractionist details"}>
+              <Button onClick={() => handleDeleteRecord(record)} type="primary">
+                {t("REMOVE_USER")}
+              </Button>
+            </Tooltip>
+          </div>
         );
       },
     },
   ];
+
+  const handleDeleteRecord = async (row: any) => {
+    let bodyData: any = {
+      type,
+      district: NO,
+      taluka: NO,
+      phc: YES,
+      refractionist: NO,
+      code: row.health_facility_code,
+    };
+    setLoading(true);
+    let result = await POSTAPIS_WITH_AUTH(MAKE_NULL_TO_VALUES, bodyData, token);
+    if (result.code == 200) {
+      setTimeout(async () => {
+        await GetTablData();
+        setLoading(false);
+      }, 2000);
+    } else {
+      return message.error("Update Failed");
+    }
+  };
 
   useEffect(() => {
     let filterData = originalTableData;
@@ -260,7 +293,7 @@ export const PhcoTable: React.FC = () => {
     let result = await POSTAPIS_WITH_AUTH("update_phco_data", body, token);
     if (result.code == 200) {
       setTimeout(async () => {
-        await GetTablData();        
+        await GetTablData();
         setLoading(false);
       }, 2000);
     } else {
@@ -364,8 +397,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
-                showSearch
-                allowClear
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Rural/Urban"
                   onChange={handleRuralOrUrban}
@@ -384,8 +417,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
-                showSearch
-                allowClear
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   searchValue=""
                   placeholder="Select District"
@@ -410,8 +443,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
-                showSearch
-                allowClear
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Taluka"
                   disabled={districtOption ? false : true}
@@ -435,8 +468,8 @@ export const PhcoTable: React.FC = () => {
             <Col sm={6} xs={24}>
               <div className={styles.selecttypes}>
                 <Select
-                showSearch
-                allowClear
+                  showSearch
+                  allowClear
                   style={{ width: "100%" }}
                   placeholder="Select Phc"
                   disabled={talukaOption ? false : true}

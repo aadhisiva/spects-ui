@@ -13,6 +13,11 @@ export const REFRACTIONIST_LOGIN = 'refractionist';
 export const EVENING_TIME = '6:00 PM';
 export const MORNING_TIME = '10:00 AM';
 
+export const YES = 'Yes';
+export const NO = '';
+
+export const MAKE_NULL_TO_VALUES = 'makeNullToValues';
+
 export const ALL_DISTRICTS =
     [
         'Yadgir(29)',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Select, Spin, Table } from "antd";
+import { Button, Col, Row, Select, Spin, Table, Tooltip, message } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import styles from "./Taluka.module.scss";
 import classNames from "classnames";
@@ -16,7 +16,12 @@ import Search from "antd/es/input/Search";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
-import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
+import {
+  MAKE_NULL_TO_VALUES,
+  NO,
+  RURAL_OR_URBAN_FILTER_OPTIONS,
+  YES,
+} from "../../../utilities";
 import { Option } from "antd/es/mentions";
 import MapUnmappedSelect from "../../../components/common/mapUnmappedSelect/mapUnmappedSelect";
 
@@ -173,9 +178,16 @@ export const TalukaTable: React.FC = () => {
       key: "action",
       render: (_, record) => {
         return (
-          <Button onClick={() => handleModifyForm(record)} type="primary">
-            {t("MODIFY")}
-          </Button>
+          <div className={styles.tableActions}>
+            <Button onClick={() => handleModifyForm(record)} type="primary">
+              {t("MODIFY")}
+            </Button>
+            <Tooltip title={"Remove Refractionist details"}>
+              <Button onClick={() => handleDeleteRecord(record)} type="primary">
+                {t("REMOVE_USER")}
+              </Button>
+            </Tooltip>
+          </div>
         );
       },
     },
@@ -247,9 +259,29 @@ export const TalukaTable: React.FC = () => {
     setVisisble(false);
   };
 
+  const handleDeleteRecord = async (row: any) => {
+    let bodyData: any = {
+      type,
+      district: NO,
+      taluka: YES,
+      phc: NO,
+      refractionist: NO,
+      code: row.taluka_code,
+    };
+    setLoading(true);
+    let result = await POSTAPIS_WITH_AUTH(MAKE_NULL_TO_VALUES, bodyData, token);
+    if (result.code == 200) {
+      setTimeout(async () => {
+        await GetTablData();
+        setLoading(false);
+      }, 2000);
+    } else {
+      return message.error("Update Failed");
+    }
+  };
+
   const handleModifyForm = (row: any) => {
     setVisisble(true);
-    console.log("row, row", row);
     setEditId(row.taluka_code);
     setFormData(row);
     setEditMode("Edit");
