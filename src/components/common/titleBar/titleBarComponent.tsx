@@ -114,7 +114,7 @@ export const TitleBarComponent: React.FC<titlePageI> = (props) => {
                   : user?.userData?.type == "taluka"
                   ? "TLO"
                   : user?.userData?.type == "phco"
-                  ? "PHCO"
+                  ? t("MEDICAL_OFFICER")
                   : t("REFRACTIONIST")}{" "}
                 |{" "}
               </span>

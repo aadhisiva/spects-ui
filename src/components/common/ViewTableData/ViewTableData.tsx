@@ -32,6 +32,7 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
     details: state.details,
     type: state.type,
     image: state.image,
+    age: state.age,
     initial_image: state.initial_image,
     frame_size: state.frame_size,
     frame_type: state.frame_type,
@@ -98,6 +99,13 @@ export const ViewTableData: React.FC<mofdifyModalI> = ({
               <ReUseInputFeild
                 name={"details"}
                 label={"Details"}
+                readOnly={true}
+              />
+            </Col>
+            <Col sm={7} xs={24}>
+              <ReUseInputFeild
+                name={"age"}
+                label={"Age"}
                 readOnly={true}
               />
             </Col>

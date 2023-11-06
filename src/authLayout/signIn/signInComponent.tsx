@@ -94,7 +94,7 @@ export const SignInComponent: FC = () => {
                                     <Select.Option value="state_admin">{t("STATE_ADMIN")}</Select.Option>
                                     <Select.Option value="district_officer">{t("DISTRICT_HEALTH_OFFICER")}</Select.Option>
                                     <Select.Option value="taluka">{t("TALUKA_HEALTH_OFFICER")}</Select.Option>
-                                    <Select.Option value="phco">{t("PHCO_HEALTH_OFFICER")}</Select.Option>
+                                    <Select.Option value="phco">{t("MEDICAL_OFFICER")}</Select.Option>
                                     <Select.Option value="refractionist">{t("REFRACTIONIST")}</Select.Option>
                                     {/* <Select.Option disabled={true} value="vendor">Vendor (Coming soon)</Select.Option> */}
                                 </Select>

@@ -507,7 +507,7 @@ export const PhcoTable: React.FC = () => {
               />
             </Col>
             <Col sm={8} xs={12} className={styles.headerRow}>
-              <span>{t("PHCO_HEALTH_OFFICER")}</span>
+              <span>{t("MEDICAL_OFFICER")}</span>
             </Col>
             <Col sm={8} xs={12} className={styles.searchContainer}>
               <Search

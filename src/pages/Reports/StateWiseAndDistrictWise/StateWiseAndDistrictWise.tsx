@@ -62,6 +62,7 @@ interface DataType {
   totalDelivered: string;
   totalPending: string;
   target: string;
+  age: String;
   totalOrders: string;
   totalreadyToDeliver: string;
 }
@@ -75,6 +76,7 @@ interface publicObjType {
   status: string;
   sub_centre: string;
   taluka: string;
+  age: String;
   type: string;
   village: string;
   health_facility: string;
@@ -185,6 +187,14 @@ export const StateWiseAndDistrictWise: React.FC = () => {
       key: "name",
       sorter: (a, b) => a.name?.length - b.name?.length,
       sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
+      title: t("AGE"),
+      dataIndex: "age",
+      key: "age",
+      sorter: (a, b) => a.age?.length - b.age?.length,
+      sortOrder: sortedInfo.columnKey === "age" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {

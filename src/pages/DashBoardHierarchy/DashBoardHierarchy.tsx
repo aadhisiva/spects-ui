@@ -311,7 +311,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
                   : type == TALUKA_LOGIN
                   ? t("TABLE_TALUKA")
                   : type == PHCO_LOGIN
-                  ? t("PHCO_CARD")
+                  ? t("MEDICAL_OFFICER")
                   : t("REFRACTIONIST")}
                 {""}
               </Button>
@@ -394,7 +394,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
                           : obj.role == "Taluka"
                           ? t("TABLE_TALUKA")
                           : obj.role == "PHCO"
-                          ? t("PHCO_CARD")
+                          ? t("MEDICAL_OFFICER")
                           : t("REFRACTIONIST_TABLE")}{" "}
                       </p>
                     </div>
