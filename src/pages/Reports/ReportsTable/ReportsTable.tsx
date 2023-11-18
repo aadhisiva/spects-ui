@@ -40,8 +40,7 @@ import PhcoSelectItems from "../hierarchyFilters/phco";
 import RefractionistSelectItems from "../hierarchyFilters/refractionist";
 
 const { Search } = Input;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
+
 interface DataType {
   key: string;
   type: string;

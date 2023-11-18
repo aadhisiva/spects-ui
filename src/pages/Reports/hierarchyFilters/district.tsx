@@ -54,7 +54,7 @@ const DistrictSelectItems = ({
   // change langugae
   const { t } = useTranslation();
   // loader
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // auth user
   const [userData] = useFetchUserData();
