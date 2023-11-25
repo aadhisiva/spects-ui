@@ -22,7 +22,7 @@ import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
 import { useFetchUserData } from "../../../utilities/userDataHook";
 import { NotificationError } from "../../../components/common/Notifications/Notifications";
-import { RURAL_OR_URBAN_FILTER_OPTIONS } from "../../../utilities";
+import * as XLSX from "xlsx";
 
 const { Option } = Select;
 const { Search } = Input;
@@ -335,6 +335,14 @@ export const PrimaryScreeningReports: React.FC = () => {
     }
   };
 
+  const handleClickDownloadToXlsx = () => {
+    let newDate = new Date().toJSON().split("T")[0];
+    const worksheet = XLSX.utils.json_to_sheet(copyOfOriginalTableData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, `spectacles_${newDate}.xlsx`);
+  };
+
   const renderReports = () => {
     return (
       <>
@@ -462,8 +470,29 @@ export const PrimaryScreeningReports: React.FC = () => {
               </Col>
               <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
+                  <Button type="primary" onClick={handleClickDownloadToXlsx}>
+                    {t("DOWNLOAD")}
+                  </Button>
+                </div>
+              </Col>
+              {/* <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
                   <span className={styles.orderData}>
                     Primary Screening Count : {primaryCount[0]?.target || 0}{" "}
+                  </span>
+                </div>
+              </Col> */}
+              <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
+                  <span className={styles.orderData}>
+                    Secondary Screening Count : {primaryCount[0]?.secondaryTarget || 0}{" "}
+                  </span>
+                </div>
+              </Col>
+              <Col sm={6} xs={24}>
+                <div className={styles.selecttypes}>
+                  <span className={styles.orderData}>
+                    Pending screening : {(primaryCount[0]?.target - primaryCount[0]?.secondaryTarget) || 0}{" "}
                   </span>
                 </div>
               </Col>

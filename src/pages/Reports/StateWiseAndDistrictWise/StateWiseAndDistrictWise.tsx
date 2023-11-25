@@ -95,7 +95,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState({});
-  
+
   // select items
   const [talukaSelect, setTalukaSelect] = useState<publicObjType[]>([]);
   const [phcoSelected, setPhcoSelected] = useState<publicObjType[]>([]);
@@ -106,6 +106,8 @@ export const StateWiseAndDistrictWise: React.FC = () => {
     DataType[]
   >([]);
 
+  const [selectedDates, setSelectedDates] = useState(""); // from date to to date
+
   /** Fitler actions */
   const [talukaOption, setTalukaOption] = useState("");
   const [refraType, setRefraTypes] = useState("");
@@ -114,7 +116,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(100);
   const [queryString, setQueryString] = useState<string>("");
 
-  const locale = 'en';
+  const locale = "en";
   const [today, setDate] = React.useState(new Date()); // Save the current date to be able to trigger an update
 
   /* custom pagination */
@@ -136,22 +138,31 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   const codes = userData?.userData?.codes;
 
   useEffect(() => {
-      const timer = setInterval(() => { // Creates an interval which will update the current data every minute
+    const timer = setInterval(() => {
+      // Creates an interval which will update the current data every minute
       // This will trigger a rerender every component that uses the useDate hook.
       setDate(new Date());
     }, 60 * 1000);
     return () => {
       clearInterval(timer); // Return a funtion to clear the timer so that it will stop being called on unmount
-    }
+    };
   }, []);
 
-  const day = today.toLocaleDateString(locale, { weekday: 'long' });
-  const date = `${day}, ${today.getDate()} ${today.toLocaleDateString(locale, { month: 'long' })}\n\n`;
+  const day = today.toLocaleDateString(locale, { weekday: "long" });
+  const date = `${day}, ${today.getDate()} ${today.toLocaleDateString(locale, {
+    month: "long",
+  })}\n\n`;
 
   const hour = today.getHours();
-  const wish = `Good ${(hour < 12 && 'Morning') || (hour < 17 && 'Afternoon') || 'Evening'}, `;
+  const wish = `Good ${
+    (hour < 12 && "Morning") || (hour < 17 && "Afternoon") || "Evening"
+  }, `;
 
-  const time = today.toLocaleTimeString(locale, { hour: 'numeric', hour12: true, minute: 'numeric' });
+  const time = today.toLocaleTimeString(locale, {
+    hour: "numeric",
+    hour12: true,
+    minute: "numeric",
+  });
 
   const columns: ColumnsType<DataType> = [
     {
@@ -268,7 +279,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
       },
     },
   ];
-  
+
   /* viewFormData */
   const handleModifyForm = async (row: any) => {
     setVisible(true);
@@ -320,9 +331,9 @@ export const StateWiseAndDistrictWise: React.FC = () => {
 
   const handleRefraTypes = (value: string) => {
     if (value !== refraType) {
-        setRefraTypes(value);
-        setDistrictOption("");
-        setTalukaOption("");
+      setRefraTypes(value);
+      setDistrictOption("");
+      setTalukaOption("");
     }
   };
 
@@ -330,6 +341,7 @@ export const StateWiseAndDistrictWise: React.FC = () => {
     if (value !== districtOption) {
       setDistrictOption(value);
       setTalukaOption("");
+      setSelectedDates("");
       let bodyData: any = { district: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
       setTalukaSelect(data?.data);
@@ -342,11 +354,17 @@ export const StateWiseAndDistrictWise: React.FC = () => {
       type: refraType,
       district: districtOption,
       taluka: talukaOption,
-    }; 
-    if (!districtOption || !refraType) return message.error("Please Select Fields.");
+      dates: selectedDates
+    };
+    if (!districtOption || !refraType)
+      return message.error("Please Select Fields.");
 
-    if(type == DISTRICT_LOGIN && !talukaOption) return message.error("Please Select Fields.");
-    
+    if (type == DISTRICT_LOGIN && !talukaOption)
+      return message.error("Please Select Fields.");
+
+    if (!selectedDates)
+      return message.error("Please Select Date.");
+
     setLoading(true);
     let result = await POSTAPIS_WITH_AUTH(
       "searchDataStateAndDistrictWise",
@@ -376,9 +394,16 @@ export const StateWiseAndDistrictWise: React.FC = () => {
   const handleTalukaOption = async (value: string) => {
     if (value !== talukaOption) {
       setTalukaOption(value);
+      setSelectedDates("");
       let bodyData: any = { taluka: value };
       let data = await POSTAPIS_WITH_AUTH("uniqueDistricts", bodyData, token);
       setPhcoSelected(data?.data);
+    }
+  };
+
+  const onChangeDate = (va: any, da: any) => {
+    if (da !== selectedDates) {
+      setSelectedDates(da);
     }
   };
 
@@ -395,8 +420,10 @@ export const StateWiseAndDistrictWise: React.FC = () => {
         >
           <div className={styles.table}>
             <div className={styles.infoTitleContainer}>
-            <p className={styles.infoTitle}>{date+", "+time}</p>
-            <p className={styles.infoTitle}>Download Option will be available only after 6 pm to 10 am.</p>
+              <p className={styles.infoTitle}>{date + ", " + time}</p>
+              <p className={styles.infoTitle}>
+                Download Option will be available only after 6 pm to 10 am.
+              </p>
             </div>
             <Row>
               <Col sm={3} xs={24} className={styles.statisticsContainer}>
@@ -460,29 +487,40 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                   </div>
                 </Col>
                 {type == DISTRICT_LOGIN ? (
+                  <Col sm={6} xs={24}>
+                    <div className={styles.selecttypes}>
+                      <Form.Item>
+                        <Select
+                          showSearch
+                          allowClear
+                          placeholder="Select taluka"
+                          onChange={handleTalukaOption}
+                          defaultValue={""}
+                          value={talukaOption}
+                        >
+                          <Option value="">Select taluka</Option>
+                          <Option value="all">Select all</Option>
+                          {talukaSelect.map((obj, i) => (
+                            <Option key={String(i)} value={obj.taluka}>
+                              {obj.taluka}
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </div>
+                  </Col>
+                ) : (
+                  ""
+                )}
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
-                    <Form.Item>
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Select taluka"
-                        onChange={handleTalukaOption}
-                        defaultValue={""}
-                        value={talukaOption}
-                      >
-                        <Option value="">Select taluka</Option>
-                        <Option value="all">Select all</Option>
-                        {talukaSelect.map((obj, i) => (
-                          <Option key={String(i)} value={obj.taluka}>
-                            {obj.taluka}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
+                    <RangePicker
+                      format="YYYY-MM-DD"
+                      placeholder={["From Date", "To Date"]}
+                      onChange={onChangeDate}
+                    />
                   </div>
                 </Col>
-                ): ("")}
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <Button
@@ -501,48 +539,49 @@ export const StateWiseAndDistrictWise: React.FC = () => {
                     </Button>
                   </div>
                 </Col>
-                  <Col sm={6} xs={24}>
-                    <div className={styles.selecttypes}>
-                      <Button
-                        type="primary"
-                        onClick={handleClickDownloadToXlsx}
-                      >
-                        {t("DOWNLOAD")}
-                      </Button>
-                    </div>
-                  </Col>
+                <Col sm={6} xs={24}>
+                  <div className={styles.selecttypes}>
+                    <Button type="primary" onClick={handleClickDownloadToXlsx}>
+                      {t("DOWNLOAD")}
+                    </Button>
+                  </div>
+                </Col>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
-                      Total Spectacles Applied : {originalTableData[0]?.totalOrders || 0}{" "}
+                      Total Spectacles Applied :{" "}
+                      {originalTableData[0]?.totalOrders || 0}{" "}
                     </span>
                   </div>
                 </Col>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
-                    Spectacles Delivered : {originalTableData[0]?.totalDelivered || 0}
+                      Spectacles Delivered :{" "}
+                      {originalTableData[0]?.totalDelivered || 0}
                     </span>
                   </div>
                 </Col>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
-                    Spectacles Pending: {originalTableData[0]?.totalPending || 0}
+                      Spectacles Pending:{" "}
+                      {originalTableData[0]?.totalPending || 0}
                     </span>
                   </div>
                 </Col>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
-                    Spectacles Ready To Deliver: {originalTableData[0]?.totalreadyToDeliver || 0}
+                      Spectacles Ready To Deliver:{" "}
+                      {originalTableData[0]?.totalreadyToDeliver || 0}
                     </span>
                   </div>
                 </Col>
                 <Col sm={6} xs={24}>
                   <div className={styles.selecttypes}>
                     <span className={styles.orderData}>
-                    Target : {originalTableData[0]?.target || 0}
+                      Target : {originalTableData[0]?.target || 0}
                     </span>
                   </div>
                 </Col>
