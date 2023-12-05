@@ -475,13 +475,13 @@ export const PrimaryScreeningReports: React.FC = () => {
                   </Button>
                 </div>
               </Col>
-              {/* <Col sm={6} xs={24}>
+              <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
                   <span className={styles.orderData}>
                     Primary Screening Count : {primaryCount[0]?.target || 0}{" "}
                   </span>
                 </div>
-              </Col> */}
+              </Col>
               <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
                   <span className={styles.orderData}>
@@ -489,13 +489,13 @@ export const PrimaryScreeningReports: React.FC = () => {
                   </span>
                 </div>
               </Col>
-              <Col sm={6} xs={24}>
+              {/* <Col sm={6} xs={24}>
                 <div className={styles.selecttypes}>
                   <span className={styles.orderData}>
                     Pending screening : {(primaryCount[0]?.target - primaryCount[0]?.secondaryTarget) || 0}{" "}
                   </span>
                 </div>
-              </Col>
+              </Col> */}
             </Row>
             {/* search and select rows */}
             <Row>
