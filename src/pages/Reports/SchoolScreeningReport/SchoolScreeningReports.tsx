@@ -540,7 +540,6 @@ export const SchoolScreeningReports: React.FC = () => {
       let reset = originalTableData.filter((obj) =>
         value !== "all" ? obj.type == value : obj
       );
-      console
       setDistrictSelect(reset);
     }
   };

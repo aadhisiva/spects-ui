@@ -9,7 +9,7 @@ const AppWithFallback = withErrorHandling(AuthLayout);
 function App() {
   return (
     <div className="App">
-      <AppWithFallback />
+      <AuthLayout />
     </div>
   );
 }

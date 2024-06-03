@@ -35,17 +35,17 @@ export const LoginUser = createAsyncThunk("user/LoginUser", async (user: ILoginI
     }
 });
 
-export const getMe = createAsyncThunk("user/getMe", async (_: string, thunkAPI) => {
-    try {
-        const response = await axiosRequest.post(`admin/getMe`);
-        return response.data;
-    } catch (error: any) {
-        if (error.response) {
-            const message = error.response.data.msg;
-            return thunkAPI.rejectWithValue(message);
-        }
-    }
-});
+// export const getMe = createAsyncThunk("user/getMe", async (_: string, thunkAPI) => {
+//     try {
+//         const response = await axiosRequest.post(`admin/getMe`);
+//         return response.data;
+//     } catch (error: any) {
+//         if (error.response) {
+//             const message = error.response.data.msg;
+//             return thunkAPI.rejectWithValue(message);
+//         }
+//     }
+// });
 
 export const verifyOTP = createAsyncThunk("user/verifyOtp", async (data: ILoginInfo, thunkAPI) => {
     try {
@@ -58,7 +58,6 @@ export const verifyOTP = createAsyncThunk("user/verifyOtp", async (data: ILoginI
         }
     }
 });
-
 export const LogOut = createAsyncThunk("user/LogOut", async () => {
     return await axiosRequest.post(`admin/logout`);
 });
@@ -100,7 +99,7 @@ export const authSlice = createSlice({
         builder.addCase(verifyOTP.fulfilled, (state, action) => {
             state.isLoading = false;
             state.isOtpVerfity = true;
-            state.user = action.payload;
+            state.user = action.payload?.data;
         });
         builder.addCase(verifyOTP.rejected, (state, action: any) => {
             message.warning(action?.payload?.data?.message);
@@ -109,19 +108,19 @@ export const authSlice = createSlice({
             state.message = action.payload;
         })
 
-        // Get User Login
-        builder.addCase(getMe.pending, (state) => {
-            state.isLoading = true;
-        });
-        builder.addCase(getMe.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.user = action.payload;
-        });
-        builder.addCase(getMe.rejected, (state, action: any) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.message = action.payload;
-        })
+        // // Get User Login
+        // builder.addCase(getMe.pending, (state) => {
+        //     state.isLoading = true;
+        // });
+        // builder.addCase(getMe.fulfilled, (state, action) => {
+        //     state.isLoading = false;
+        //     state.user = action.payload;
+        // });
+        // builder.addCase(getMe.rejected, (state, action: any) => {
+        //     state.isLoading = false;
+        //     state.isError = true;
+        //     state.message = action.payload;
+        // })
     }
 });
 

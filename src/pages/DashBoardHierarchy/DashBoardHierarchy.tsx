@@ -11,7 +11,7 @@ import classNames from "classnames";
 import { GET_APIS, POSTAPIS_WITH_AUTH } from "../../api/apisSpectacles";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { getMe } from "../../redux/features/authSlice";
+// import { getMe } from "../../redux/features/authSlice";
 import { IStateValues } from "../../type";
 import { PhocLoginFirstTIme } from "../../components/common/phcoLoginFirstTime/phocLoginFirstTIme";
 import { NotificationError } from "../../components/common/Notifications/Notifications";
@@ -92,9 +92,7 @@ export const DashBoardHierarchy: React.FC = (props) => {
     }
   }, [isError, navigate]);
 
-  useEffect(() => {
-    dispatch(getMe(""));
-  }, [dispatch]);
+ 
 
   const SwitchLoginData = (loginData: any) => {
     switch (loginData) {
@@ -202,13 +200,15 @@ export const DashBoardHierarchy: React.FC = (props) => {
     })();
   }, [token]);
 
+  localStorage.setItem("isIntialLogin", user?.userData?.isIntialLogin ?? null);
+  const getValue = localStorage.getItem("isIntialLogin");
   useEffect(() => {
-    if (user?.userData?.isIntialLogin == "Y") {
+    if (getValue !== 'null') {
       setPhcoLoginFirstTime(true);
     } else {
       setPhcoLoginFirstTime(false);
     }
-  }, [user?.userData?.isIntialLogin]);
+  }, [getValue]);
 
   useEffect(() => {
     SwitchLoginData(user?.userData?.type);
@@ -223,8 +223,8 @@ export const DashBoardHierarchy: React.FC = (props) => {
   };
 
   const handleSuccess = () => {
-    dispatch(getMe(""));
-    // setPhcoLoginFirstTime(false);
+    // dispatch(getMe(""));
+    setPhcoLoginFirstTime(false);
   };
 
   const showModal = () => {

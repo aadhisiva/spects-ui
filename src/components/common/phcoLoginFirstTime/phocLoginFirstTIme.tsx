@@ -210,11 +210,10 @@ let bodyData: any = {codes: userData?.userData?.codes, type: userData?.userData?
   });
 
   const handleSkip = async () => {
-    console.log("SDFsd")
     let res = await GET_APIS('skip', token);
-    console.log("RE",res)
     setOpen();
     onSave();
+    localStorage.removeItem("isIntialLogin");
   }
 
 

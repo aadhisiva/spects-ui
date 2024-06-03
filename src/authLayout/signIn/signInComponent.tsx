@@ -38,12 +38,12 @@ export const SignInComponent: FC = () => {
     //navigation
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (isOtpVerfity) {
-            navigate("/dashboard", { replace: true });
-        }
-        dispatch(reset(''));
-    }, [isOtpVerfity]);
+    // useEffect(() => {
+    //     if (isOtpVerfity) {
+    //         navigate("/dashboard", { replace: true });
+    //     }
+    //     dispatch(reset(''));
+    // }, [isOtpVerfity]);
 
 
     const onFinish = async () => {
