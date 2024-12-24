@@ -1,0 +1,19 @@
+.bordered-box {
+    border: 0.5px solid #000; /* Border color and thickness */
+    padding: 20px;         /* Inner padding */
+    position: relative;    /* To position the title within the box */
+    border-radius: 20px;
+  }
+  
+  .bordered-box .border-title {
+    position: absolute;    /* Position title over the border */
+    top: -12px;            /* Adjust vertical alignment of the title */
+    left: 2%;             /* Center horizontally */
+    transform: translateX(-2%); /* Correct centering */
+    padding: 0 20px;       /* Add padding around the title */
+    font-size: 1.1em;      /* Adjust font size */
+    border-radius: 20px;
+    font-weight: 600;
+    background-color: #000;
+    color: white;
+  }
