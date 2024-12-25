@@ -1,0 +1,22 @@
+.table-Pagination {
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 20px 20px;
+    background-color: rgb(131, 140, 140);
+}
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 19px;
+    color: white;
+}
+.title-and-search {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
