@@ -131,6 +131,7 @@ export default function PhcoAssign() {
         handleSubmitModal={handleSubmitModal}
         title={'SubCenter Modal'}
         formData={formData}
+        isLastAssign={true}
       />
     )
   }

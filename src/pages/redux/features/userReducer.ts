@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface CounterState {
+export interface CounterState {
     RoleName?: string;
     RoleId?: string;
     Mobile?: string;
+    UserId?: string;
+    Token?: string;
     Access?: any;
     useAuth?: boolean;
     sidebarShow: boolean,
@@ -15,6 +17,8 @@ const initialState: CounterState = {
     RoleName: "",
     RoleId: "",
     Mobile: "",
+    UserId: "",
+    Token: "",
     Access: {},
     useAuth: false,
     sidebarShow: true,
@@ -27,10 +31,12 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         userLoggedIn: (state, action: PayloadAction<any>) => {
-            const {RoleName, Mobile, Access, RoleId} = action.payload;
+            const {RoleName, Mobile, Access, RoleId, UserId, Token} = action.payload;
             state.RoleName = RoleName;
             state.RoleId = RoleId;
             state.Mobile = Mobile;
+            state.UserId = UserId;
+            state.Token = Token;
             state.Access = Access;
             state.useAuth = true;
             state.sidebarShow = true;
@@ -40,6 +46,8 @@ const userSlice = createSlice({
             state.RoleName = "";
             state.RoleId = "";
             state.Mobile = "";
+            state.UserId = "";
+            state.Token = "";
             state.Access = {};
             state.useAuth = false;
             state.sidebarShow = true;

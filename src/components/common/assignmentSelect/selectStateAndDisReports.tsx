@@ -9,8 +9,8 @@ import userSelectedValue from '../customHooks/userSelectedValue'
 import useAccess from '../customHooks/useAccess'
 import SelectDate from '../form/date'
 import { CDatePicker } from '@coreui/react-pro'
-import { postRequest } from '../../services/apiServices'
 import SpinnerLoder from '../spinnerLoder'
+import { postRequest } from '../../services/apiServices'
 
 interface ISelectDistrict {
   handleSubmitForm?: any
@@ -18,45 +18,36 @@ interface ISelectDistrict {
   handleDownloadReports?: any
 }
 
-export default function SelectForReports({
+export default function SelectStateAndDisReports({
   handleSubmitForm,
   loading,
   handleDownloadReports,
 }: ISelectDistrict) {
   const [isLoading, setLoading] = useState(false)
   const [districtDropdown, setDistrictDropdown] = useState([])
-  const [talukDropdown, setTalukDropdown] = useState([])
-  const [phcoDropdown, setPhcoDropdown] = useState([])
-  const [subCenterDropdown, setSubCenterDropdown] = useState([])
+  const [talukDropdown, setTalukDropDown] = useState([])
   const [selectedDate, setSelectedDate] = useState<Date | null | any>(null)
 
   const [values, setValues] = useState({
     DataType: '',
     DistrictCode: '',
     TalukCode: '',
-    PhcoCode: '',
-    SubCenterCode: '',
-    Status: '',
     FromDate: '',
     ToDate: '',
   })
 
   const [{ Mobile }] = userSelectedValue()
-  const [{ dropDownAuthAccess, talukAcces, phcoAcces, subCenterAcces, authValues }] = useAccess()
+  const [{ dropDownAuthAccess, authValues, superAcces, districtAcces, talukAcces }] = useAccess()
 
   const handleDataTypeDropdown = async (e: ChangeEvent<HTMLInputElement>) => {
     setValues({
       ...values,
       DataType: e.target.value,
       DistrictCode: '',
-      TalukCode: '',
-      PhcoCode: '',
-      SubCenterCode: '',
-      Status: '',
       FromDate: '',
       ToDate: '',
     })
-    let response = await postRequest(
+    let result = await postRequest(
       'getMasterDropDownForReports',
       {
         ReqType: 1,
@@ -67,7 +58,8 @@ export default function SelectForReports({
       setLoading,
     )
     setLoading(false)
-    setDistrictDropdown(response?.data)
+    let newarray: any = [...[{ name: 'Select All', value: 'all' }, ...result.data]]
+    setDistrictDropdown(newarray)
   }
 
   const handleDistictDropdown = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -75,14 +67,11 @@ export default function SelectForReports({
       ...values,
       DistrictCode: e.target.value,
       TalukCode: '',
-      PhcoCode: '',
-      SubCenterCode: '',
-      Status: '',
       FromDate: '',
       ToDate: '',
     })
     setLoading(true)
-    let response = await postRequest(
+    let result = await postRequest(
       'getMasterDropDownForReports',
       {
         ReqType: 2,
@@ -94,67 +83,8 @@ export default function SelectForReports({
       setLoading,
     )
     setLoading(false)
-    setTalukDropdown(response?.data)
-  }
-
-  const handleTalukDropdown = async (e: ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      TalukCode: e.target.value,
-      PhcoCode: '',
-      SubCenterCode: '',
-      Status: '',
-      FromDate: '',
-      ToDate: '',
-    })
-    setLoading(true)
-    let response = await postRequest(
-      'getMasterDropDownForReports',
-      {
-        ReqType: 3,
-        UDCode: values.DistrictCode,
-        UTCode: e.target.value,
-        loginType: authValues.PhcoLevel,
-        ListType: dropDownAuthAccess,
-        Mobile,
-      },
-      setLoading,
-    )
-    setLoading(false)
-    setPhcoDropdown(response?.data)
-  }
-
-  const handlePhcoDropdown = async (e: ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      PhcoCode: e.target.value,
-      SubCenterCode: '',
-      Status: '',
-      FromDate: '',
-      ToDate: '',
-    })
-    setLoading(true)
-    let response = await postRequest(
-      'getMasterDropDownForReports',
-      {
-        ReqType: 4,
-        UDCode: values.DistrictCode,
-        UTCode: values.TalukCode,
-        UPCode: e.target.value,
-      },
-      setLoading,
-    )
-    setLoading(false)
-    setSubCenterDropdown(response?.data)
-  }
-
-  const handleChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      Status: e.target.value,
-      FromDate: '',
-      ToDate: '',
-    })
+    let newarray: any = [...[{ name: 'Select All', value: 'all' }, ...result.data]]
+    setTalukDropDown(newarray)
   }
 
   const handleChangeFromDate = (e: ChangeEvent<HTMLInputElement>): any => {
@@ -170,9 +100,6 @@ export default function SelectForReports({
       DataType: '',
       DistrictCode: '',
       TalukCode: '',
-      PhcoCode: '',
-      SubCenterCode: '',
-      Status: '',
       FromDate: '',
       ToDate: '',
     })
@@ -196,36 +123,21 @@ export default function SelectForReports({
           label={'District Name'}
           onChange={handleDistictDropdown}
         />
-        <SelectOption
-          options={talukDropdown}
-          name={'TalukCode'}
-          value={values.TalukCode}
-          label={'Taluk Name'}
-          onChange={handleTalukDropdown}
-        />
-        <SelectOption
-          options={phcoDropdown}
-          name={'PhcoCode'}
-          value={values.PhcoCode}
-          label={'Phco Name'}
-          onChange={handlePhcoDropdown}
-        />
-        <SelectOption
-          options={subCenterDropdown}
-          name={'SubCenterCode'}
-          value={values.SubCenterCode}
-          label={'SubCenter Name'}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setValues({ ...values, SubCenterCode: e.target.value })
-          }
-        />
-        <SelectOption
-          options={statusOptions}
-          name={'Status'}
-          value={values.Status}
-          label={'Status'}
-          onChange={handleChangeStatus}
-        />
+        {superAcces && districtAcces ? (
+          ''
+        ) : talukAcces ? (
+          <SelectOption
+            options={talukDropdown}
+            name={'TalukCode'}
+            value={values.TalukCode}
+            label={'Taluk Name'}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setValues({ ...values, TalukCode: e.target.value })
+            }
+          />
+        ) : (
+          ''
+        )}
         <SelectDate
           label={'Select From Date'}
           value={selectedDate}

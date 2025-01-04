@@ -58,7 +58,8 @@ export default function Roles() {
       setLoading(false)
       alert(data.message || 'please try again')
     }
-  }
+  };
+  console.log("decrypt",tableData)
 
   useEffect(() => {
     fecthIntialData()

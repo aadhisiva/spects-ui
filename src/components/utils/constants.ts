@@ -3,10 +3,20 @@ export const RURAL_URBAN = [
     { name: "Urban", value: "Urban" },
 ];
 
+export const DATATYPE_OPTIONS = [
+    { name: "School", value: "School" },
+    { name: "Other", value: "Other" },
+];
+
 
 export const YES_NO = [
     { name: "Yes", value: "Yes" },
     { name: "No", value: "No" },
+];
+
+export const NGO_GOV = [
+    { name: "NGO", value: "NGO" },
+    { name: "Government", value: "Government" },
 ];
 
 export const statusOptions = [

@@ -1,10 +1,12 @@
 import axios from "axios";
 import { toast } from "react-toastify"; // Or your preferred toast library
+import { store } from "./pages/redux/store";
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8889/api/admin", // Set your API base URL
-  timeout: 10000, // Set a timeout (optional)
+  // baseURL: "http://localhost:8889/api/admin", // Set your API base URL
+  baseURL: "https://spectacles.karnataka.gov.in/api/admin", // Set your API base URL
+  timeout: 30000, // Set a timeout (optional)
   headers: {
     "Content-Type": "application/json",
   },
@@ -14,7 +16,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Attach token if required
-    const token = localStorage.getItem("token"); // Replace with your auth logic
+    const state: any = store.getState();
+    const token = state.user['Token'];
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -11,7 +11,7 @@ export default function useAccess() {
 
   let loginAuthAccess =
     Access.District == 'Yes' && Access.Type == 'Admin'
-      ? 'Admin'
+      ? 'District'
       : Access.District == 'Yes'
         ? 'District'
         : Access.Taluk == 'Yes'
@@ -19,7 +19,7 @@ export default function useAccess() {
           : Access.Phco == 'Yes'
             ? 'Phco'
             : Access.SubCenter == 'Yes'
-              ? 'Subcenter'
+              ? 'SubCenter'
               : ''
 
   let mobileAuthAccess =
@@ -47,7 +47,7 @@ export default function useAccess() {
             : ''
 
   const authValues = {
-    DistrictLevel: superAcces ? "" : districtAcces ? "" : talukAcces ? "District" : phcoAcces ? "District" : subCenterAcces ? "District" : "",
+    DistrictLevel: superAcces ? "all" : districtAcces ? "all" : talukAcces ? "District" : phcoAcces ? "District" : subCenterAcces ? "District" : "",
     TalukLevel : superAcces ? "" : districtAcces ? "" : talukAcces ? "District" : phcoAcces ? "Taluk" : subCenterAcces ? "Taluk": "",
     PhcoLevel : superAcces ? "" : districtAcces ? "" : talukAcces ? "" : phcoAcces ? "" : subCenterAcces ? "Phco" : ""
   };

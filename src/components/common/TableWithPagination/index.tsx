@@ -81,39 +81,30 @@ interface IPaginatedTable {
   title?: string
   isButtonType?: string
   originalData: any
-  totalCount?: number
-  currentPage?: number
-  rowsPerPage?: number
+  totalCount?: number | any 
+  currentPage?: number | string | any
+  rowsPerPage?: number | string | any
   setCurrentPage?: void | any
   setRowsPerPage?: void | any
+  pagination?: boolean
 }
 const PaginatedTable = ({
   headCells,
   handleClickModify,
   title,
-  originalData,
-  totalCount,
+  originalData = [],
+  totalCount = 0,
   rowsPerPage,
   currentPage,
   setRowsPerPage,
   setCurrentPage,
   isButtonType,
-}: any) => {
-  const [data, setData] = useState(dataasf.data)
+  pagination
+}: IPaginatedTable) => {
   // const [totalCount, setTotalCount] = useState(0); // Total number of items from the API
   const [searchTerm, setSearchTerm] = useState('') // Search term
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState('')
-
-  // useEffect(() => {
-  //   const fetchTableData = async () => {
-  //     // const response = await fetchData({ page: currentPage, rowsPerPage, search: searchTerm });
-  //     const response = dataasf
-  //     setData(response.data); // Update table data
-  //     setTotalCount(response.totalItems); // Update total items count
-  //   };
-  //   fetchTableData();
-  // }, [currentPage, rowsPerPage, searchTerm]);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
@@ -125,21 +116,23 @@ const PaginatedTable = ({
     setCurrentPage(1) // Reset to the first page
   }
 
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(originalData, getComparator(order, orderBy)).slice(
-        0,
-        currentPage * rowsPerPage + rowsPerPage,
-      ),
-    [order, orderBy, currentPage, rowsPerPage, originalData, totalCount],
-  )
+  const visibleRows = pagination ? originalData : React.useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage; // Calculate the starting index
+    const endIndex = startIndex + rowsPerPage;         // Calculate the ending index
+  
+    return stableSort(originalData, getComparator(order, orderBy)).slice(
+      startIndex,
+      endIndex
+    ); // Return rows only for the current page
+  }, [order, orderBy, currentPage, rowsPerPage, originalData]);
 
   const totalPages = Math.ceil(totalCount / rowsPerPage) // Calculate total pages dynamically
+  
   return (
     <div className="table-Pagination">
       <CRow className="title-and-search">
         <CCol md={4} xs={12}>
-          <span className="title">{title || "Table Data"}</span>
+          <span className="title">{title || 'Table Data'}</span>
         </CCol>
         <CCol md={2} xs={12}>
           {/* Rows Per Page Selector */}
@@ -158,23 +151,23 @@ const PaginatedTable = ({
 
       {/* Table */}
       <CRow>
-        <CTable hover striped responsive>
+        <CTable small hover striped responsive>
           <CTableHead>
             <CTableRow>
               {(headCells || []).map((header: any) => {
-                return <CTableHeaderCell className="text-center" key={header.id}>{header.label}</CTableHeaderCell>
+                return (
+                  <CTableHeaderCell className="text-center" key={header.id}>
+                    {header.label}
+                  </CTableHeaderCell>
+                )
               })}
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {visibleRows.map((row, index) => {
+            {visibleRows.map((row: any, index: string | number) => {
               const labelId = `enhanced-table-checkbox-${index}`
               return (
-                <CTableRow
-                  tabIndex={-1}
-                  key={index}
-                  style={{ cursor: 'pointer', color: 'white' }}
-                >
+                <CTableRow tabIndex={-1} key={index} style={{ cursor: 'pointer', color: 'white' }}>
                   {headCells.map((headCell: any, index: string) => {
                     if (headCell.id == 'Action') {
                       return (
@@ -224,21 +217,51 @@ const PaginatedTable = ({
         </CCol>
         <CCol md={6} sm={12}>
           <CPagination>
+            {/* Previous Button */}
             <CPaginationItem
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev: number) => Math.max(prev - 1, 1))}
             >
               Previous
             </CPaginationItem>
-            {[...Array(totalPages).keys()].map((page) => (
-              <CPaginationItem
-                key={page}
-                active={page + 1 === currentPage}
-                onClick={() => setCurrentPage(page + 1)}
-              >
-                {page + 1}
-              </CPaginationItem>
-            ))}
+
+            {/* First Page */}
+            {currentPage > 2 && (
+              <>
+                <CPaginationItem onClick={() => setCurrentPage(1)}>1</CPaginationItem>
+                {currentPage > 3 && <CPaginationItem disabled>...</CPaginationItem>}
+              </>
+            )}
+
+            {/* Current and Surrounding Pages */}
+            {[...Array(totalPages).keys()]
+              .filter(
+                (page) =>
+                  page + 1 === currentPage ||
+                  page + 1 === currentPage - 1 ||
+                  page + 1 === currentPage + 1,
+              )
+              .map((page) => (
+                <CPaginationItem
+                  key={page}
+                  active={page + 1 === currentPage}
+                  onClick={() => setCurrentPage(page + 1)}
+                >
+                  {page + 1}
+                </CPaginationItem>
+              ))}
+
+            {/* Last Page */}
+            {currentPage < totalPages - 1 && (
+              <>
+                {currentPage < totalPages - 2 && <CPaginationItem disabled>...</CPaginationItem>}
+                <CPaginationItem onClick={() => setCurrentPage(totalPages)}>
+                  {totalPages}
+                </CPaginationItem>
+              </>
+            )}
+
+            {/* Next Button */}
             <CPaginationItem
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((prev: number) => Math.min(prev + 1, totalPages))}

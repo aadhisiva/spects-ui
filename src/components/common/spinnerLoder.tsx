@@ -1,5 +1,6 @@
 import React from 'react'
 import { CSpinner } from '@coreui/react'
+import "./spinnerLoader.css";
 
 interface ISpinnerLoder {
   loading?: boolean
@@ -9,10 +10,10 @@ export default function SpinnerLoder({ loading }: ISpinnerLoder) {
   return (
     <>
       {loading && (
-        <div className="pt-3 text-center">
-          <CSpinner color="primary" variant="grow" className="text-align" />
+        <div className="loader-overlay">
+          <div className="loader-spinner"></div>
         </div>
       )}
     </>
-  );
-};
+  )
+}

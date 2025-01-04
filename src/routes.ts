@@ -32,9 +32,6 @@ const RefractionisiLoginDataPage = React.lazy(() => import('./pages/reports/refr
 const routes = [
   // { path: '/', exact: true, name: 'Dashboard' },
   { path: '/', name: 'Dashboard', element: DashboardPage },
-  // { path: '/theme', name: 'Theme', element: Colors, exact: true },
-  // { path: '/theme/colors', name: 'Colors', element: Colors },
-  // { path: '/theme/typography', name: 'Typography', element: Typography },
 
   { path: DISTRICT_ASSIGN, name: 'District', element: DistrictAssign },
   { path: SUBCENTER_ASSIGN, name: 'SubCenter', element: SubCenterAssign },

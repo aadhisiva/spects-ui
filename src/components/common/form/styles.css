@@ -1,0 +1,11 @@
+.c-datepicker-input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .c-datepicker-calendar {
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }

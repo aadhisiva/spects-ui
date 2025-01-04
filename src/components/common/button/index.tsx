@@ -12,6 +12,7 @@ export default function ButtonWithLoader({ loading, handleClick, title, type, is
     <CCol sm={4} md={isModal ? 6 : 3} xs={6} style={{display: 'flex', alignItems: 'end'}}>
       <CButton
         color="primary"
+        // style={{ backgroundColor: "#1c8bce"}}
         onClick={handleClick}
         disabled={loading}
         type={type || "button"}

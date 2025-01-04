@@ -1,5 +1,5 @@
 .bordered-box {
-    border: 0.5px solid #000; /* Border color and thickness */
+    border: 0.5px solid #1c8bce; /* Border color and thickness */
     padding: 20px;         /* Inner padding */
     position: relative;    /* To position the title within the box */
     border-radius: 20px;
@@ -14,6 +14,6 @@
     font-size: 1.1em;      /* Adjust font size */
     border-radius: 20px;
     font-weight: 600;
-    background-color: #000;
+    background-color: #1c8bce;
     color: white;
   }

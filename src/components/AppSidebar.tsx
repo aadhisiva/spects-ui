@@ -1,21 +1,20 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import {
   CCloseButton,
-  CImage,
   CSidebar,
   CSidebarBrand,
   CSidebarFooter,
   CSidebarHeader,
   CSidebarToggler,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
-// import { sygnet } from '@root/assets/brand/sygnet'
+import Logo from '../assets/images/karnataka.png';
+import "./sidebar.css";
 
-import Logo from '../assets/images/karnataka.png'
+
 // sidebar nav config
 import userSelectedValue from './common/customHooks/userSelectedValue'
 import { adminRoutes, districtRoutes, phcoRoutes, superAdminRoutes, talukRoutes } from '../_nav'
@@ -44,7 +43,7 @@ const AppSidebar = () => {
   // const imagePath = require(`../assets/images/karmataka.png`).default;
   return (
     <CSidebar
-      className="border-end"
+      className="border-end sidebar"
       colorScheme="dark"
       position="fixed"
       unfoldable={sidebarUnfoldable}
@@ -54,7 +53,7 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarHeader className="border-bottom">
-        <CSidebarBrand to="/">
+        <CSidebarBrand>
           <img src={Logo} alt="Karmataka" sizes="10px" width={50} loading="lazy" />
         </CSidebarBrand>
         <span style={{ fontSize: '19px' }}>Spectacles</span>

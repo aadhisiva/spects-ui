@@ -1,5 +1,4 @@
-import React from 'react'
-import { cilChartPie, cilReportSlash, cilSpeedometer } from '@coreui/icons'
+import { cilChartPie, cilSpeedometer } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 import {
   CHILD_ROLES,
@@ -208,7 +207,7 @@ export const talukRoutes = [
     component: CNavTitle,
     name: 'Secondary Screening',
   },
-  _stateAndDistrictDataPath,
+  // _stateAndDistrictDataPath,
   _refractionistLoginDataPath,
 ]
 
@@ -233,6 +232,6 @@ export const phcoRoutes = [
     component: CNavTitle,
     name: 'Secondary Screening',
   },
-  _stateAndDistrictDataPath,
+  // _stateAndDistrictDataPath,
   _refractionistLoginDataPath,
 ]

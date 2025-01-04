@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
   CContainer,
   CDropdown,
@@ -15,20 +15,16 @@ import {
   useColorModes,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import {
-  cilContrast,
-  cilMenu,
-  cilMoon,
-  cilSun,
-} from '@coreui/icons'
+import { cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 import { sideBarOpen } from '../pages/redux/features/userReducer'
 import userSelectedValue from './common/customHooks/userSelectedValue'
+import './sidebar.css'
 
 const AppHeader = () => {
-  const headerRef = useRef()
+  const headerRef: any = useRef(null)
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
   const dispatch = useDispatch()
@@ -43,7 +39,7 @@ const AppHeader = () => {
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
-      <CContainer className="border-bottom px-4" fluid>
+      <CContainer className="border-bottom px-4 spec-header" fluid>
         <CHeaderToggler
           onClick={() => dispatch(sideBarOpen(!sidebarShow))}
           style={{ marginInlineStart: '-14px' }}
@@ -52,9 +48,7 @@ const AppHeader = () => {
         </CHeaderToggler>
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
-            <CNavLink to="/" as={NavLink}>
-              Spectacles
-            </CNavLink>
+            <span className='header-title'>Spectacles Distribution</span>
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav>

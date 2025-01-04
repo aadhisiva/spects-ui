@@ -1,8 +1,8 @@
 .table-Pagination {
-    border: 1px solid;
+    border: 1px solid #1c8bce;
     border-radius: 10px;
     padding: 20px 20px;
-    background-color: rgb(131, 140, 140);
+    background-color: rgb(249, 254, 254);
 }
 .pagination {
     display: flex;

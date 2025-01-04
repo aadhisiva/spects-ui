@@ -6,6 +6,10 @@ import { mobileNoValid, nameValid } from '../form/validations'
 import axiosInstance from '../../../axiosInstance'
 import SelectOption from '../form/select'
 import userSelectedValue from '../customHooks/userSelectedValue'
+import useAccess from '../customHooks/useAccess'
+import { toast } from 'react-toastify'
+import { decryptData } from '../../utils/decrypt'
+import { NGO_GOV } from '../../utils/constants'
 
 interface IDistrictModal {
   visible: boolean
@@ -13,6 +17,7 @@ interface IDistrictModal {
   title?: string
   handleSubmitModal?: void | any
   formData?: any
+  isLastAssign?: boolean
 }
 
 export default function DistrictModal({
@@ -21,15 +26,18 @@ export default function DistrictModal({
   title,
   handleSubmitModal,
   formData,
+  isLastAssign = false,
 }: IDistrictModal) {
-  const [loading, setLoading] = React.useState(false);
-  const [roleOption, setRolesOption] = React.useState([]);
+  const [loading, setLoading] = React.useState(false)
+  const [roleOption, setRolesOption] = React.useState([])
 
-  const [{ RoleId, Mobile, RoleName }] = userSelectedValue();
+  const [{ RoleId, Mobile, RoleName }] = userSelectedValue()
+  const [{ loginAuthAccess }] = useAccess()
 
   let initialValues = {
     Mobile: formData.Mobile || '',
-    Name: formData.Name || ''
+    Name: formData.Name || '',
+    NgoOrGov: formData.NgoOrGov || '',
   }
 
   useEffect(() => {
@@ -38,11 +46,15 @@ export default function DistrictModal({
 
   const fecthIntialData = async () => {
     setLoading(true)
-    let response = await axiosInstance.post('getChildBasedOnParent', {
-      RoleId: RoleId,
+    // let response = await axiosInstance.post('getChildBasedOnParent', {
+    //   RoleId: RoleId,
+    // })
+    let response = await axiosInstance.post('addOrGetRoles', {
+      ReqType: 'Get',
     })
     if (response?.data.code == 200) {
-      setRolesOption(response.data.data)
+      let decrypt = decryptData(response.data.data)
+      setRolesOption(decrypt)
       setLoading(false)
     } else {
       setLoading(false)
@@ -66,14 +78,27 @@ export default function DistrictModal({
         }
         return nameValid(value)
       },
-    }
-  };
+    },
+  }
 
   const onSubmit = (values: any) => {
-    values.RoleId = roleOption[0]['value'];
-    values.UserId = formData?.UserId;
-    values.CreatedMobile = Mobile;
-    values.Role = RoleName;
+    values.RoleId =
+      loginAuthAccess == 'District'
+        ? roleOption[2]['id']
+        : loginAuthAccess == 'Taluk'
+          ? roleOption[3]['id']
+          : loginAuthAccess == 'Phco'
+            ? roleOption[4]['id']
+            : loginAuthAccess == 'SubCenter'
+              ? roleOption[5]['id']
+              : ''
+    if (!values.RoleId) return toast.info('RoleId is empty.')
+    values.UserId = formData?.UserId
+    values.CreatedMobile = Mobile
+    values.CreatedRole = RoleName;
+    if(isLastAssign){
+      if(!values.NgoOrGov) toast.info('NgoOrGov is empty. Select one of the options.');
+    };
     let formValues = { ...formData, ...values }
     handleSubmitModal(formValues)
   }
@@ -117,6 +142,17 @@ export default function DistrictModal({
               onBlur={handleBlur}
               errors={touched.Name && Boolean(errors.Name)}
               helperText={touched.Name && errors.Name}
+              isModal={true}
+            />
+            <SelectOption
+              label={'NgoOrGov'}
+              name={'NgoOrGov'}
+              value={values.NgoOrGov}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={NGO_GOV}
+              errors={touched.NgoOrGov && Boolean(errors.NgoOrGov)}
+              helperText={touched.NgoOrGov && errors.NgoOrGov}
               isModal={true}
             />
           </CModalBody>

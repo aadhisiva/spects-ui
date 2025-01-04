@@ -9,22 +9,15 @@ import './scss/examples.scss'
 // We use those styles to show code examples, you should remove them in your application.
 import PrivateRoute from './pages/privateRoutes'
 import PublicRoute from './pages/publicRoutes'
-import routes from './routes'
-import { DISTRICT_ASSIGN } from './components/utils/routingPath'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Login = React.lazy(() => import('./pages/login/Login'))
-const Register = React.lazy(() => import('./pages/register/Register'))
 const Page404 = React.lazy(() => import('./pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./pages/page500/Page500'));
 
-const DistrictAssign = React.lazy(() => import('./pages/assignment/districtAssign'))
-const PhcoAssign = React.lazy(() => import('./pages/assignment/phcoAssign'))
-const SubCenterAssign = React.lazy(() => import('./pages/assignment/subCenterAssign'))
-const TalukAssign = React.lazy(() => import('./pages/assignment/talukAssign'))
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -45,7 +38,7 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/web'>
       <Suspense
         fallback={
           <div className="pt-3 text-center">

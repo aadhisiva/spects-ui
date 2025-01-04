@@ -12,6 +12,7 @@ import DistrictModal from '../../components/common/modals/districtModal'
 import axiosInstance from '../../axiosInstance'
 import { toast } from 'react-toastify'
 import SpinnerLoder from '../../components/common/spinnerLoder'
+import { postRequest } from '../../components/services/apiServices'
 
 const headCells = [
   {
@@ -53,8 +54,8 @@ const headCells = [
 ]
 
 export default function DistrictAssign() {
-  const [loading, setLoading] = useState(false);
-  const [isBloading, setBLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [isBloading, setBLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const [totalCount, setTotalCount] = useState(0)
   const [formData, setFormData] = useState({})
@@ -64,20 +65,17 @@ export default function DistrictAssign() {
   const [rowsPerPage, setRowsPerPage] = useState(10) // Rows per page
 
   const fecthIntialData = async () => {
-    setLoading(true)
-    let { data } = await axiosInstance.post('getAssignedMasters', {
-      ReqType: 'District',
-      DataType: '',
-      Mobile: "987",
-    })
-    if (data?.code == 200) {
-      setTableData(data.data)
-      setTotalCount(data.data?.length || 0)
-      setLoading(false)
-    } else {
-      setLoading(false)
-      alert(data.message || 'please try again')
-    }
+    let result = await postRequest(
+      'getAssignedMasters',
+      {
+        ReqType: 'District',
+        DataType: '',
+        Mobile: '987',
+      },
+      setLoading,
+    )
+    setTableData(result.data)
+    setTotalCount(result?.length || 0)
   }
 
   useEffect(() => {
@@ -125,7 +123,7 @@ export default function DistrictAssign() {
   return (
     <div>
       {visible && openModalForm()}
-      <SpinnerLoder  loading={loading} />
+      <SpinnerLoder loading={loading} />
       <BorderWithTitle title={'Assignment'}>
         <SelectDistrict handleSubmitForm={handleClickAdd} loading={isBloading} />
       </BorderWithTitle>

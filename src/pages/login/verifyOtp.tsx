@@ -94,6 +94,7 @@ export const VerifiOtp = ({ userData, Mobile }: IVerifiOtp) => {
           Token: decrypt.Token,
           Access: formData.access,
           RoleId: RoleId,
+          UserId: formData.UserId,
           RoleName: userData.find((obj: any) => obj.RoleId == RoleId)?.RoleName,
         }
         dispatch(userLoggedIn(user))
